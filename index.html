@@ -2,17 +2,16 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <!-- ✅ iPhone mini(사파리)에서도 “한 화면(노 스크롤)”에 들어오게: 100dvh + safe-area -->
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <title>WordSwipe - 단어 학습</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root{
-      /* JS가 실제 화면 높이로 갱신 (사파리 주소창 변동 대응) */
-      --vh: 1vh;
-      --pad: 20px;
-      --gap: 20px;
+      --vvh: 1vh;         /* visualViewport 기반 */
+      --pad: 16px;
+      --gap: 12px;
+      --scale: 1;         /* 카드 내부 자동 축소 */
     }
 
     html, body { height: 100%; }
@@ -20,9 +19,9 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      min-height: 100vh;
-      overflow: hidden; /* ✅ 전체 스크롤 방지 */
+      overflow: hidden; /* ✅ 전체 스크롤 완전 차단 */
       position: relative;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body::before {
@@ -50,29 +49,33 @@
     .container {
       max-width: 480px;
       margin: 0 auto;
-      /* ✅ iOS 주소창/툴바 변화에도 안정적인 높이 */
-      height: calc(var(--vh) * 100);
+
+      /* ✅ 주소창 보이는 “실제 보이는 높이(visualViewport)”로 고정 */
+      height: calc(var(--vvh) * 100);
+
       display: flex;
       flex-direction: column;
+      gap: var(--gap);
+
       padding:
         calc(var(--pad) + env(safe-area-inset-top))
         var(--pad)
         calc(var(--pad) + env(safe-area-inset-bottom))
         var(--pad);
+
       position: relative;
       z-index: 1;
-      overflow: hidden; /* ✅ 내부도 스크롤 방지 */
-      gap: 12px;
+      overflow: hidden;
     }
 
     header {
+      flex: 0 0 auto;
       backdrop-filter: blur(20px);
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
-      padding: 14px 18px;
+      border-radius: 22px;
+      padding: 12px 14px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      flex: 0 0 auto;
     }
 
     .header-top {
@@ -83,7 +86,7 @@
     }
 
     h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       color: white;
       letter-spacing: -0.5px;
@@ -101,14 +104,12 @@
       place-items: center;
       cursor: pointer;
       font-size: 18px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       backdrop-filter: blur(10px);
+      touch-action: manipulation;
     }
 
-    .icon-btn:active {
-      transform: scale(0.95);
-      background: rgba(255, 255, 255, 0.3);
-    }
+    .icon-btn:active { transform: scale(0.96); }
 
     .stats {
       display: flex;
@@ -123,7 +124,7 @@
       padding: 6px 12px;
       border-radius: 12px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.2);
       line-height: 1;
@@ -134,7 +135,6 @@
       height: 8px;
       border-radius: 999px;
       overflow: hidden;
-      position: relative;
       margin-top: 10px;
     }
 
@@ -142,23 +142,23 @@
       height: 100%;
       background: linear-gradient(90deg, #fff, rgba(255,255,255,0.8));
       border-radius: 999px;
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.25s ease;
       box-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
     main {
       flex: 1 1 auto;
-      min-height: 0; /* ✅ flex 자식 overflow 계산에 필수 */
+      min-height: 0;         /* ✅ 핵심 */
+      overflow: hidden;
       display: flex;
       align-items: stretch;
       justify-content: center;
-      overflow: hidden; /* ✅ 스크롤 방지 */
     }
 
     .deck {
       width: 100%;
       max-width: 440px;
-      height: 100%;        /* ✅ 남은 공간을 정확히 채움 */
+      height: 100%;
       position: relative;
       perspective: 1000px;
       overflow: hidden;
@@ -167,10 +167,10 @@
     .card-stack {
       position: absolute;
       inset: 0;
-      border-radius: 28px;
+      border-radius: 26px;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(5px);
-      transform: scale(0.96) translateY(8px);
+      transform: scale(0.965) translateY(6px);
       opacity: 0.6;
     }
 
@@ -180,44 +180,54 @@
       background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
       backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.5);
-      border-radius: 28px;
-      padding: 22px 20px; /* 기본값 (아래에서 iPhone mini용 더 줄임) */
+      border-radius: 26px;
       box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      display: flex;
-      flex-direction: column;
+
+      /* ✅ swipe에만 transform 쓰고 */
       touch-action: none;
       will-change: transform;
       cursor: grab;
-      overflow: hidden; /* ✅ 카드 내부가 밀려도 스크롤 안 생기게 */
+      overflow: hidden;
+      display: flex;
     }
 
     .card:active { cursor: grabbing; }
 
-    .card.enter { animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .card.enter { animation: cardEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
     @keyframes cardEnter {
-      from { transform: translateY(-20%) scale(0.9) rotateX(10deg); opacity: 0; }
+      from { transform: translateY(-15%) scale(0.92) rotateX(10deg); opacity: 0; }
       to   { transform: translateY(0) scale(1) rotateX(0); opacity: 1; }
+    }
+
+    /* ✅ 카드 “내용”만 자동 축소(scale). swipe transform과 분리! */
+    .card-inner{
+      width: 100%;
+      height: 100%;
+      transform: scale(var(--scale));
+      transform-origin: top center;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .card-header {
       text-align: center;
-      margin-bottom: 14px;
       flex: 0 0 auto;
     }
 
     .word-display {
-      font-size: 42px;
+      font-size: 38px;
       font-weight: 800;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       letter-spacing: -1px;
-      margin-bottom: 6px;
-      min-height: 50px;
+      min-height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -227,41 +237,40 @@
     }
 
     .word-meaning {
-      font-size: 18px;
+      font-size: 17px;
       color: #764ba2;
-      font-weight: 600;
+      font-weight: 700;
       opacity: 0;
-      transform: translateY(-5px);
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: translateY(-4px);
+      transition: all 0.25s ease;
       -webkit-text-fill-color: initial;
     }
 
-    .word-meaning.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .word-meaning.show { opacity: 1; transform: translateY(0); }
 
     .example-section {
       flex: 1 1 auto;
-      min-height: 0; /* ✅ flex 내부 레이아웃 안정화 */
+      min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 10px;
-      overflow: hidden; /* ✅ 노 스크롤 */
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .definition-box, .example-box {
+      border-radius: 18px;
+      padding: 12px 14px;
+      flex: 0 0 auto;
     }
 
     .definition-box {
       background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12));
       border: 2px solid rgba(102,126,234,0.2);
-      border-radius: 18px;
-      padding: 14px 16px;
-      flex: 0 0 auto;
     }
 
     .definition-label {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       color: #667eea;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -269,24 +278,21 @@
     }
 
     .definition-text {
-      font-size: 16px;
-      line-height: 1.4;
+      font-size: 15px;
+      line-height: 1.35;
       color: #2d3748;
-      font-weight: 500;
+      font-weight: 600;
       font-style: italic;
     }
 
     .example-box {
       background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
       border: 2px solid rgba(102,126,234,0.15);
-      border-radius: 18px;
-      padding: 14px 16px;
-      flex: 0 0 auto;
     }
 
     .example-label {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       color: #764ba2;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -294,46 +300,42 @@
     }
 
     .example-text {
-      font-size: 17px;
-      line-height: 1.45;
+      font-size: 16px;
+      line-height: 1.4;
       color: #2d3748;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .blank {
       display: inline-block;
-      min-width: 88px;
+      min-width: 84px;
       border-bottom: 2px solid #667eea;
       text-align: center;
       padding: 0 4px;
       color: #667eea;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .translation {
-      margin-top: 10px;
-      padding-top: 10px;
+      margin-top: 8px;
+      padding-top: 8px;
       border-top: 2px dashed rgba(102,126,234,0.2);
-      font-size: 14px;
+      font-size: 13px;
       color: #718096;
-      line-height: 1.4;
+      line-height: 1.35;
       opacity: 0;
       max-height: 0;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s ease;
     }
 
-    .translation.show {
-      opacity: 1;
-      max-height: 160px;
-    }
+    .translation.show { opacity: 1; max-height: 120px; }
 
     .choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: auto;   /* ✅ 남는 공간을 위로 보내고 선택지/힌트를 하단 고정 느낌 */
-      margin-bottom: 8px;
+      margin-top: auto;
       flex: 0 0 auto;
     }
 
@@ -341,13 +343,13 @@
       background: white;
       border: 2px solid #e2e8f0;
       border-radius: 16px;
-      padding: 12px 10px;
+      padding: 10px 8px;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       color: #2d3748;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -355,7 +357,12 @@
       gap: 4px;
       align-items: center;
       justify-content: center;
-      min-height: 60px; /* ✅ 조금 줄임 */
+      min-height: 56px;
+
+      /* ✅ iOS 탭 반응 확실 */
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .choice::before {
@@ -364,24 +371,22 @@
       inset: 0;
       background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.2s ease;
       z-index: 0;
     }
 
+    .choice:active { transform: scale(0.98); }
     .choice:hover::before { opacity: 1; }
-    .choice:active { transform: scale(0.97); }
 
-    .choice-word { position: relative; z-index: 1; line-height: 1.05; }
+    .choice-word, .choice-meaning { position: relative; z-index: 1; }
 
     .choice-meaning {
       font-size: 12px;
       color: #764ba2;
-      font-weight: 600;
+      font-weight: 700;
       opacity: 0;
-      transform: translateY(-3px);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-      z-index: 1;
+      transform: translateY(-2px);
+      transition: all 0.2s ease;
       line-height: 1.1;
     }
 
@@ -391,21 +396,17 @@
       background: linear-gradient(135deg, #48bb78, #38a169);
       border-color: #48bb78;
       color: white;
-      animation: correctBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 8px 20px rgba(72, 187, 120, 0.4);
+      box-shadow: 0 8px 20px rgba(72, 187, 120, 0.35);
     }
-
-    .choice.correct .choice-meaning { color: rgba(255,255,255,0.9); }
+    .choice.correct .choice-meaning { color: rgba(255,255,255,0.92); }
 
     .choice.wrong {
       background: linear-gradient(135deg, #f56565, #e53e3e);
       border-color: #f56565;
       color: white;
-      animation: wrongShake 0.5s;
-      box-shadow: 0 8px 20px rgba(245, 101, 101, 0.4);
+      box-shadow: 0 8px 20px rgba(245, 101, 101, 0.35);
     }
-
-    .choice.wrong .choice-meaning { color: rgba(255,255,255,0.9); }
+    .choice.wrong .choice-meaning { color: rgba(255,255,255,0.92); }
 
     .choice.disabled {
       opacity: 0.6;
@@ -413,26 +414,16 @@
       pointer-events: none;
     }
 
-    @keyframes correctBounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-
-    @keyframes wrongShake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px) rotate(-2deg); }
-      75% { transform: translateX(8px) rotate(2deg); }
-    }
-
     .swipe-hint {
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       color: #a0aec0;
-      font-weight: 600;
+      font-weight: 800;
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: translateY(6px);
+      transition: all 0.2s ease;
       flex: 0 0 auto;
+      margin-top: 6px;
     }
 
     .swipe-hint.show { opacity: 1; transform: translateY(0); }
@@ -444,26 +435,22 @@
       place-items: center;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.15s ease;
       z-index: 10;
     }
+    .swipe-overlay.ok { background: radial-gradient(circle, rgba(72,187,120,0.28), transparent); }
+    .swipe-overlay.again { background: radial-gradient(circle, rgba(245,101,101,0.28), transparent); }
 
-    .swipe-overlay.ok { background: radial-gradient(circle, rgba(72,187,120,0.3), transparent); }
-    .swipe-overlay.again { background: radial-gradient(circle, rgba(245,101,101,0.3), transparent); }
-
-    .swipe-icon {
-      font-size: 80px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-    }
+    .swipe-icon { font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
 
     footer {
+      flex: 0 0 auto;
       backdrop-filter: blur(20px);
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
-      padding: 14px;
+      border-radius: 22px;
+      padding: 12px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      flex: 0 0 auto;
     }
 
     .footer-actions {
@@ -473,18 +460,19 @@
     }
 
     .action-btn {
-      padding: 14px;
+      padding: 12px;
       border-radius: 16px;
       border: none;
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       white-space: nowrap;
+      touch-action: manipulation;
     }
 
     .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -496,9 +484,9 @@
     .action-btn.primary {
       background: linear-gradient(135deg, #48bb78, #38a169);
       color: white;
-      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.35);
     }
-    .action-btn:not(:disabled):active { transform: scale(0.97); }
+    .action-btn:not(:disabled):active { transform: scale(0.98); }
 
     .complete-screen {
       text-align: center;
@@ -507,19 +495,14 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      gap: 20px;
+      gap: 18px;
+      padding: 20px;
     }
 
-    .complete-icon { font-size: 80px; animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-    @keyframes bounceIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
+    .complete-icon { font-size: 72px; }
     .complete-title {
-      font-size: 32px;
-      font-weight: 800;
+      font-size: 30px;
+      font-weight: 900;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -528,44 +511,18 @@
 
     .complete-stats {
       background: rgba(102,126,234,0.1);
-      padding: 18px 28px;
-      border-radius: 20px;
+      padding: 16px 24px;
+      border-radius: 18px;
       display: flex;
-      gap: 28px;
+      gap: 24px;
     }
 
     .stat-item { text-align: center; }
-    .stat-value { font-size: 36px; font-weight: 800; color: #2d3748; margin-bottom: 4px; }
-    .stat-label { font-size: 13px; color: #718096; font-weight: 600; }
+    .stat-value { font-size: 34px; font-weight: 900; color: #2d3748; margin-bottom: 4px; }
+    .stat-label { font-size: 13px; color: #718096; font-weight: 800; }
 
     @keyframes swipeRight { to { transform: translateX(150%) rotate(15deg); opacity: 0; } }
     @keyframes swipeLeft  { to { transform: translateX(-150%) rotate(-15deg); opacity: 0; } }
-
-    /* ✅ iPhone mini/작은 높이에서 “한 화면” 유지용 압축 */
-    @media (max-height: 780px) {
-      :root{ --pad: 14px; }
-      header { padding: 12px 14px; border-radius: 20px; }
-      footer { padding: 12px; border-radius: 20px; }
-      h1 { font-size: 22px; }
-      .icon-btn { width: 38px; height: 38px; border-radius: 12px; }
-      .card { padding: 18px 16px; border-radius: 24px; }
-      .word-display { font-size: 36px; min-height: 44px; }
-      .definition-text { font-size: 15px; }
-      .example-text { font-size: 16px; }
-      .choice { min-height: 54px; padding: 10px 8px; }
-      .action-btn { padding: 12px; font-size: 14px; }
-      .progress-container { margin-top: 8px; }
-    }
-
-    /* ✅ 더 낮은 높이(주소창이 크게 먹는 상황)에서도 버팀 */
-    @media (max-height: 720px) {
-      .header-top { margin-bottom: 8px; }
-      .card-header { margin-bottom: 10px; }
-      .example-section { gap: 10px; margin-bottom: 8px; }
-      .definition-box, .example-box { padding: 12px 14px; }
-      .translation { margin-top: 8px; padding-top: 8px; font-size: 13px; }
-      .swipe-icon { font-size: 72px; }
-    }
   </style>
 </head>
 <body>
@@ -573,7 +530,7 @@
     <header>
       <div class="header-top">
         <h1>WordSwipe</h1>
-        <div style="display: flex; gap: 8px;">
+        <div style="display:flex; gap:8px;">
           <button class="icon-btn" id="soundBtn">🔊</button>
           <button class="icon-btn" id="resetBtn">↻</button>
         </div>
@@ -596,25 +553,55 @@
 
     <footer>
       <div class="footer-actions">
-        <button class="action-btn secondary" id="againBtn" disabled>
-          ← 다시 볼게요
-        </button>
-        <button class="action-btn primary" id="okBtn" disabled>
-          완료! →
-        </button>
+        <button class="action-btn secondary" id="againBtn" disabled>← 다시 볼게요</button>
+        <button class="action-btn primary" id="okBtn" disabled>완료! →</button>
       </div>
     </footer>
   </div>
 
   <script>
-    // ✅ iOS Safari 주소창 높이 변동에도 “한 화면” 유지
-    function setVH(){
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    // ✅ 1) 주소창이 보이는 상태(visual viewport) 기준으로 높이 고정
+    function setVVH(){
+      const vv = window.visualViewport;
+      const h = vv ? vv.height : window.innerHeight;
+      document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
     }
-    window.addEventListener('resize', setVH);
-    window.addEventListener('orientationchange', setVH);
-    setVH();
+
+    // ✅ 2) 카드 내용이 “한 화면”을 넘어가면 자동 축소(scale)
+    function fitCard(){
+      const card = document.querySelector('.card');
+      if(!card) return;
+      const inner = card.querySelector('.card-inner');
+      if(!inner) return;
+
+      // 측정 전에 scale 1로 원복
+      document.documentElement.style.setProperty('--scale', '1');
+
+      // 다음 프레임에서 정확한 높이 계산
+      requestAnimationFrame(() => {
+        const cardH = card.clientHeight;
+        const innerH = inner.scrollHeight;
+
+        // 혹시 padding/여유 조금 빼기 (사파리 바운더리 안전)
+        const safety = 8;
+        const available = Math.max(0, cardH - safety);
+
+        let scale = 1;
+        if(innerH > available && innerH > 0){
+          scale = available / innerH;
+          // 너무 작아지면 읽기 어려우니 최소 제한(원하면 0.75로 올려도 됨)
+          scale = Math.max(0.78, Math.min(1, scale));
+        }
+        document.documentElement.style.setProperty('--scale', String(scale));
+      });
+    }
+
+    // resize / scroll(주소창 등장/숨김) 모두 대응
+    window.addEventListener('resize', () => { setVVH(); fitCard(); });
+    window.visualViewport && window.visualViewport.addEventListener('resize', () => { setVVH(); fitCard(); });
+    window.visualViewport && window.visualViewport.addEventListener('scroll', () => { setVVH(); fitCard(); });
+
+    setVVH();
 
     const DATA = [
       { w:'accurate', m:'정확한', def:'exact and correct in all details', ex:'The report must be _____ and reliable.', t:'보고서는 정확하고 신뢰할 만해야 한다.' },
@@ -683,7 +670,6 @@
     let order = shuffle([...DATA.keys()]);
     let idx = 0, okCount = 0, againCount = 0;
     let answered = false, currentCard = null;
-    let choicesData = [];
 
     const deckEl = document.getElementById('deck');
     const soundBtn = document.getElementById('soundBtn');
@@ -723,37 +709,43 @@
 
       const item = DATA[order[idx]];
       const choices = generateChoices(item);
-      choicesData = choices;
 
       const card = document.createElement('div');
       card.className = 'card' + (enter ? ' enter' : '');
       card.innerHTML = `
-        <div class="card-header">
-          <div class="word-display">
-            <span id="wordText">?</span>
-            <span class="word-meaning" id="wordMeaning">(${item.m})</span>
+        <div class="card-inner">
+          <div class="card-header">
+            <div class="word-display">
+              <span id="wordText">?</span>
+              <span class="word-meaning" id="wordMeaning">(${item.m})</span>
+            </div>
+          </div>
+
+          <div class="example-section">
+            <div class="definition-box">
+              <div class="definition-label">Definition</div>
+              <div class="definition-text">${item.def}</div>
+            </div>
+
+            <div class="example-box">
+              <div class="example-label">Example</div>
+              <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
+              <div class="translation" id="translation">${item.t}</div>
+            </div>
+
+            <div class="choices" id="choices">
+              ${choices.map((c, i) => `
+                <div class="choice" data-word="${c.w}" data-idx="${i}">
+                  <div class="choice-word">${c.w}</div>
+                  <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="swipe-hint" id="swipeHint">← 나중에 / 완료 →</div>
           </div>
         </div>
-        <div class="example-section">
-          <div class="definition-box">
-            <div class="definition-label">Definition</div>
-            <div class="definition-text">${item.def}</div>
-          </div>
-          <div class="example-box">
-            <div class="example-label">Example</div>
-            <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
-            <div class="translation" id="translation">${item.t}</div>
-          </div>
-          <div class="choices" id="choices">
-            ${choices.map((c, i) => `
-              <div class="choice" data-word="${c.w}" data-idx="${i}">
-                <div class="choice-word">${c.w}</div>
-                <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
-              </div>
-            `).join('')}
-          </div>
-          <div class="swipe-hint" id="swipeHint">← 나중에 / 완료 →</div>
-        </div>
+
         <div class="swipe-overlay ok"><div class="swipe-icon">✓</div></div>
         <div class="swipe-overlay again"><div class="swipe-icon">↺</div></div>
       `;
@@ -772,6 +764,9 @@
       });
 
       attachSwipe(card);
+
+      // ✅ 렌더 직후 “한 화면” 맞추기
+      fitCard();
     }
 
     function generateChoices(item) {
@@ -804,23 +799,23 @@
         const meaningEl = c.querySelector(`[data-meaning-idx="${idx2}"]`);
         meaningEl.classList.add('show');
 
-        if (c.dataset.word === item.w) {
-          c.classList.add('correct');
-        } else if (c.dataset.word === selected) {
-          c.classList.add('wrong');
-        }
+        if (c.dataset.word === item.w) c.classList.add('correct');
+        else if (c.dataset.word === selected) c.classList.add('wrong');
       });
 
-      document.getElementById('wordText').textContent = item.w;
-      document.getElementById('wordMeaning').classList.add('show');
-      document.getElementById('translation').classList.add('show');
-      document.getElementById('swipeHint').classList.add('show');
+      currentCard.querySelector('#wordText').textContent = item.w;
+      currentCard.querySelector('#wordMeaning').classList.add('show');
+      currentCard.querySelector('#translation').classList.add('show');
+      currentCard.querySelector('#swipeHint').classList.add('show');
 
       const blankEl = currentCard.querySelector('.blank');
       if (blankEl) blankEl.textContent = item.w;
 
       okBtn.disabled = false;
       againBtn.disabled = false;
+
+      // 번역/힌트 펼쳐지면서 높이가 늘 수 있으니 다시 fit
+      fitCard();
     }
 
     function attachSwipe(card) {
@@ -854,13 +849,13 @@
         const threshold = 100;
 
         if (curX > threshold || (vel > 0.5 && curX > 0)) {
-          card.style.animation = 'swipeRight 0.3s ease forwards';
-          setTimeout(() => swipeResolve('right'), 300);
+          card.style.animation = 'swipeRight 0.28s ease forwards';
+          setTimeout(() => swipeResolve('right'), 280);
         } else if (curX < -threshold || (vel > 0.5 && curX < 0)) {
-          card.style.animation = 'swipeLeft 0.3s ease forwards';
-          setTimeout(() => swipeResolve('left'), 300);
+          card.style.animation = 'swipeLeft 0.28s ease forwards';
+          setTimeout(() => swipeResolve('left'), 280);
         } else {
-          card.style.transition = 'transform 0.3s ease';
+          card.style.transition = 'transform 0.22s ease';
           card.style.transform = '';
           okOverlay.style.opacity = 0;
           againOverlay.style.opacity = 0;
@@ -875,14 +870,9 @@
     }
 
     function swipeResolve(dir) {
-      if (dir === 'right') {
-        okCount++;
-        idx++;
-      } else {
-        againCount++;
-        order.push(order[idx]);
-        idx++;
-      }
+      if (dir === 'right') { okCount++; idx++; }
+      else { againCount++; order.push(order[idx]); idx++; }
+
       if (currentCard) currentCard.remove();
       renderCard(true);
       updateUI();
@@ -892,22 +882,26 @@
       const card = document.createElement('div');
       card.className = 'card enter';
       card.innerHTML = `
-        <div class="complete-screen">
-          <div class="complete-icon">🎉</div>
-          <div class="complete-title">완료!</div>
-          <div class="complete-stats">
-            <div class="stat-item">
-              <div class="stat-value">${okCount}</div>
-              <div class="stat-label">완료</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value">${againCount}</div>
-              <div class="stat-label">복습</div>
+        <div class="card-inner">
+          <div class="complete-screen">
+            <div class="complete-icon">🎉</div>
+            <div class="complete-title">완료!</div>
+            <div class="complete-stats">
+              <div class="stat-item">
+                <div class="stat-value">${okCount}</div>
+                <div class="stat-label">완료</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${againCount}</div>
+                <div class="stat-label">복습</div>
+              </div>
             </div>
           </div>
         </div>
       `;
       deckEl.appendChild(card);
+      currentCard = card;
+      fitCard();
     }
 
     function updateUI() {
@@ -927,9 +921,7 @@
       speechSynthesis.speak(u);
     }
 
-    function getX(e) {
-      return e.touches ? e.touches[0].clientX : e.clientX;
-    }
+    function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
 
     function shuffle(arr) {
       const a = [...arr];
