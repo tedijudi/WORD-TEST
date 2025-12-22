@@ -6,19 +6,20 @@
   <title>WordSwipe - 단어 학습</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --vh: 100vh; }
     html, body { height: 100%; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      min-height: 100vh;
+      min-height: var(--vh);
       overflow-x: hidden;
       overflow-y: auto;
       position: relative;
     }
     
-    @supports (min-height: 100svh) {
-      body { min-height: 100svh; }
+    @supports (height: 100dvh) {
+      :root { --vh: 100dvh; }
     }
     
     body::before {
@@ -46,15 +47,15 @@
     .container {
       max-width: 480px;
       margin: 0 auto;
-      min-height: 100vh;
+      min-height: var(--vh);
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 14px;
-      padding-left: max(14px, env(safe-area-inset-left));
-      padding-right: max(14px, env(safe-area-inset-right));
-      padding-top: max(14px, env(safe-area-inset-top));
-      padding-bottom: max(14px, env(safe-area-inset-bottom));
+      gap: 8px;
+      padding: 12px;
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
       position: relative;
       z-index: 1;
       touch-action: pan-y;
@@ -65,8 +66,8 @@
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
@@ -74,11 +75,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     
     h1 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: white;
       letter-spacing: -0.5px;
@@ -113,9 +114,9 @@
     .stat-badge {
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 12px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -140,15 +141,15 @@
     main {
       flex: 1;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      padding: 10px 0;
+      padding: 8px 0;
     }
     
     .deck {
       width: 100%;
       max-width: 420px;
-      height: min(520px, calc(100dvh - 240px));
+      height: clamp(380px, calc(var(--vh) - 200px), 480px);
       position: relative;
       perspective: 1000px;
     }
@@ -170,7 +171,7 @@
       backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.5);
       border-radius: 28px;
-      padding: 20px 16px;
+      padding: 18px 14px;
       box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -208,15 +209,15 @@
     }
     
     .word-display {
-      font-size: 38px;
+      font-size: 34px;
       font-weight: 800;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       letter-spacing: -1px;
-      margin-bottom: 8px;
-      min-height: 46px;
+      margin-bottom: 6px;
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -225,7 +226,7 @@
     }
     
     .word-meaning {
-      font-size: 17px;
+      font-size: 16px;
       color: #764ba2;
       font-weight: 600;
       opacity: 0;
@@ -242,15 +243,15 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
     
     .definition-box {
       background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12));
       border: 2px solid rgba(102,126,234,0.2);
       border-radius: 18px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       position: relative;
     }
     
@@ -265,7 +266,7 @@
     
     .definition-text {
       font-size: 16px;
-      line-height: 1.5;
+      line-height: 1.48;
       color: #2d3748;
       font-weight: 500;
       font-style: italic;
@@ -275,7 +276,7 @@
       background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
       border: 2px solid rgba(102,126,234,0.15);
       border-radius: 18px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       position: relative;
     }
     
@@ -290,7 +291,7 @@
     
     .example-text {
       font-size: 17px;
-      line-height: 1.6;
+      line-height: 1.5;
       color: #2d3748;
       font-weight: 500;
     }
@@ -334,7 +335,7 @@
       background: white;
       border: 2px solid #e2e8f0;
       border-radius: 16px;
-      padding: 14px 10px;
+      padding: 12px 10px;
       font-size: 15px;
       font-weight: 700;
       color: #2d3748;
@@ -348,7 +349,7 @@
       gap: 4px;
       align-items: center;
       justify-content: center;
-      min-height: 68px;
+      min-height: 62px;
     }
     
     .choice::before {
@@ -475,7 +476,7 @@
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
-      padding: 12px;
+      padding: 10px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
@@ -486,7 +487,7 @@
     }
     
     .action-btn {
-      padding: 12px;
+      padding: 11px;
       border-radius: 16px;
       border: none;
       font-size: 14px;
@@ -520,26 +521,27 @@
       transform: scale(0.97);
     }
 
-    @media (max-width: 390px) {
+    @media (max-width: 430px) {
       .container {
-        gap: 10px;
-        padding: 12px;
+        gap: 8px;
+        padding: 10px;
       }
       header {
-        padding: 12px 14px;
-        margin-bottom: 10px;
+        padding: 11px 12px;
+        margin-bottom: 8px;
       }
       h1 { font-size: 19px; }
       .stat-badge { font-size: 12px; padding: 6px 9px; }
-      .deck { height: min(460px, calc(100dvh - 220px)); }
-      .card { padding: 18px 14px; }
-      .word-display { font-size: 30px; }
-      .word-meaning { font-size: 16px; }
+      .deck { height: clamp(340px, calc(var(--vh) - 180px), 440px); }
+      .card { padding: 16px 12px; }
+      .word-display { font-size: 30px; min-height: 38px; }
+      .word-meaning { font-size: 15px; }
       .definition-text { font-size: 15px; }
       .example-text { font-size: 15px; }
       .choices { gap: 6px; }
-      .choice { min-height: 56px; padding: 11px 8px; font-size: 13px; }
-      .action-btn { padding: 11px; font-size: 13px; }
+      .choice { min-height: 54px; padding: 10px 8px; font-size: 13px; }
+      .action-btn { padding: 10px; font-size: 13px; }
+      footer { padding: 9px; }
     }
     
     .complete-screen {
