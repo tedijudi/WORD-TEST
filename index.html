@@ -149,7 +149,7 @@
     .deck {␊
       width: 100%;␊
       max-width: 420px;
-      height: clamp(380px, calc(var(--vh) - 200px), 480px);
+      height: clamp(320px, calc(var(--vh) - 190px), 420px);
       position: relative;␊
       perspective: 1000px;␊
     }␊
@@ -171,7 +171,7 @@
       backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.5);
       border-radius: 28px;
-      padding: 18px 14px;
+      padding: 16px 12px;
       box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -209,7 +209,7 @@
     }
     
     .word-display {␊
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 800;␊
       background: linear-gradient(135deg, #667eea, #764ba2);␊
       -webkit-background-clip: text;␊
@@ -217,7 +217,7 @@
       background-clip: text;␊
       letter-spacing: -1px;␊
       margin-bottom: 6px;
-      min-height: 42px;
+      min-height: 40px;
       display: flex;␊
       align-items: center;␊
       justify-content: center;␊
@@ -226,7 +226,7 @@
     }␊
     
     .word-meaning {␊
-      font-size: 16px;
+      font-size: 15px;
       color: #764ba2;␊
       font-weight: 600;␊
       opacity: 0;␊
@@ -243,15 +243,15 @@
       flex: 1;␊
       display: flex;␊
       flex-direction: column;␊
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 8px;
     }␊
     
     .definition-box {␊
       background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12));␊
       border: 2px solid rgba(102,126,234,0.2);␊
       border-radius: 18px;␊
-      padding: 14px 16px;
+      padding: 12px 14px;
       position: relative;␊
     }␊
     
@@ -276,7 +276,7 @@
       background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));␊
       border: 2px solid rgba(102,126,234,0.15);␊
       border-radius: 18px;␊
-      padding: 14px 16px;
+      padding: 12px 14px;
       position: relative;␊
     }␊
     
@@ -290,7 +290,7 @@
     }
     
     .example-text {␊
-      font-size: 17px;␊
+      font-size: 16px;
       line-height: 1.5;
       color: #2d3748;␊
       font-weight: 500;␊
@@ -335,8 +335,8 @@
       background: white;␊
       border: 2px solid #e2e8f0;␊
       border-radius: 16px;␊
-      padding: 12px 10px;
-      font-size: 15px;␊
+      padding: 11px 9px;
+      font-size: 14px;
       font-weight: 700;␊
       color: #2d3748;␊
       text-align: center;␊
@@ -349,7 +349,7 @@
       gap: 4px;␊
       align-items: center;␊
       justify-content: center;␊
-      min-height: 62px;
+      min-height: 56px;
     }␊
     
     .choice::before {
@@ -458,21 +458,21 @@
         padding: 10px;
       }
       header {
-        padding: 11px 12px;
-        margin-bottom: 8px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
       }
-      h1 { font-size: 19px; }
-      .stat-badge { font-size: 12px; padding: 6px 9px; }
-      .deck { height: clamp(340px, calc(var(--vh) - 180px), 440px); }
-      .card { padding: 16px 12px; }
-      .word-display { font-size: 30px; min-height: 38px; }
-      .word-meaning { font-size: 15px; }
-      .definition-text { font-size: 15px; }
-      .example-text { font-size: 15px; }
+      h1 { font-size: 18px; }
+      .stat-badge { font-size: 12px; padding: 5px 8px; }
+      .deck { height: clamp(300px, calc(var(--vh) - 170px), 400px); }
+      .card { padding: 14px 10px; }
+      .word-display { font-size: 28px; min-height: 36px; }
+      .word-meaning { font-size: 14px; }
+      .definition-text { font-size: 14px; }
+      .example-text { font-size: 14px; }
       .choices { gap: 6px; }
-      .choice { min-height: 54px; padding: 10px 8px; font-size: 13px; }
-      .action-btn { padding: 10px; font-size: 13px; }
-      footer { padding: 9px; }
+      .choice { min-height: 52px; padding: 9px 8px; font-size: 13px; }
+      .action-btn { padding: 9px; font-size: 13px; }
+      footer { padding: 8px; }
     }
     
     .complete-screen {
@@ -910,4 +910,5 @@
   </script>
 </body>
 </html>
+
 
