@@ -3,122 +3,122 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <title>WordSwipe - 수능 영단어</title>
-  
-  <!-- 소셜 공유 메타태그 -->
-  <meta property="og:title" content="WordSwipe - 수능 영단어 학습" />
-  <meta property="og:description" content="오늘 단어 학습 완료! 🎉" />
-  <meta property="og:image" content="https://YOUR_DOMAIN/share-image.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#6366f1" />
+  <title>WordSwipe - 경선식 영단어</title>
   
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --vvh: 1vh;
-      --pad: 12px;
-      --gap: 8px;
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --error: #ef4444;
+      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
     }
 
-    /* ✅ 아이폰13미니 전용 최적화 */
-    @media (max-height: 700px) {
+    /* ✅ 갤럭시 Z플립5 최적화 (720x1680, 세로로 길다) */
+    @media (min-height: 1600px) {
       :root {
-        --pad: 10px;
-        --gap: 6px;
+        --card-scale: 1.1; /* 카드 크게 */
       }
     }
 
-    html, body { height: 100%; }
+    /* ✅ 아이폰13미니 (375x812) */
+    @media (max-height: 700px) and (max-width: 400px) {
+      :root {
+        --card-scale: 0.92;
+      }
+    }
+
+    html, body { height: 100%; overflow: hidden; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      overflow: hidden;
+      background: var(--bg-gradient);
       position: relative;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
+    /* 배경 패턴 */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 40px 40px;
-      animation: grain 8s steps(10) infinite;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.06) 0%, transparent 50%);
       pointer-events: none;
-      opacity: 0.6;
-    }
-
-    @keyframes grain {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-5%, -5%); }
     }
 
     .container {
-      max-width: 480px;
+      max-width: min(480px, 100vw);
       margin: 0 auto;
-      height: calc(var(--vvh) * 100);
+      height: calc(var(--vvh, 1vh) * 100);
       display: flex;
       flex-direction: column;
-      gap: var(--gap);
-      padding: calc(var(--pad) + env(safe-area-inset-top)) var(--pad) calc(var(--pad) + env(safe-area-inset-bottom)) var(--pad);
+      gap: 10px;
+      padding: 
+        max(12px, env(safe-area-inset-top)) 
+        12px 
+        max(80px, env(safe-area-inset-bottom) + 70px) 
+        12px;
       position: relative;
       z-index: 1;
       overflow: hidden;
     }
 
-    /* ✅ 헤더 극도 최소화 (옵션 B) */
+    /* ✅ 헤더 극도 최소화 */
     header {
       flex: 0 0 auto;
-      backdrop-filter: blur(20px);
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 18px;
-      padding: 8px 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      padding: 10px 14px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     h1 {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 800;
       color: white;
       letter-spacing: -0.3px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.15);
       flex: 1;
       white-space: nowrap;
+    }
+
+    .day-badge {
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 10px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
     }
 
     .stat-mini {
       font-size: 12px;
       font-weight: 700;
       color: rgba(255,255,255,0.95);
-      background: rgba(255,255,255,0.2);
-      padding: 4px 8px;
-      border-radius: 8px;
-      white-space: nowrap;
-    }
-
-    .icon-btn {
-      width: 32px;
-      height: 32px;
+      background: rgba(255,255,255,0.18);
+      padding: 5px 9px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s ease;
+      white-space: nowrap;
       backdrop-filter: blur(10px);
-      touch-action: manipulation;
-      flex-shrink: 0;
     }
 
-    .icon-btn:active { transform: scale(0.94); }
-
+    /* ✅ 메인 카드 영역 */
     main {
       flex: 1 1 auto;
       min-height: 0;
@@ -133,132 +133,189 @@
       max-width: 440px;
       height: 100%;
       position: relative;
-      perspective: 1000px;
+      perspective: 1200px;
       overflow: hidden;
     }
 
     .card-stack {
       position: absolute;
       inset: 0;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(5px);
-      transform: scale(0.97) translateY(4px);
-      opacity: 0.5;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      transform: scale(0.96) translateY(6px);
+      opacity: 0.4;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     .card {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 100%);
-      backdrop-filter: blur(40px);
-      border: 2px solid rgba(255, 255, 255, 0.5);
-      border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      background: 
+        linear-gradient(135deg, 
+          rgba(255,255,255,0.98) 0%, 
+          rgba(255,255,255,0.92) 100%
+        );
+      backdrop-filter: blur(40px) saturate(150%);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 28px;
+      box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.25),
+        0 10px 24px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
       touch-action: none;
       will-change: transform;
       cursor: grab;
       overflow: hidden;
-      display: flex;
+      transform: scale(var(--card-scale, 1));
     }
 
     .card:active { cursor: grabbing; }
-    .card.enter { animation: cardEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .card.enter { 
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
 
     @keyframes cardEnter {
-      from { transform: translateY(-12%) scale(0.94) rotateX(8deg); opacity: 0; }
-      to   { transform: translateY(0) scale(1) rotateX(0); opacity: 1; }
+      from { 
+        transform: translateY(-15%) scale(0.9) rotateX(12deg); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateY(0) scale(var(--card-scale, 1)) rotateX(0); 
+        opacity: 1; 
+      }
     }
 
     .card-inner {
       width: 100%;
       height: 100%;
-      padding: 14px 12px;
+      padding: 16px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      overflow: hidden; /* ✅ 스크롤 완전 제거 */
+      gap: 10px;
+      overflow: hidden;
     }
 
-    .example-section {
-      flex: 1 1 auto;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    /* 정의/예문 박스 */
     .definition-box, .example-box {
-      border-radius: 16px;
-      padding: 10px 12px;
+      border-radius: 18px;
+      padding: 12px 14px;
       flex: 0 0 auto;
+      position: relative;
+      overflow: hidden;
     }
 
     .definition-box {
-      background: linear-gradient(135deg, rgba(102,126,234,0.11), rgba(118,75,162,0.11));
-      border: 1.5px solid rgba(102,126,234,0.18);
+      background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.08), 
+        rgba(139, 92, 246, 0.08)
+      );
+      border: 2px solid rgba(99, 102, 241, 0.15);
+    }
+
+    .definition-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 0 4px 4px 0;
+    }
+
+    .example-box {
+      background: linear-gradient(135deg, 
+        rgba(139, 92, 246, 0.06), 
+        rgba(236, 72, 153, 0.06)
+      );
+      border: 2px solid rgba(139, 92, 246, 0.12);
     }
 
     .definition-label, .example-label {
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
-      margin-bottom: 5px;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .definition-label { color: #667eea; }
-    .example-label { color: #764ba2; }
+    .definition-label { 
+      color: var(--primary);
+    }
+
+    .definition-label::before {
+      content: '📖';
+      font-size: 12px;
+    }
+
+    .example-label { 
+      color: var(--secondary);
+    }
+
+    .example-label::before {
+      content: '💬';
+      font-size: 12px;
+    }
 
     .definition-text {
-      font-size: 13px;
-      line-height: 1.3;
-      color: #2d3748;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #1e293b;
       font-weight: 600;
       font-style: italic;
     }
 
-    .example-box {
-      background: linear-gradient(135deg, rgba(102,126,234,0.07), rgba(118,75,162,0.07));
-      border: 1.5px solid rgba(102,126,234,0.13);
-    }
-
     .example-text {
-      font-size: 14px;
-      line-height: 1.35;
-      color: #2d3748;
+      font-size: 15px;
+      line-height: 1.45;
+      color: #1e293b;
       font-weight: 600;
     }
 
     .blank {
       display: inline-block;
-      min-width: 70px;
-      border-bottom: 2px solid #667eea;
+      min-width: 80px;
+      border-bottom: 3px solid var(--primary);
       text-align: center;
-      padding: 0 3px;
-      color: #667eea;
-      font-weight: 800;
+      padding: 0 4px;
+      color: var(--primary);
+      font-weight: 900;
+      animation: blinkBorder 1.5s infinite;
+    }
+
+    @keyframes blinkBorder {
+      0%, 100% { border-color: var(--primary); }
+      50% { border-color: var(--accent); }
     }
 
     .translation {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1.5px dashed rgba(102,126,234,0.2);
-      font-size: 12px;
-      color: #718096;
-      line-height: 1.3;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 2px dashed rgba(99, 102, 241, 0.2);
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.35;
       opacity: 0;
       max-height: 0;
       overflow: hidden;
-      transition: all 0.25s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .translation.show { opacity: 1; max-height: 100px; }
+    .translation.show { 
+      opacity: 1; 
+      max-height: 120px; 
+    }
 
+    /* ✅ 선택지 */
     .choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
       margin-top: auto;
       flex: 0 0 auto;
     }
@@ -266,32 +323,35 @@
     .choice {
       background: white;
       border: 2px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 8px 6px;
-      font-size: 13px;
+      border-radius: 16px;
+      padding: 10px 8px;
+      font-size: 14px;
       font-weight: 800;
-      color: #2d3748;
+      color: #1e293b;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
       align-items: center;
       justify-content: center;
-      min-height: 48px;
+      min-height: 52px;
       touch-action: manipulation;
       -webkit-user-select: none;
       user-select: none;
+      box-shadow: 
+        0 2px 8px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.8);
     }
 
     @media (max-height: 700px) {
       .choice {
-        min-height: 44px;
-        font-size: 12px;
-        padding: 7px 5px;
+        min-height: 46px;
+        font-size: 13px;
+        padding: 8px 6px;
       }
     }
 
@@ -299,59 +359,112 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+      background: linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.06), 
+        rgba(139, 92, 246, 0.06)
+      );
       opacity: 0;
       transition: opacity 0.2s ease;
-      z-index: 0;
     }
 
-    .choice:active { transform: scale(0.97); }
+    .choice:active { 
+      transform: scale(0.96); 
+    }
 
-    .choice-word, .choice-meaning { position: relative; z-index: 1; line-height: 1.1; }
+    .choice:hover::before {
+      opacity: 1;
+    }
+
+    .choice-word { 
+      position: relative; 
+      z-index: 1; 
+      line-height: 1.2; 
+    }
 
     .choice-meaning {
       font-size: 11px;
-      color: #764ba2;
+      color: var(--secondary);
       font-weight: 700;
       opacity: 0;
-      transform: translateY(-2px);
-      transition: all 0.2s ease;
+      transform: translateY(-3px);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      z-index: 1;
+      line-height: 1.1;
     }
 
-    .choice-meaning.show { opacity: 1; transform: translateY(0); }
+    .choice-meaning.show { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
 
     .choice.correct {
-      background: linear-gradient(135deg, #48bb78, #38a169);
-      border-color: #48bb78;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border-color: var(--success);
       color: white;
-      box-shadow: 0 6px 18px rgba(72, 187, 120, 0.35);
+      box-shadow: 
+        0 8px 24px rgba(16, 185, 129, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+      animation: correctPulse 0.5s ease;
     }
-    .choice.correct .choice-meaning { color: rgba(255,255,255,0.92); }
+
+    .choice.correct .choice-meaning { 
+      color: rgba(255,255,255,0.95); 
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
     .choice.wrong {
-      background: linear-gradient(135deg, #f56565, #e53e3e);
-      border-color: #f56565;
+      background: linear-gradient(135deg, var(--error), #dc2626);
+      border-color: var(--error);
       color: white;
-      box-shadow: 0 6px 18px rgba(245, 101, 101, 0.35);
+      box-shadow: 
+        0 8px 24px rgba(239, 68, 68, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      animation: wrongShake 0.5s ease;
     }
-    .choice.wrong .choice-meaning { color: rgba(255,255,255,0.92); }
 
-    .choice.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+    .choice.wrong .choice-meaning { 
+      color: rgba(255,255,255,0.95); 
+    }
 
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-1deg); }
+      40% { transform: translateX(8px) rotate(1deg); }
+      60% { transform: translateX(-6px) rotate(-0.5deg); }
+      80% { transform: translateX(6px) rotate(0.5deg); }
+    }
+
+    .choice.disabled { 
+      opacity: 0.6; 
+      cursor: not-allowed; 
+      pointer-events: none; 
+    }
+
+    /* 스와이프 힌트 */
     .swipe-hint {
       text-align: center;
-      font-size: 11px;
-      color: #a0aec0;
+      font-size: 12px;
+      color: rgba(30, 41, 59, 0.5);
       font-weight: 800;
       opacity: 0;
-      transform: translateY(4px);
-      transition: all 0.2s ease;
+      transform: translateY(6px);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       flex: 0 0 auto;
-      margin-top: 4px;
+      margin-top: 6px;
+      letter-spacing: 0.3px;
     }
 
-    .swipe-hint.show { opacity: 1; transform: translateY(0); }
+    .swipe-hint.show { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
 
+    /* 스와이프 오버레이 */
     .swipe-overlay {
       position: absolute;
       inset: 0;
@@ -359,59 +472,123 @@
       place-items: center;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.2s ease;
       z-index: 10;
-    }
-    .swipe-overlay.ok { background: radial-gradient(circle, rgba(72,187,120,0.25), transparent); }
-    .swipe-overlay.again { background: radial-gradient(circle, rgba(245,101,101,0.25), transparent); }
-
-    .swipe-icon { font-size: 64px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
-
-    footer {
-      flex: 0 0 auto;
-      backdrop-filter: blur(20px);
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border-radius: 28px;
     }
 
-    .footer-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .swipe-overlay.ok { 
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 70%); 
     }
 
-    .action-btn {
-      padding: 10px;
-      border-radius: 14px;
-      border: none;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .swipe-overlay.again { 
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.2), transparent 70%); 
+    }
+
+    .swipe-icon { 
+      font-size: 72px; 
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); 
+    }
+
+    /* ✅ 플로팅 네비게이션 */
+    .floating-nav {
+      position: fixed;
+      bottom: max(20px, env(safe-area-inset-bottom) + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
+      gap: 12px;
+    }
+
+    .fab-menu {
+      display: flex;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .fab-menu.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .fab-item {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 
+        0 8px 24px rgba(99, 102, 241, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: all 0.2s ease;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .fab-item:active {
+      transform: scale(0.92);
+    }
+
+    .fab-item::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: 700;
       white-space: nowrap;
-      touch-action: manipulation;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
     }
 
-    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .action-btn.secondary {
-      background: rgba(255, 255, 255, 0.3);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.4);
+    .fab-item:hover::after {
+      opacity: 1;
     }
-    .action-btn.primary {
-      background: linear-gradient(135deg, #48bb78, #38a169);
-      color: white;
-      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.35);
-    }
-    .action-btn:not(:disabled):active { transform: scale(0.97); }
 
+    .fab-main {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
+      color: white;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 
+        0 12px 32px rgba(236, 72, 153, 0.5),
+        inset 0 2px 0 rgba(255,255,255,0.4);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .fab-main:active {
+      transform: scale(0.94);
+    }
+
+    .fab-main.open {
+      transform: rotate(45deg);
+    }
+
+    /* 완료 화면 */
     .complete-screen {
       text-align: center;
       display: flex;
@@ -419,75 +596,127 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      gap: 16px;
-      padding: 20px;
+      gap: 20px;
+      padding: 24px;
     }
 
-    .complete-icon { font-size: 64px; }
+    .complete-icon { 
+      font-size: 80px; 
+      animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
     .complete-title {
-      font-size: 26px;
+      font-size: 32px;
       font-weight: 900;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .complete-stats {
-      background: rgba(102,126,234,0.1);
-      padding: 14px 22px;
-      border-radius: 16px;
+      background: rgba(99, 102, 241, 0.08);
+      padding: 20px 28px;
+      border-radius: 20px;
       display: flex;
-      gap: 20px;
+      gap: 28px;
+      border: 2px solid rgba(99, 102, 241, 0.15);
     }
 
-    .stat-item { text-align: center; }
-    .stat-value { font-size: 30px; font-weight: 900; color: #2d3748; margin-bottom: 4px; }
-    .stat-label { font-size: 12px; color: #718096; font-weight: 800; }
+    .stat-item { 
+      text-align: center; 
+    }
+
+    .stat-value { 
+      font-size: 36px; 
+      font-weight: 900; 
+      color: #1e293b; 
+      margin-bottom: 4px; 
+    }
+
+    .stat-label { 
+      font-size: 13px; 
+      color: #64748b; 
+      font-weight: 800; 
+    }
 
     .share-btn {
-      margin-top: 10px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin-top: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 14px 28px;
       border-radius: 999px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      transition: all 0.2s ease;
     }
 
-    .share-btn:active { transform: scale(0.97); }
+    .share-btn:active { 
+      transform: scale(0.96); 
+    }
 
-    @keyframes swipeRight { to { transform: translateX(150%) rotate(14deg); opacity: 0; } }
-    @keyframes swipeLeft  { to { transform: translateX(-150%) rotate(-14deg); opacity: 0; } }
+    /* 스와이프 애니메이션 */
+    @keyframes swipeRight { 
+      to { 
+        transform: translateX(160%) rotate(18deg); 
+        opacity: 0; 
+      } 
+    }
+
+    @keyframes swipeLeft { 
+      to { 
+        transform: translateX(-160%) rotate(-18deg); 
+        opacity: 0; 
+      } 
+    }
 
     /* 로딩 */
     .loading {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: var(--bg-gradient);
       display: grid;
       place-items: center;
       z-index: 999;
       color: white;
-      font-size: 18px;
-      font-weight: 700;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="loading" id="loading">단어 불러오는 중...</div>
+  <div class="loading" id="loading">
+    <div>
+      <div class="loading-spinner"></div>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">단어 불러오는 중...</p>
+    </div>
+  </div>
 
   <div class="container">
     <header>
-      <h1>WordSwipe <span id="statCurrent">1/50</span></h1>
+      <h1>WordSwipe</h1>
+      <span class="day-badge" id="dayBadge">Day 1</span>
+      <span class="stat-mini"><span id="statCurrent">1/50</span></span>
       <span class="stat-mini">✅ <span id="statOk">0</span></span>
-      <span class="stat-mini">🔁 <span id="statAgain">0</span></span>
-      <button class="icon-btn" id="soundBtn" title="발음">🔊</button>
-      <button class="icon-btn" id="statsBtn" title="통계" onclick="location.href='stats.html'">📊</button>
-      <button class="icon-btn" id="resetBtn" title="처음부터">↻</button>
     </header>
 
     <main>
@@ -495,13 +724,17 @@
         <div class="card-stack"></div>
       </div>
     </main>
+  </div>
 
-    <footer>
-      <div class="footer-actions">
-        <button class="action-btn secondary" id="againBtn" disabled>← 다시</button>
-        <button class="action-btn primary" id="okBtn" disabled>완료 →</button>
-      </div>
-    </footer>
+  <!-- ✅ 플로팅 네비게이션 -->
+  <div class="floating-nav">
+    <div class="fab-menu" id="fabMenu">
+      <a href="wordsets.html" class="fab-item" data-label="단어장">📚</a>
+      <a href="review.html" class="fab-item" data-label="복습">🔁</a>
+      <a href="stats.html" class="fab-item" data-label="통계">📊</a>
+      <a href="completed.html" class="fab-item" data-label="완료">✅</a>
+    </div>
+    <button class="fab-main" id="fabMain">+</button>
   </div>
 
   <script>
@@ -517,100 +750,101 @@
     window.visualViewport?.addEventListener('scroll', setVVH);
     setVVH();
 
-    // ✅ Google TTS (무료, 고품질)
-    async function playTTS(text) {
-      try {
-        const API_KEY = 'YOUR_GOOGLE_CLOUD_API_KEY'; // ⚠️ 여기에 키 입력
-        const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`;
-        
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            input: { text },
-            voice: { languageCode: 'en-US', name: 'en-US-Neural2-J', ssmlGender: 'MALE' },
-            audioConfig: { audioEncoding: 'MP3' }
-          })
-        });
+    // ✅ 플로팅 네비 토글
+    const fabMain = document.getElementById('fabMain');
+    const fabMenu = document.getElementById('fabMenu');
+    let menuOpen = false;
 
-        const data = await response.json();
-        if (data.audioContent) {
-          const audio = new Audio('data:audio/mp3;base64,' + data.audioContent);
-          audio.play();
-        }
-      } catch (e) {
-        console.error('TTS 오류:', e);
-        // 폴백: 브라우저 TTS
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US';
-        speechSynthesis.speak(u);
+    fabMain.onclick = () => {
+      menuOpen = !menuOpen;
+      fabMenu.classList.toggle('open', menuOpen);
+      fabMain.classList.toggle('open', menuOpen);
+    };
+
+    // ✅ 진동 피드백
+    function vibrate(pattern) {
+      if (navigator.vibrate) {
+        navigator.vibrate(pattern);
       }
     }
 
+    // ✅ 데이터 로드
     let DATA = [];
+    let currentDay = 1;
     let order = [];
     let idx = 0, okCount = 0, againCount = 0;
     let answered = false, currentCard = null;
-    let wrongWords = []; // ✅ 복습 알고리즘용
+    let wrongWords = []; // 틀린 단어 추적
 
     const deckEl = document.getElementById('deck');
-    const soundBtn = document.getElementById('soundBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const okBtn = document.getElementById('okBtn');
-    const againBtn = document.getElementById('againBtn');
     const loadingEl = document.getElementById('loading');
 
-    // ✅ words.json 불러오기
     async function loadWords() {
       try {
         const res = await fetch('words.json');
-        DATA = await res.json();
-        init();
+        const json = await res.json();
+        
+        // 로컬스토리지에서 현재 Day 불러오기
+        currentDay = parseInt(localStorage.getItem('currentDay') || '1');
+        
+        const dayData = json.days.find(d => d.day === currentDay);
+        if (dayData) {
+          DATA = dayData.words;
+          document.getElementById('dayBadge').textContent = `Day ${currentDay}`;
+          init();
+        } else {
+          alert('단어 데이터가 없습니다.');
+        }
       } catch (e) {
-        alert('단어 파일을 불러올 수 없습니다. words.json 파일이 있는지 확인하세요.');
+        alert('단어 파일을 불러올 수 없습니다.');
         console.error(e);
       } finally {
         loadingEl.style.display = 'none';
       }
     }
 
-    resetBtn.onclick = resetDeck;
-    okBtn.onclick = () => swipeResolve('right');
-    againBtn.onclick = () => swipeResolve('left');
-    soundBtn.onclick = () => {
-      if (idx < order.length) {
-        playTTS(DATA[order[idx]].w);
-      }
-    };
-
     function init() {
-      // ✅ 복습 알고리즘: 틀린 단어 2배 확률로 재등장
-      const base = [...DATA.keys()];
-      const extended = [...base];
-      wrongWords.forEach(wi => {
-        extended.push(wi); // 틀린 단어 한 번 더 추가
-      });
-      order = shuffle(extended);
+      // ✅ 복합 복습 알고리즘: SRS 80% + 틀린단어 20%
+      const srsWords = getSRSWords(); // SRS 대상 단어
+      const wrongPool = wrongWords.map(wi => wi); // 틀린 단어 인덱스
       
+      const base = [...DATA.keys()];
+      let pool = [...base];
+      
+      // 틀린 단어 20% 가중치
+      wrongPool.forEach(wi => {
+        if (Math.random() < 0.2) pool.push(wi);
+      });
+      
+      order = shuffle(pool);
       idx = 0;
       renderCard(true);
       updateUI();
-      saveStats(); // 세션 시작 기록
     }
 
-    function resetDeck() {
-      wrongWords = []; // 복습 리셋
-      okCount = 0;
-      againCount = 0;
-      answered = false;
-      deckEl.innerHTML = '<div class="card-stack"></div>';
-      init();
+    function getSRSWords() {
+      // SRS 로직 (간격 반복)
+      const now = Date.now();
+      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+      const srsPool = [];
+      
+      DATA.forEach((item, i) => {
+        const record = studied[item.w];
+        if (!record) return; // 처음 보는 단어
+        
+        const interval = record.interval || 1; // 1일, 3일, 7일, 14일...
+        const nextReview = record.lastReview + (interval * 24 * 60 * 60 * 1000);
+        
+        if (now >= nextReview) {
+          srsPool.push(i);
+        }
+      });
+      
+      return srsPool;
     }
 
     function renderCard(enter = false) {
       answered = false;
-      okBtn.disabled = true;
-      againBtn.disabled = true;
 
       if (idx >= order.length) {
         showComplete();
@@ -623,32 +857,29 @@
       const card = document.createElement('div');
       card.className = 'card' + (enter ? ' enter' : '');
       
-      // ✅ "?" 제거, 바로 단어 공간만 확보
       card.innerHTML = `
         <div class="card-inner">
-          <div class="example-section">
-            <div class="definition-box">
-              <div class="definition-label">Definition</div>
-              <div class="definition-text">${item.def}</div>
-            </div>
-
-            <div class="example-box">
-              <div class="example-label">Example</div>
-              <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
-              <div class="translation" id="translation">${item.t}</div>
-            </div>
-
-            <div class="choices" id="choices">
-              ${choices.map((c, i) => `
-                <div class="choice" data-word="${c.w}" data-idx="${i}">
-                  <div class="choice-word">${c.w}</div>
-                  <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
-                </div>
-              `).join('')}
-            </div>
-
-            <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
+          <div class="definition-box">
+            <div class="definition-label">Definition</div>
+            <div class="definition-text">${item.def}</div>
           </div>
+
+          <div class="example-box">
+            <div class="example-label">Example</div>
+            <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
+            <div class="translation" id="translation">${item.t}</div>
+          </div>
+
+          <div class="choices" id="choices">
+            ${choices.map((c, i) => `
+              <div class="choice" data-word="${c.w}" data-idx="${i}">
+                <div class="choice-word">${c.w}</div>
+                <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
         </div>
 
         <div class="swipe-overlay ok"><div class="swipe-icon">✓</div></div>
@@ -696,9 +927,15 @@
       const selected = btn.dataset.word;
       const isCorrect = selected === item.w;
 
-      // ✅ 틀린 단어 기록
-      if (!isCorrect && !wrongWords.includes(order[idx])) {
-        wrongWords.push(order[idx]);
+      // ✅ 오답 진동
+      if (!isCorrect) {
+        vibrate([100, 50, 100]); // 긴 진동
+        if (!wrongWords.includes(order[idx])) {
+          wrongWords.push(order[idx]);
+        }
+      } else {
+        okCount++;
+        updateSRS(item.w, true);
       }
 
       currentCard.querySelectorAll('.choice').forEach((c, idx2) => {
@@ -710,18 +947,37 @@
         else if (c.dataset.word === selected) c.classList.add('wrong');
       });
 
-      // ✅ 정답 표시 (빈칸에)
       const blankEl = currentCard.querySelector('.blank');
       if (blankEl) blankEl.textContent = item.w;
 
       currentCard.querySelector('#translation').classList.add('show');
       currentCard.querySelector('#swipeHint').classList.add('show');
 
-      okBtn.disabled = false;
-      againBtn.disabled = false;
+      // 1초 후 자동 넘김 (선택)
+      // setTimeout(() => swipeResolve('right'), 1500);
+    }
 
-      // 자동 발음
-      playTTS(item.w);
+    function updateSRS(word, correct) {
+      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+      
+      if (!studied[word]) {
+        studied[word] = {
+          interval: 1,
+          lastReview: Date.now(),
+          correctCount: 0
+        };
+      }
+      
+      if (correct) {
+        studied[word].correctCount++;
+        // 간격 증가: 1 → 3 → 7 → 14 → 30일
+        const intervals = [1, 3, 7, 14, 30];
+        const nextIdx = Math.min(studied[word].correctCount, intervals.length - 1);
+        studied[word].interval = intervals[nextIdx];
+        studied[word].lastReview = Date.now();
+      }
+      
+      localStorage.setItem('studied', JSON.stringify(studied));
     }
 
     function attachSwipe(card) {
@@ -740,9 +996,9 @@
       const onMove = e => {
         if (!dragging) return;
         curX = getX(e) - startX;
-        const rot = curX * 0.05;
+        const rot = curX * 0.04;
         card.style.transform = `translate3d(${curX}px, 0, 0) rotate(${rot}deg)`;
-        const prog = Math.min(1, Math.abs(curX) / 140);
+        const prog = Math.min(1, Math.abs(curX) / 150);
         okOverlay.style.opacity = curX > 0 ? prog : 0;
         againOverlay.style.opacity = curX < 0 ? prog : 0;
       };
@@ -752,16 +1008,16 @@
         dragging = false;
         const dt = Date.now() - startT;
         const vel = Math.abs(curX) / dt;
-        const threshold = 90;
+        const threshold = 100;
 
         if (curX > threshold || (vel > 0.5 && curX > 0)) {
-          card.style.animation = 'swipeRight 0.26s ease forwards';
-          setTimeout(() => swipeResolve('right'), 260);
+          card.style.animation = 'swipeRight 0.3s ease forwards';
+          setTimeout(() => swipeResolve('right'), 300);
         } else if (curX < -threshold || (vel > 0.5 && curX < 0)) {
-          card.style.animation = 'swipeLeft 0.26s ease forwards';
-          setTimeout(() => swipeResolve('left'), 260);
+          card.style.animation = 'swipeLeft 0.3s ease forwards';
+          setTimeout(() => swipeResolve('left'), 300);
         } else {
-          card.style.transition = 'transform 0.2s ease';
+          card.style.transition = 'transform 0.25s ease';
           card.style.transform = '';
           okOverlay.style.opacity = 0;
           againOverlay.style.opacity = 0;
@@ -776,8 +1032,13 @@
     }
 
     function swipeResolve(dir) {
-      if (dir === 'right') { okCount++; idx++; }
-      else { againCount++; order.push(order[idx]); idx++; }
+      if (dir === 'right') {
+        idx++;
+      } else {
+        againCount++;
+        order.push(order[idx]);
+        idx++;
+      }
 
       if (currentCard) currentCard.remove();
       renderCard(true);
@@ -785,7 +1046,7 @@
     }
 
     function showComplete() {
-      saveStats(); // ✅ 세션 완료 기록
+      saveStats();
 
       const card = document.createElement('div');
       card.className = 'card enter';
@@ -793,11 +1054,11 @@
         <div class="card-inner">
           <div class="complete-screen">
             <div class="complete-icon">🎉</div>
-            <div class="complete-title">완료!</div>
+            <div class="complete-title">Day ${currentDay} 완료!</div>
             <div class="complete-stats">
               <div class="stat-item">
                 <div class="stat-value">${okCount}</div>
-                <div class="stat-label">완료</div>
+                <div class="stat-label">정답</div>
               </div>
               <div class="stat-item">
                 <div class="stat-value">${againCount}</div>
@@ -815,10 +1076,8 @@
     function updateUI() {
       document.getElementById('statCurrent').textContent = `${Math.min(idx + 1, order.length)}/${order.length}`;
       document.getElementById('statOk').textContent = okCount;
-      document.getElementById('statAgain').textContent = againCount;
     }
 
-    // ✅ 통계 저장 (LocalStorage)
     function saveStats() {
       const today = new Date().toISOString().split('T')[0];
       const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
@@ -834,9 +1093,8 @@
       localStorage.setItem('wordswipe_stats', JSON.stringify(stats));
     }
 
-    // ✅ 소셜 공유
     async function shareResult() {
-      const text = `WordSwipe에서 오늘 ${okCount}개 단어를 완료했어요! 🎉\n\n✅ 완료: ${okCount}\n🔁 복습: ${againCount}`;
+      const text = `WordSwipe Day ${currentDay} 완료! 🎉\n\n✅ 정답: ${okCount}\n🔁 복습: ${againCount}`;
       
       if (navigator.share) {
         try {
@@ -849,13 +1107,14 @@
           console.log('공유 취소');
         }
       } else {
-        // 폴백: 클립보드 복사
         navigator.clipboard.writeText(text);
         alert('결과가 클립보드에 복사되었습니다!');
       }
     }
 
-    function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+    function getX(e) { 
+      return e.touches ? e.touches[0].clientX : e.clientX; 
+    }
 
     function shuffle(arr) {
       const a = [...arr];
@@ -866,7 +1125,6 @@
       return a;
     }
 
-    // 시작
     loadWords();
   </script>
 </body>
