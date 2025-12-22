@@ -8,10 +8,43 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root{
-      --vvh: 1vh;         /* visualViewport 기반 */
+      --vvh: 1vh;
       --pad: 16px;
       --gap: 12px;
-      --scale: 1;         /* 카드 내부 자동 축소 */
+      --scale: 1;
+      
+      /* ✅ 화면 크기별 동적 변수 */
+      --word-size: 38px;
+      --def-size: 15px;
+      --ex-size: 16px;
+      --choice-size: 15px;
+      --choice-min-h: 56px;
+      --card-pad: 18px;
+    }
+
+    /* ✅ 작은 화면 대응 (아이폰13미니, SE 등) */
+    @media (max-height: 700px) {
+      :root {
+        --word-size: 32px;
+        --def-size: 13px;
+        --ex-size: 14px;
+        --choice-size: 13px;
+        --choice-min-h: 50px;
+        --card-pad: 14px;
+        --gap: 10px;
+      }
+    }
+
+    @media (max-height: 650px) {
+      :root {
+        --word-size: 28px;
+        --def-size: 12px;
+        --ex-size: 13px;
+        --choice-size: 12px;
+        --choice-min-h: 46px;
+        --card-pad: 12px;
+        --gap: 8px;
+      }
     }
 
     html, body { height: 100%; }
@@ -19,7 +52,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      overflow: hidden; /* ✅ 전체 스크롤 완전 차단 */
+      overflow: hidden;
       position: relative;
       -webkit-tap-highlight-color: transparent;
     }
@@ -49,20 +82,15 @@
     .container {
       max-width: 480px;
       margin: 0 auto;
-
-      /* ✅ 주소창 보이는 “실제 보이는 높이(visualViewport)”로 고정 */
       height: calc(var(--vvh) * 100);
-
       display: flex;
       flex-direction: column;
       gap: var(--gap);
-
       padding:
         calc(var(--pad) + env(safe-area-inset-top))
         var(--pad)
         calc(var(--pad) + env(safe-area-inset-bottom))
         var(--pad);
-
       position: relative;
       z-index: 1;
       overflow: hidden;
@@ -148,7 +176,7 @@
 
     main {
       flex: 1 1 auto;
-      min-height: 0;         /* ✅ 핵심 */
+      min-height: 0;
       overflow: hidden;
       display: flex;
       align-items: stretch;
@@ -184,8 +212,6 @@
       box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-      /* ✅ swipe에만 transform 쓰고 */
       touch-action: none;
       will-change: transform;
       cursor: grab;
@@ -194,7 +220,6 @@
     }
 
     .card:active { cursor: grabbing; }
-
     .card.enter { animation: cardEnter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
     @keyframes cardEnter {
@@ -202,16 +227,22 @@
       to   { transform: translateY(0) scale(1) rotateX(0); opacity: 1; }
     }
 
-    /* ✅ 카드 “내용”만 자동 축소(scale). swipe transform과 분리! */
+    /* ✅ 카드 내부 - 스크롤 가능하도록 수정 */
     .card-inner{
       width: 100%;
       height: 100%;
-      transform: scale(var(--scale));
-      transform-origin: top center;
-      padding: 18px 16px;
+      padding: var(--card-pad);
       display: flex;
       flex-direction: column;
       gap: 10px;
+      overflow-y: auto; /* ✅ 스크롤 가능 */
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; /* ✅ iOS 부드러운 스크롤 */
+    }
+
+    /* ✅ 스크롤바 숨김 (선택사항) */
+    .card-inner::-webkit-scrollbar {
+      display: none;
     }
 
     .card-header {
@@ -220,7 +251,7 @@
     }
 
     .word-display {
-      font-size: 38px;
+      font-size: var(--word-size);
       font-weight: 800;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
@@ -249,12 +280,10 @@
     .word-meaning.show { opacity: 1; transform: translateY(0); }
 
     .example-section {
-      flex: 1 1 auto;
-      min-height: 0;
+      flex: 0 1 auto; /* ✅ 자동 크기 */
       display: flex;
       flex-direction: column;
       gap: 10px;
-      overflow: hidden;
     }
 
     .definition-box, .example-box {
@@ -278,7 +307,7 @@
     }
 
     .definition-text {
-      font-size: 15px;
+      font-size: var(--def-size);
       line-height: 1.35;
       color: #2d3748;
       font-weight: 600;
@@ -300,7 +329,7 @@
     }
 
     .example-text {
-      font-size: 16px;
+      font-size: var(--ex-size);
       line-height: 1.4;
       color: #2d3748;
       font-weight: 600;
@@ -335,8 +364,8 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: auto;
-      flex: 0 0 auto;
+      margin-top: 10px; /* ✅ 약간 여유 */
+      flex: 0 0 auto; /* ✅ 고정 */
     }
 
     .choice {
@@ -344,7 +373,7 @@
       border: 2px solid #e2e8f0;
       border-radius: 16px;
       padding: 10px 8px;
-      font-size: 15px;
+      font-size: var(--choice-size);
       font-weight: 800;
       color: #2d3748;
       text-align: center;
@@ -357,9 +386,7 @@
       gap: 4px;
       align-items: center;
       justify-content: center;
-      min-height: 56px;
-
-      /* ✅ iOS 탭 반응 확실 */
+      min-height: var(--choice-min-h);
       touch-action: manipulation;
       -webkit-user-select: none;
       user-select: none;
@@ -381,7 +408,7 @@
     .choice-word, .choice-meaning { position: relative; z-index: 1; }
 
     .choice-meaning {
-      font-size: 12px;
+      font-size: calc(var(--choice-size) - 2px);
       color: #764ba2;
       font-weight: 700;
       opacity: 0;
@@ -560,47 +587,15 @@
   </div>
 
   <script>
-    // ✅ 1) 주소창이 보이는 상태(visual viewport) 기준으로 높이 고정
     function setVVH(){
       const vv = window.visualViewport;
       const h = vv ? vv.height : window.innerHeight;
       document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
     }
 
-    // ✅ 2) 카드 내용이 “한 화면”을 넘어가면 자동 축소(scale)
-    function fitCard(){
-      const card = document.querySelector('.card');
-      if(!card) return;
-      const inner = card.querySelector('.card-inner');
-      if(!inner) return;
-
-      // 측정 전에 scale 1로 원복
-      document.documentElement.style.setProperty('--scale', '1');
-
-      // 다음 프레임에서 정확한 높이 계산
-      requestAnimationFrame(() => {
-        const cardH = card.clientHeight;
-        const innerH = inner.scrollHeight;
-
-        // 혹시 padding/여유 조금 빼기 (사파리 바운더리 안전)
-        const safety = 8;
-        const available = Math.max(0, cardH - safety);
-
-        let scale = 1;
-        if(innerH > available && innerH > 0){
-          scale = available / innerH;
-          // 너무 작아지면 읽기 어려우니 최소 제한(원하면 0.75로 올려도 됨)
-          scale = Math.max(0.78, Math.min(1, scale));
-        }
-        document.documentElement.style.setProperty('--scale', String(scale));
-      });
-    }
-
-    // resize / scroll(주소창 등장/숨김) 모두 대응
-    window.addEventListener('resize', () => { setVVH(); fitCard(); });
-    window.visualViewport && window.visualViewport.addEventListener('resize', () => { setVVH(); fitCard(); });
-    window.visualViewport && window.visualViewport.addEventListener('scroll', () => { setVVH(); fitCard(); });
-
+    window.addEventListener('resize', setVVH);
+    window.visualViewport && window.visualViewport.addEventListener('resize', setVVH);
+    window.visualViewport && window.visualViewport.addEventListener('scroll', setVVH);
     setVVH();
 
     const DATA = [
@@ -764,9 +759,6 @@
       });
 
       attachSwipe(card);
-
-      // ✅ 렌더 직후 “한 화면” 맞추기
-      fitCard();
     }
 
     function generateChoices(item) {
@@ -813,9 +805,6 @@
 
       okBtn.disabled = false;
       againBtn.disabled = false;
-
-      // 번역/힌트 펼쳐지면서 높이가 늘 수 있으니 다시 fit
-      fitCard();
     }
 
     function attachSwipe(card) {
@@ -901,7 +890,6 @@
       `;
       deckEl.appendChild(card);
       currentCard = card;
-      fitCard();
     }
 
     function updateUI() {
