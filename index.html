@@ -6,13 +6,19 @@
   <title>WordSwipe - 단어 학습</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
       min-height: 100vh;
       overflow-x: hidden;
+      overflow-y: auto;
       position: relative;
+    }
+    
+    @supports (min-height: 100svh) {
+      body { min-height: 100svh; }
     }
     
     body::before {
@@ -43,9 +49,15 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      gap: 10px;
+      padding: 14px;
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      padding-top: max(14px, env(safe-area-inset-top));
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
       position: relative;
       z-index: 1;
+      touch-action: pan-y;
     }
     
     header {
@@ -53,8 +65,8 @@
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
@@ -62,11 +74,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     
     h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       color: white;
       letter-spacing: -0.5px;
@@ -94,7 +106,7 @@
     
     .stats {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
     
@@ -127,15 +139,16 @@
     
     main {
       flex: 1;
-      display: grid;
-      place-items: center;
-      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
     }
     
     .deck {
       width: 100%;
-      max-width: 440px;
-      aspect-ratio: 3/4;
+      max-width: 420px;
+      height: min(520px, calc(100dvh - 240px));
       position: relative;
       perspective: 1000px;
     }
@@ -157,15 +170,17 @@
       backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.5);
       border-radius: 28px;
-      padding: 28px 24px;
+      padding: 20px 16px;
       box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
       display: flex;
       flex-direction: column;
-      touch-action: none;
+      touch-action: pan-y;
       will-change: transform;
       cursor: grab;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     
     .card:active {
@@ -193,7 +208,7 @@
     }
     
     .word-display {
-      font-size: 42px;
+      font-size: 38px;
       font-weight: 800;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
@@ -201,16 +216,16 @@
       background-clip: text;
       letter-spacing: -1px;
       margin-bottom: 8px;
-      min-height: 50px;
+      min-height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
     
     .word-meaning {
-      font-size: 18px;
+      font-size: 17px;
       color: #764ba2;
       font-weight: 600;
       opacity: 0;
@@ -227,15 +242,15 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
     
     .definition-box {
       background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12));
       border: 2px solid rgba(102,126,234,0.2);
       border-radius: 18px;
-      padding: 18px 20px;
+      padding: 16px 18px;
       position: relative;
     }
     
@@ -260,7 +275,7 @@
       background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
       border: 2px solid rgba(102,126,234,0.15);
       border-radius: 18px;
-      padding: 18px 20px;
+      padding: 16px 18px;
       position: relative;
     }
     
@@ -311,8 +326,8 @@
     .choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
     
     .choice {
@@ -460,21 +475,21 @@
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 24px;
-      padding: 16px;
+      padding: 12px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
     .footer-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     
     .action-btn {
-      padding: 16px;
+      padding: 12px;
       border-radius: 16px;
       border: none;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -503,6 +518,28 @@
     
     .action-btn:not(:disabled):active {
       transform: scale(0.97);
+    }
+
+    @media (max-width: 390px) {
+      .container {
+        gap: 10px;
+        padding: 12px;
+      }
+      header {
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+      h1 { font-size: 19px; }
+      .stat-badge { font-size: 12px; padding: 6px 9px; }
+      .deck { height: min(460px, calc(100dvh - 220px)); }
+      .card { padding: 18px 14px; }
+      .word-display { font-size: 30px; }
+      .word-meaning { font-size: 16px; }
+      .definition-text { font-size: 15px; }
+      .example-text { font-size: 15px; }
+      .choices { gap: 6px; }
+      .choice { min-height: 56px; padding: 11px 8px; font-size: 13px; }
+      .action-btn { padding: 11px; font-size: 13px; }
     }
     
     .complete-screen {
