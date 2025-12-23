@@ -2,122 +2,592 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>학습 통계 - WordSwipe</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#6366f1" />
+  <title>통계 - WordSwipe</title>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
+
+    :root {
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     }
+
+    html, body { height: 100%; overflow-x: hidden; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-gradient);
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background: white;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      min-height: 100vh;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(80px, env(safe-area-inset-bottom)) 16px;
     }
-    h1 {
-      font-size: 28px;
-      font-weight: 900;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
+
+    header {
+      margin-bottom: 24px;
     }
+
     .back-btn {
-      display: inline-block;
-      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       padding: 10px 16px;
-      background: #667eea;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
       color: white;
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 14px;
       font-weight: 700;
       font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
     }
-    .stat-card {
-      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
-      border: 2px solid rgba(102,126,234,0.2);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .stat-date {
-      font-size: 14px;
-      font-weight: 800;
-      color: #667eea;
+
+    .back-btn:active { transform: scale(0.96); }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.2);
       margin-bottom: 8px;
     }
-    .stat-values {
-      display: flex;
-      gap: 16px;
-    }
-    .stat-item {
-      flex: 1;
-      text-align: center;
-    }
-    .stat-num {
-      font-size: 24px;
-      font-weight: 900;
-      color: #2d3748;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: #718096;
+
+    .subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.9);
       font-weight: 600;
     }
-    .empty {
+
+    .section {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .badge-item {
       text-align: center;
-      padding: 40px;
-      color: #a0aec0;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .badge-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+      filter: grayscale(1) opacity(0.5);
+    }
+
+    .badge-item.unlocked .badge-icon {
+      filter: none;
+    }
+
+    .badge-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .badge-item.unlocked .badge-name {
+      color: white;
+    }
+
+    .streak-display {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .streak-number {
+      font-size: 64px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+      margin-bottom: 8px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .streak-label {
       font-size: 16px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 700;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .calendar-day.active {
+      background: white;
+      color: var(--primary);
+    }
+
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .leaderboard-item.me {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .rank {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      min-width: 30px;
+    }
+
+    .rank.first { color: #fbbf24; }
+    .rank.second { color: #d1d5db; }
+    .rank.third { color: #f59e0b; }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 2px;
+    }
+
+    .user-words {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+    }
+
+    .friend-code-section {
+      text-align: center;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      margin-top: 16px;
+    }
+
+    .friend-code {
+      font-size: 24px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: 2px;
+      margin: 12px 0;
+    }
+
+    .copy-btn {
+      padding: 10px 20px;
+      background: white;
+      color: var(--primary);
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.96);
+    }
+
+    .chart-container {
+      height: 180px;
+      position: relative;
+      margin-top: 16px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 100%;
+      gap: 4px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(180deg, white, rgba(255,255,255,0.7));
+      border-radius: 6px 6px 0 0;
+      position: relative;
+      min-height: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .chart-label {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 700;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-gradient);
+      display: grid;
+      place-items: center;
+      z-index: 999;
+      color: white;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <div class="loading" id="loading">
+    <div>
+      <div class="loading-spinner"></div>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
+    </div>
+  </div>
+
   <div class="container">
-    <a href="index.html" class="back-btn">← 돌아가기</a>
-    <h1>📊 학습 통계</h1>
-    <div id="statsContainer"></div>
+    <header>
+      <a href="index.html" class="back-btn">← 돌아가기</a>
+      <h1>📊 학습 통계</h1>
+      <p class="subtitle">나의 학습 현황</p>
+    </header>
+
+    <!-- 연속 학습 -->
+    <div class="section">
+      <div class="section-title">🔥 연속 학습</div>
+      <div class="streak-display">
+        <div class="streak-number" id="streakDays">0</div>
+        <div class="streak-label">일 연속 학습 중!</div>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <!-- 배지 -->
+    <div class="section">
+      <div class="section-title">🏆 달성 배지</div>
+      <div class="badge-grid">
+        <div class="badge-item" id="badge1">
+          <div class="badge-icon">🌱</div>
+          <div class="badge-name">시작</div>
+        </div>
+        <div class="badge-item" id="badge2">
+          <div class="badge-icon">⭐</div>
+          <div class="badge-name">100단어</div>
+        </div>
+        <div class="badge-item" id="badge3">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">7일 연속</div>
+        </div>
+        <div class="badge-item" id="badge4">
+          <div class="badge-icon">💎</div>
+          <div class="badge-name">500단어</div>
+        </div>
+        <div class="badge-item" id="badge5">
+          <div class="badge-icon">👑</div>
+          <div class="badge-name">완벽 숙달</div>
+        </div>
+        <div class="badge-item" id="badge6">
+          <div class="badge-icon">🚀</div>
+          <div class="badge-name">30일 완성</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주간 학습 -->
+    <div class="section">
+      <div class="section-title">📈 주간 학습량</div>
+      <div class="chart-container">
+        <div class="chart-bars" id="chartBars"></div>
+      </div>
+    </div>
+
+    <!-- 친구 경쟁 -->
+    <div class="section">
+      <div class="section-title">👥 친구 순위</div>
+      <div class="leaderboard" id="leaderboard"></div>
+      <div class="friend-code-section">
+        <div style="font-size:13px; color:rgba(255,255,255,0.8); font-weight:700;">내 친구 코드</div>
+        <div class="friend-code" id="friendCode">LOADING...</div>
+        <button class="copy-btn" onclick="copyFriendCode()">코드 복사</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
-    const container = document.getElementById('statsContainer');
+    let myCode = '';
 
-    const dates = Object.keys(stats).sort().reverse();
+    async function loadStats() {
+      try {
+        // 연속 학습 계산
+        const streak = calculateStreak();
+        document.getElementById('streakDays').textContent = streak;
+        
+        // 달력 렌더링 (최근 28일)
+        renderCalendar();
+        
+        // 배지 체크
+        checkBadges();
+        
+        // 주간 차트
+        renderWeeklyChart();
+        
+        // 친구 코드 생성/불러오기
+        myCode = localStorage.getItem('friendCode');
+        if (!myCode) {
+          myCode = generateFriendCode();
+          localStorage.setItem('friendCode', myCode);
+        }
+        document.getElementById('friendCode').textContent = myCode;
+        
+        // 리더보드
+        renderLeaderboard();
+        
+      } catch (e) {
+        console.error(e);
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
 
-    if (dates.length === 0) {
-      container.innerHTML = '<div class="empty">아직 학습 기록이 없습니다.</div>';
-    } else {
-      dates.forEach(date => {
-        const s = stats[date];
-        const card = document.createElement('div');
-        card.className = 'stat-card';
-        card.innerHTML = `
-          <div class="stat-date">${date}</div>
-          <div class="stat-values">
-            <div class="stat-item">
-              <div class="stat-num">${s.sessions}</div>
-              <div class="stat-label">세션</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-num">${s.correct}</div>
-              <div class="stat-label">✅ 완료</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-num">${s.wrong}</div>
-              <div class="stat-label">🔁 복습</div>
-            </div>
+    function calculateStreak() {
+      const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
+      const dates = Object.keys(stats).sort().reverse();
+      
+      if (dates.length === 0) return 0;
+      
+      const today = new Date().toISOString().split('T')[0];
+      let streak = 0;
+      let checkDate = new Date();
+      
+      for (let i = 0; i < 365; i++) {
+        const dateStr = checkDate.toISOString().split('T')[0];
+        if (stats[dateStr] && stats[dateStr].sessions > 0) {
+          streak++;
+        } else {
+          if (dateStr !== today) break; // 오늘 아직 안 했으면 어제까지만
+        }
+        checkDate.setDate(checkDate.getDate() - 1);
+      }
+      
+      return streak;
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
+      
+      const today = new Date();
+      
+      for (let i = 27; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const day = document.createElement('div');
+        day.className = 'calendar-day';
+        
+        if (stats[dateStr] && stats[dateStr].sessions > 0) {
+          day.classList.add('active');
+          day.textContent = stats[dateStr].correct || 0;
+        }
+        
+        grid.appendChild(day);
+      }
+    }
+
+    function checkBadges() {
+      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+      const completedWords = Object.keys(studied).length;
+      const streak = calculateStreak();
+      
+      // 배지 1: 시작 (1단어 이상)
+      if (completedWords >= 1) {
+        document.getElementById('badge1').classList.add('unlocked');
+      }
+      
+      // 배지 2: 100단어
+      if (completedWords >= 100) {
+        document.getElementById('badge2').classList.add('unlocked');
+      }
+      
+      // 배지 3: 7일 연속
+      if (streak >= 7) {
+        document.getElementById('badge3').classList.add('unlocked');
+      }
+      
+      // 배지 4: 500단어
+      if (completedWords >= 500) {
+        document.getElementById('badge4').classList.add('unlocked');
+      }
+      
+      // 배지 5: 완벽 숙달 (정답률 90% 이상 단어 100개)
+      const mastered = Object.values(studied).filter(r => r.correctCount >= 5).length;
+      if (mastered >= 100) {
+        document.getElementById('badge5').classList.add('unlocked');
+      }
+      
+      // 배지 6: 30일 완성
+      if (completedWords >= 1500) {
+        document.getElementById('badge6').classList.add('unlocked');
+      }
+    }
+
+    function renderWeeklyChart() {
+      const bars = document.getElementById('chartBars');
+      const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
+      
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const today = new Date();
+      
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const dayName = days[date.getDay()];
+        
+        const count = stats[dateStr]?.correct || 0;
+        const maxHeight = 150;
+        const height = Math.min(maxHeight, count * 3);
+        
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        bar.style.height = height + 'px';
+        bar.innerHTML = `<div class="chart-label">${dayName}</div>`;
+        
+        bars.appendChild(bar);
+      }
+    }
+
+    function renderLeaderboard() {
+      const leaderboard = document.getElementById('leaderboard');
+      const myStats = JSON.parse(localStorage.getItem('studied') || '{}');
+      const myWords = Object.keys(myStats).length;
+      
+      // 임시 랭킹 데이터 (실제로는 서버에서 가져와야 함)
+      const rankings = [
+        { name: '철수', words: 520, isMe: false },
+        { name: '영희', words: 380, isMe: false },
+        { name: '나', words: myWords, isMe: true },
+        { name: '민수', words: myWords - 30, isMe: false },
+        { name: '지혜', words: myWords - 50, isMe: false }
+      ].sort((a, b) => b.words - a.words);
+      
+      rankings.forEach((user, index) => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item' + (user.isMe ? ' me' : '');
+        
+        let rankClass = '';
+        let rankEmoji = `${index + 1}위`;
+        
+        if (index === 0) { rankClass = 'first'; rankEmoji = '🥇'; }
+        else if (index === 1) { rankClass = 'second'; rankEmoji = '🥈'; }
+        else if (index === 2) { rankClass = 'third'; rankEmoji = '🥉'; }
+        
+        item.innerHTML = `
+          <div class="rank ${rankClass}">${rankEmoji}</div>
+          <div class="user-info">
+            <div class="user-name">${user.name}</div>
+            <div class="user-words">${user.words}개 단어</div>
           </div>
         `;
-        container.appendChild(card);
+        
+        leaderboard.appendChild(item);
       });
     }
+
+    function generateFriendCode() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+
+    function copyFriendCode() {
+      navigator.clipboard.writeText(myCode);
+      alert('친구 코드가 복사되었습니다!\n친구에게 공유해보세요.');
+    }
+
+    loadStats();
   </script>
 </body>
 </html>
