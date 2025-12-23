@@ -459,7 +459,7 @@
     // Service Worker 등록
     // ========================================
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+       navigator.serviceWorker.register('/WORD-TEST/service-worker.js')
         .then(reg => console.log('✅ Service Worker 등록:', reg))
         .catch(err => console.error('❌ Service Worker 등록 실패:', err));
     }
@@ -757,4 +757,5 @@
   </script>
 </body>
 </html>
+
 
