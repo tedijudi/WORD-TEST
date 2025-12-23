@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#6366f1" />
   <title>단어장 - WordSwipe</title>
+  
+  <!-- PWA 설정 -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="WordSwipe" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  
   <link rel="stylesheet" href="common.css" />
   
   <style>
-    /* 기존 스타일 유지 */
     .main-container {
       max-width: 480px;
       margin: 0 auto;
@@ -74,7 +81,6 @@
       border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* 나머지 스타일 동일 */
     main {
       flex: 1 1 auto;
       min-height: 0;
@@ -109,6 +115,21 @@
 
     .card:active { cursor: grabbing; }
 
+    .card.enter {
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardEnter {
+      from {
+        transform: translateY(-15%) scale(0.9) rotateX(12deg);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1) rotateX(0);
+        opacity: 1;
+      }
+    }
+
     .card-inner {
       width: 100%;
       height: 100%;
@@ -117,50 +138,6 @@
       flex-direction: column;
       gap: 12px;
       overflow: hidden;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      gap: 12px;
-      padding: 12px 16px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(30px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
-      box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 10px 14px;
-      background: transparent;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all var(--transition-base);
-      min-width: 70px;
-    }
-
-    .nav-item:active { transform: scale(0.94); }
-    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
-
-    .nav-icon { font-size: 24px; line-height: 1; }
-    .nav-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: white;
-      white-space: nowrap;
     }
 
     .definition-box, .example-box {
@@ -226,7 +203,10 @@
       transition: all var(--transition-slow);
     }
 
-    .translation.show { opacity: 1; max-height: 150px; }
+    .translation.show { 
+      opacity: 1; 
+      max-height: 150px; 
+    }
 
     .choices {
       display: grid;
@@ -255,7 +235,17 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .choice:active { transform: scale(0.96); }
+    @media (max-height: 700px) {
+      .choice {
+        min-height: 50px;
+        padding: 10px 8px;
+        font-size: 14px;
+      }
+    }
+
+    .choice:active { 
+      transform: scale(0.96); 
+    }
 
     .choice-meaning {
       font-size: 12px;
@@ -265,16 +255,26 @@
       transition: all var(--transition-bounce);
     }
 
-    .choice-meaning.show { opacity: 1; }
+    .choice-meaning.show { 
+      opacity: 1; 
+    }
 
     .choice.correct {
       background: var(--gradient-success);
       border-color: var(--success);
       color: white;
       box-shadow: 0 8px 24px rgba(16,185,129,0.4);
+      animation: correctPulse 0.5s ease;
     }
 
-    .choice.correct .choice-meaning { color: rgba(255,255,255,0.95); }
+    .choice.correct .choice-meaning { 
+      color: rgba(255,255,255,0.95); 
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
     .choice.wrong {
       background: linear-gradient(135deg, var(--error), #dc2626);
@@ -284,12 +284,19 @@
       animation: shake 0.5s ease;
     }
 
-    .choice.wrong .choice-meaning { color: rgba(255,255,255,0.95); }
+    .choice.wrong .choice-meaning { 
+      color: rgba(255,255,255,0.95); 
+    }
 
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-10px); }
       75% { transform: translateX(10px); }
+    }
+
+    .choice.disabled {
+      opacity: 0.6;
+      pointer-events: none;
     }
 
     .swipe-hint {
@@ -302,7 +309,99 @@
       margin-top: 8px;
     }
 
-    .swipe-hint.show { opacity: 1; }
+    .swipe-hint.show { 
+      opacity: 1; 
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all var(--transition-base);
+      min-width: 70px;
+    }
+
+    .nav-item:active { 
+      transform: scale(0.94); 
+    }
+
+    .nav-item.active { 
+      background: rgba(255, 255, 255, 0.25); 
+    }
+
+    .nav-icon { 
+      font-size: 24px; 
+      line-height: 1; 
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .complete-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .complete-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes bounceIn {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .complete-title {
+      font-size: 32px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .complete-text {
+      font-size: 16px;
+      color: var(--gray-600);
+      margin-bottom: 24px;
+    }
   </style>
 </head>
 <body>
@@ -348,9 +447,30 @@
   </nav>
 
   <script type="module">
-    import { initFirebase, saveToCloud, getUserProfile, updateUserName } from './firebase-config.js';
+    // ========================================
+    // 온보딩 체크
+    // ========================================
+    if (!localStorage.getItem('onboardingCompleted')) {
+      window.location.href = 'onboarding.html';
+    }
 
+    // ========================================
+    // Service Worker 등록
+    // ========================================
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('✅ Service Worker 등록:', reg))
+        .catch(err => console.error('❌ Service Worker 등록 실패:', err));
+    }
+
+    // ========================================
+    // Firebase 임포트
+    // ========================================
+    import { initFirebase, saveToCloud, getUserProfile } from './firebase-config.js';
+
+    // ========================================
     // visualViewport 높이
+    // ========================================
     function setVVH() {
       const vv = window.visualViewport;
       const h = vv ? vv.height : window.innerHeight;
@@ -360,11 +480,16 @@
     window.visualViewport?.addEventListener('resize', setVVH);
     setVVH();
 
-    // 진동
+    // ========================================
+    // 진동 피드백
+    // ========================================
     function vibrate(pattern) {
       if (navigator.vibrate) navigator.vibrate(pattern);
     }
 
+    // ========================================
+    // 전역 변수
+    // ========================================
     let DATA = [];
     let order = [];
     let idx = 0, okCount = 0;
@@ -374,7 +499,9 @@
     const loadingEl = document.getElementById('loading');
     const syncIndicator = document.getElementById('syncIndicator');
 
-    // Firebase 초기화 및 데이터 로드
+    // ========================================
+    // 초기화
+    // ========================================
     async function init() {
       try {
         // Firebase 초기화
@@ -384,7 +511,9 @@
         
         // 프로필 확인
         const profile = await getUserProfile();
-        console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
+        if (profile) {
+          console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
+        }
         
         // 단어 데이터 로드
         const res = await fetch('words.json');
@@ -392,18 +521,32 @@
         DATA = json.words;
         order = shuffle([...DATA.keys()]);
         
-        renderCard();
+        renderCard(true);
         updateUI();
       } catch (e) {
         console.error('초기화 실패:', e);
         syncIndicator.classList.add('offline');
-        alert('Firebase 연결 실패. 오프라인 모드로 계속합니다.');
+        
+        // 오프라인 모드로 계속
+        try {
+          const res = await fetch('words.json');
+          const json = await res.json();
+          DATA = json.words;
+          order = shuffle([...DATA.keys()]);
+          renderCard(true);
+          updateUI();
+        } catch (err) {
+          alert('데이터를 불러올 수 없습니다. 인터넷 연결을 확인해주세요.');
+        }
       } finally {
         loadingEl.style.display = 'none';
       }
     }
 
-    function renderCard() {
+    // ========================================
+    // 카드 렌더링
+    // ========================================
+    function renderCard(enter = false) {
       if (idx >= order.length) {
         showComplete();
         return;
@@ -414,7 +557,7 @@
       const choices = generateChoices(item);
 
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'card' + (enter ? ' enter' : '');
       card.innerHTML = `
         <div class="card-inner">
           <div class="definition-box">
@@ -451,6 +594,9 @@
       attachSwipe(card);
     }
 
+    // ========================================
+    // 선택지 생성
+    // ========================================
     function generateChoices(item) {
       const similar = DATA
         .filter(d => d.w !== item.w)
@@ -460,6 +606,9 @@
       return shuffle([...similar, { w: item.w, m: item.m }]);
     }
 
+    // ========================================
+    // 선택 처리
+    // ========================================
     function selectChoice(btn, item) {
       if (answered) return;
       answered = true;
@@ -467,11 +616,12 @@
       const selected = btn.dataset.word;
       const isCorrect = selected === item.w;
 
-      if (!isCorrect) vibrate([100, 50, 100]);
-      else {
+      if (!isCorrect) {
+        vibrate([100, 50, 100]);
+      } else {
         okCount++;
         
-        // ✅ 학습 데이터 저장
+        // 학습 데이터 저장
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
         if (!studied[item.w]) {
           studied[item.w] = {
@@ -484,11 +634,12 @@
         studied[item.w].lastReview = Date.now();
         localStorage.setItem('studied', JSON.stringify(studied));
         
-        // ✅ 클라우드 저장 (비동기)
+        // 클라우드 저장 (비동기)
         saveToCloud();
       }
 
       currentCard.querySelectorAll('.choice').forEach((c, i) => {
+        c.classList.add('disabled');
         const meaningEl = c.querySelector(`[data-idx="${i}"]`);
         meaningEl.classList.add('show');
         
@@ -503,6 +654,9 @@
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
+    // ========================================
+    // 스와이프 연결
+    // ========================================
     function attachSwipe(card) {
       let startX = 0, curX = 0, dragging = false;
 
@@ -510,6 +664,7 @@
         if (!answered) return;
         dragging = true;
         startX = e.clientX || e.touches[0].clientX;
+        card.style.transition = 'none';
       };
 
       card.onpointermove = e => {
@@ -528,7 +683,7 @@
           setTimeout(() => {
             card.remove();
             idx++;
-            renderCard();
+            renderCard(true);
             updateUI();
           }, 300);
         } else {
@@ -537,8 +692,18 @@
         }
         curX = 0;
       };
+
+      card.onpointercancel = () => {
+        dragging = false;
+        card.style.transition = 'transform 0.2s ease';
+        card.style.transform = '';
+        curX = 0;
+      };
     }
 
+    // ========================================
+    // 완료 화면
+    // ========================================
     function showComplete() {
       // 통계 저장
       const today = new Date().toISOString().split('T')[0];
@@ -554,21 +719,27 @@
       
       deckEl.innerHTML = `
         <div class="card">
-          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
-            <div style="font-size:80px; margin-bottom:24px;">🎉</div>
-            <h2 class="text-gradient" style="font-size:32px; margin-bottom:16px;">완료!</h2>
-            <p style="font-size:16px; color:#64748b; margin-bottom:24px;">✅ ${okCount}개 정답</p>
+          <div class="complete-screen">
+            <div class="complete-icon">🎉</div>
+            <h2 class="complete-title">완료!</h2>
+            <p class="complete-text">✅ ${okCount}개 정답</p>
             <a href="index.html" class="btn btn-primary">다시 시작</a>
           </div>
         </div>
       `;
     }
 
+    // ========================================
+    // UI 업데이트
+    // ========================================
     function updateUI() {
       document.getElementById('statCurrent').textContent = `${idx + 1}/${order.length}`;
       document.getElementById('statOk').textContent = okCount;
     }
 
+    // ========================================
+    // 배열 섞기
+    // ========================================
     function shuffle(arr) {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) {
@@ -578,6 +749,9 @@
       return a;
     }
 
+    // ========================================
+    // 시작
+    // ========================================
     init();
   </script>
 </body>
