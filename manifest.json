@@ -2,7 +2,7 @@
   "name": "WordSwipe - 영단어 학습",
   "short_name": "WordSwipe",
   "description": "스와이프로 배우는 스마트 영단어 학습 앱",
-  "start_url": "/",
+  "start_url": "/WORD-TEST/",
   "display": "standalone",
   "background_color": "#6366f1",
   "theme_color": "#6366f1",
