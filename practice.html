@@ -530,9 +530,12 @@ card.onpointerup = () => {
   if (!dragging) return;
   dragging = false;
   
-  if (curX > 100) {
-    // 이전
-    card.style.transition = 'transform 0.3s ease';
+  const threshold = 60; // 60px로 감도 향상
+  const velocity = Math.abs(curX);
+  
+  if (curX > threshold) {
+    // 이전 카드
+    card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
     card.style.transform = 'translateX(150%) rotate(20deg)';
     setTimeout(() => {
       card.remove();
@@ -540,9 +543,9 @@ card.onpointerup = () => {
       renderCard(true);
       updateUI();
     }, 300);
-  } else if (curX < -100) {
-    // 다음
-    card.style.transition = 'transform 0.3s ease';
+  } else if (curX < -threshold) {
+    // 다음 카드
+    card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
     card.style.transform = 'translateX(-150%) rotate(-20deg)';
     setTimeout(() => {
       card.remove();
@@ -551,11 +554,13 @@ card.onpointerup = () => {
       updateUI();
     }, 300);
   } else {
-    card.style.transition = 'transform 0.2s ease';
+    // 원위치
+    card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     card.style.transform = '';
   }
   curX = 0;
 };
+
 
     }
 
