@@ -526,36 +526,37 @@
         card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
       };
 
-      card.onpointerup = () => {
-        if (!dragging) return;
-        dragging = false;
-        
-        if (curX > 100) {
-          // 이전
-          card.style.transition = 'transform 0.3s ease';
-          card.style.transform = 'translateX(150%) rotate(20deg)';
-          setTimeout(() => {
-            card.remove();
-            idx = Math.max(0, idx - 1);
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else if (curX < -100) {
-          // 다음
-          card.style.transition = 'transform 0.3s ease';
-          card.style.transform = 'translateX(-150%) rotate(-20deg)';
-          setTimeout(() => {
-            card.remove();
-            idx++;
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else {
-          card.style.transition = 'transform 0.2s ease';
-          card.style.transform = '';
-        }
-        curX = 0;
-      };
+card.onpointerup = () => {
+  if (!dragging) return;
+  dragging = false;
+  
+  if (curX > 100) {
+    // 이전
+    card.style.transition = 'transform 0.3s ease';
+    card.style.transform = 'translateX(150%) rotate(20deg)';
+    setTimeout(() => {
+      card.remove();
+      idx = Math.max(0, idx - 1);
+      renderCard(true);
+      updateUI();
+    }, 300);
+  } else if (curX < -100) {
+    // 다음
+    card.style.transition = 'transform 0.3s ease';
+    card.style.transform = 'translateX(-150%) rotate(-20deg)';
+    setTimeout(() => {
+      card.remove();
+      idx++;
+      renderCard(true);
+      updateUI();
+    }, 300);
+  } else {
+    card.style.transition = 'transform 0.2s ease';
+    card.style.transform = '';
+  }
+  curX = 0;
+};
+
     }
 
     function showComplete() {
