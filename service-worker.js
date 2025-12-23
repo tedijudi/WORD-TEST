@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordswipe-v1.0.0';
+const CACHE_NAME = 'wordswipe-v3.0.0';
 const urlsToCache = [
   '/WORD-TEST/',
   '/WORD-TEST/index.html',
@@ -32,16 +32,21 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ 오래된 캐시 삭제:', cacheName);
-            return caches.delete(cacheName);
-          }
+          // 모든 캐시 삭제
+          console.log('🗑️ 캐시 삭제:', cacheName);
+          return caches.delete(cacheName);
         })
       );
+    }).then(() => {
+      // 모든 클라이언트 새로고침
+      return self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.navigate(client.url));
+      });
     })
   );
   self.clients.claim();
 });
+
 
 // Fetch 이벤트 (오프라인 지원)
 self.addEventListener('fetch', event => {
