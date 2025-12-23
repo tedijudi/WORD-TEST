@@ -147,11 +147,24 @@
     }
 
     /* 친구 추가 */
-    .add-friend-form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
+.add-friend-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* 모바일 세로모드 최적화 */
+@media (max-width: 390px) {
+  .add-friend-form {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .add-friend-btn {
+    width: 100%;
+  }
+}
+
 
     .friend-code-input {
       flex: 1;
