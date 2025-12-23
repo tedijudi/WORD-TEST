@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="common.css" />
   
   <style>
+    body {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -160,12 +164,44 @@
       margin-bottom: 10px;
     }
 
+    .mnemonic-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.08));
+      border: 2px solid rgba(16,185,129,0.15);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .mnemonic-label {
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--success);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mnemonic-label::before {
+      content: '💡';
+      font-size: 12px;
+    }
+
+    .mnemonic-text {
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+
     .word-example {
       font-size: 15px;
       color: var(--gray-700);
       line-height: 1.4;
       padding: 10px;
-      background: rgba(16, 185, 129, 0.05);
+      background: rgba(16,185,129,0.05);
       border-left: 3px solid var(--success);
       border-radius: 8px;
       margin-bottom: 8px;
@@ -182,7 +218,7 @@
       gap: 12px;
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px dashed rgba(16, 185, 129, 0.2);
+      border-top: 1px dashed rgba(16,185,129,0.2);
     }
 
     .meta-item {
@@ -206,7 +242,7 @@
       font-size: 14px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
       transition: all 0.2s ease;
     }
 
@@ -246,8 +282,8 @@
       transform: translateX(-50%);
       z-index: 100;
       display: flex;
-      gap: 12px;
-      padding: 12px 16px;
+      gap: 8px;
+      padding: 12px 12px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(30px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -262,29 +298,29 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: transparent;
       border: none;
       border-radius: 16px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
-      min-width: 70px;
+      min-width: 60px;
     }
 
     .nav-item:active { transform: scale(0.94); }
     .nav-item.active { background: rgba(255, 255, 255, 0.25); }
 
-    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-icon { font-size: 20px; line-height: 1; }
     .nav-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: white;
       white-space: nowrap;
     }
   </style>
 </head>
-<body style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+<body>
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
@@ -318,9 +354,13 @@
   </div>
 
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item">
+    <a href="practice.html" class="nav-item">
       <div class="nav-icon">📚</div>
-      <div class="nav-label">단어장</div>
+      <div class="nav-label">연습</div>
+    </a>
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">✍️</div>
+      <div class="nav-label">시험</div>
     </a>
     <a href="wordsets.html" class="nav-item">
       <div class="nav-icon">📖</div>
@@ -422,6 +462,10 @@
             </div>
             <div class="word-meaning">${item.m}</div>
             <div class="word-def">${item.def}</div>
+            <div class="mnemonic-box">
+              <div class="mnemonic-label">연상 문장</div>
+              <div class="mnemonic-text">${item.mnemonic}</div>
+            </div>
             <div class="word-example">${item.ex.replace('_____', item.w)}</div>
             <div class="word-translation">${item.t}</div>
             <button class="restudy-btn" data-word="${item.w}">다시 학습하기</button>
@@ -445,7 +489,7 @@
       const studied = JSON.parse(localStorage.getItem('studied') || '{}');
       
       if (studied[word]) {
-        studied[word].lastReview = Date.now() - (4 * 24 * 60 * 60 * 1000); // 4일 전으로 설정
+        studied[word].lastReview = Date.now() - (4 * 24 * 60 * 60 * 1000);
         localStorage.setItem('studied', JSON.stringify(studied));
         saveToCloud();
       }
