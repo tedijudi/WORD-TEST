@@ -1,35 +1,9 @@
 {
-  "metadata": {
-    "title": "경선식 영단어",
-    "totalDays": 30,
-    "wordsPerDay": 50,
-    "totalWords": 1500
-  },
-  "days": [
-    {
-      "day": 1,
-      "title": "Day 1 - 기초 필수",
-      "words": [
-        {
-          "w": "accurate",
-          "m": "정확한",
-          "def": "exact and correct in all details",
-          "ex": "The report must be _____ and reliable.",
-          "t": "보고서는 정확하고 신뢰할 만해야 한다."
-        },
-        {
-          "w": "adapt",
-          "m": "적응하다",
-          "def": "to change behavior or thinking to fit new conditions",
-          "ex": "Animals _____ to their environment over time.",
-          "t": "동물들은 시간이 지나면서 환경에 적응한다."
-        }
-      ]
-    },
-    {
-      "day": 2,
-      "title": "Day 2 - 동사 마스터",
-      "words":
-    }
+  "words": [
+    {"w":"accurate","m":"정확한","def":"exact and correct in all details","ex":"The report must be _____ and reliable.","t":"보고서는 정확하고 신뢰할 만해야 한다."},
+    {"w":"adapt","m":"적응하다","def":"to change to fit new conditions","ex":"Animals _____ to their environment.","t":"동물들은 환경에 적응한다."},
+    {"w":"allocate","m":"할당하다","def":"to distribute for a specific purpose","ex":"We must _____ enough time.","t":"충분한 시간을 할당해야 한다."},
+    {"w":"analyze","m":"분석하다","def":"to examine in detail","ex":"Scientists _____ the data.","t":"과학자들은 데이터를 분석한다."},
+    {"w":"approach","m":"접근하다","def":"to come near or nearer","ex":"We need a new _____.","t":"새로운 접근이 필요하다."}
   ]
 }
