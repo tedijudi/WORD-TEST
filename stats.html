@@ -5,42 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#6366f1" />
   <title>통계 - WordSwipe</title>
+  <link rel="stylesheet" href="common.css" />
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --accent: #ec4899;
-      --success: #10b981;
-      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    }
-
-    html, body { height: 100%; overflow-x: hidden; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-gradient);
-      position: relative;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
     .container {
       max-width: 600px;
       margin: 0 auto;
       min-height: 100vh;
-      padding: max(20px, env(safe-area-inset-top)) 16px max(80px, env(safe-area-inset-bottom)) 16px;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(100px, env(safe-area-inset-bottom)) 16px;
     }
 
     header {
@@ -100,40 +72,186 @@
       gap: 8px;
     }
 
-    .badge-grid {
+    /* 프로필 카드 */
+    .profile-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      place-items: center;
+      font-size: 28px;
     }
 
-    .badge-item {
-      text-align: center;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .profile-info {
+      flex: 1;
     }
 
-    .badge-icon {
-      font-size: 36px;
-      margin-bottom: 8px;
-      filter: grayscale(1) opacity(0.5);
+    .profile-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .badge-item.unlocked .badge-icon {
-      filter: none;
-    }
-
-    .badge-name {
+    .edit-name-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
       font-size: 12px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
     }
 
-    .badge-item.unlocked .badge-name {
+    .profile-code {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 700;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 16px;
+    }
+
+    .profile-stat {
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 24px;
+      font-weight: 900;
       color: white;
     }
 
+    .profile-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 700;
+    }
+
+    /* 친구 추가 */
+    .add-friend-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .friend-code-input {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .friend-code-input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .add-friend-btn {
+      padding: 12px 20px;
+      border-radius: 14px;
+      border: none;
+      background: white;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-friend-btn:active { transform: scale(0.96); }
+
+    /* 리더보드 */
+    .leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s;
+    }
+
+    .leaderboard-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(4px);
+    }
+
+    .leaderboard-item.me {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .rank {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .rank.first { color: #fbbf24; text-shadow: 0 2px 8px rgba(251,191,36,0.5); }
+    .rank.second { color: #d1d5db; text-shadow: 0 2px 8px rgba(209,213,219,0.5); }
+    .rank.third { color: #f59e0b; text-shadow: 0 2px 8px rgba(245,158,11,0.5); }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 2px;
+    }
+
+    .user-words {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+    }
+
+    .user-badge {
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.2);
+      font-size: 11px;
+      font-weight: 800;
+      color: white;
+    }
+
+    /* 연속 학습 */
     .streak-display {
       text-align: center;
       padding: 24px;
@@ -154,6 +272,7 @@
       font-weight: 700;
     }
 
+    /* 달력 */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -169,95 +288,65 @@
       font-size: 11px;
       font-weight: 700;
       color: rgba(255,255,255,0.5);
+      transition: all 0.2s;
     }
 
     .calendar-day.active {
       background: white;
       color: var(--primary);
+      transform: scale(1.1);
     }
 
-    .leaderboard {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .leaderboard-item {
-      display: flex;
-      align-items: center;
+    /* 배지 */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      padding: 14px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .leaderboard-item.me {
-      background: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .rank {
-      font-size: 20px;
-      font-weight: 900;
-      color: white;
-      min-width: 30px;
-    }
-
-    .rank.first { color: #fbbf24; }
-    .rank.second { color: #d1d5db; }
-    .rank.third { color: #f59e0b; }
-
-    .user-info {
-      flex: 1;
-    }
-
-    .user-name {
-      font-size: 15px;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 2px;
-    }
-
-    .user-words {
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-      font-weight: 600;
-    }
-
-    .friend-code-section {
+    .badge-item {
       text-align: center;
       padding: 16px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 14px;
-      margin-top: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s;
     }
 
-    .friend-code {
-      font-size: 24px;
-      font-weight: 900;
+    .badge-item.unlocked {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    .badge-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+      filter: grayscale(1) opacity(0.5);
+      transition: all 0.3s;
+    }
+
+    .badge-item.unlocked .badge-icon {
+      filter: none;
+      animation: bounce 0.5s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .badge-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .badge-item.unlocked .badge-name {
       color: white;
-      letter-spacing: 2px;
-      margin: 12px 0;
     }
 
-    .copy-btn {
-      padding: 10px 20px;
-      background: white;
-      color: var(--primary);
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: all 0.2s ease;
-    }
-
-    .copy-btn:active {
-      transform: scale(0.96);
-    }
-
+    /* 주간 차트 */
     .chart-container {
       height: 180px;
       position: relative;
@@ -279,6 +368,11 @@
       position: relative;
       min-height: 4px;
       transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .chart-bar:hover {
+      background: linear-gradient(180deg, #fbbf24, rgba(251,191,36,0.7));
     }
 
     .chart-label {
@@ -291,27 +385,159 @@
       font-weight: 700;
     }
 
-    .loading {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-gradient);
+    .chart-value {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: white;
+      font-weight: 800;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .chart-bar:hover .chart-value {
+      opacity: 1;
+    }
+
+    /* 탭 */
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 친구 목록 */
+    .friends-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+
+    .friend-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--secondary));
       display: grid;
       place-items: center;
-      z-index: 999;
+      font-size: 20px;
+    }
+
+    .friend-details {
+      flex: 1;
+    }
+
+    .friend-name {
+      font-size: 14px;
+      font-weight: 800;
       color: white;
     }
 
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .friend-words {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 600;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      min-width: 70px;
+    }
+
+    .nav-item:active { transform: scale(0.94); }
+    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
+
+    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -326,15 +552,74 @@
   <div class="container">
     <header>
       <a href="index.html" class="back-btn">← 돌아가기</a>
-      <h1>📊 학습 통계</h1>
+      <h1>📊 통계</h1>
       <p class="subtitle">나의 학습 현황</p>
     </header>
+
+    <!-- 프로필 -->
+    <div class="section">
+      <div class="section-title">👤 프로필</div>
+      <div class="profile-card">
+        <div class="profile-avatar">😊</div>
+        <div class="profile-info">
+          <div class="profile-name">
+            <span id="userName">학습자</span>
+            <button class="edit-name-btn" onclick="editName()">✏️</button>
+          </div>
+          <div class="profile-code">코드: <strong id="friendCode">------</strong></div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="totalWords">0</div>
+          <div class="profile-stat-label">학습 단어</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="streakDays">0</div>
+          <div class="profile-stat-label">연속 일수</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-value" id="rankPosition">-</div>
+          <div class="profile-stat-label">순위</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 친구 시스템 -->
+    <div class="section">
+      <div class="section-title">👥 친구</div>
+      
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab('leaderboard')">리더보드</button>
+        <button class="tab-btn" onclick="switchTab('friends')">내 친구</button>
+      </div>
+
+      <!-- 리더보드 탭 -->
+      <div class="tab-content active" id="leaderboard-tab">
+        <div class="add-friend-form">
+          <input 
+            type="text" 
+            class="friend-code-input" 
+            id="friendCodeInput" 
+            placeholder="친구 코드 입력"
+            maxlength="6"
+          />
+          <button class="add-friend-btn" onclick="addFriend()">추가</button>
+        </div>
+        <div class="leaderboard" id="leaderboard"></div>
+      </div>
+
+      <!-- 친구 탭 -->
+      <div class="tab-content" id="friends-tab">
+        <div class="friends-list" id="friendsList"></div>
+      </div>
+    </div>
 
     <!-- 연속 학습 -->
     <div class="section">
       <div class="section-title">🔥 연속 학습</div>
       <div class="streak-display">
-        <div class="streak-number" id="streakDays">0</div>
+        <div class="streak-number" id="streakDisplay">0</div>
         <div class="streak-label">일 연속 학습 중!</div>
       </div>
       <div class="calendar-grid" id="calendarGrid"></div>
@@ -350,7 +635,7 @@
         </div>
         <div class="badge-item" id="badge2">
           <div class="badge-icon">⭐</div>
-          <div class="badge-name">100단어</div>
+          <div class="badge-name">50단어</div>
         </div>
         <div class="badge-item" id="badge3">
           <div class="badge-icon">🔥</div>
@@ -358,7 +643,7 @@
         </div>
         <div class="badge-item" id="badge4">
           <div class="badge-icon">💎</div>
-          <div class="badge-name">500단어</div>
+          <div class="badge-name">100단어</div>
         </div>
         <div class="badge-item" id="badge5">
           <div class="badge-icon">👑</div>
@@ -366,7 +651,7 @@
         </div>
         <div class="badge-item" id="badge6">
           <div class="badge-icon">🚀</div>
-          <div class="badge-name">30일 완성</div>
+          <div class="badge-name">전체 완성</div>
         </div>
       </div>
     </div>
@@ -378,60 +663,70 @@
         <div class="chart-bars" id="chartBars"></div>
       </div>
     </div>
-
-    <!-- 친구 경쟁 -->
-    <div class="section">
-      <div class="section-title">👥 친구 순위</div>
-      <div class="leaderboard" id="leaderboard"></div>
-      <div class="friend-code-section">
-        <div style="font-size:13px; color:rgba(255,255,255,0.8); font-weight:700;">내 친구 코드</div>
-        <div class="friend-code" id="friendCode">LOADING...</div>
-        <button class="copy-btn" onclick="copyFriendCode()">코드 복사</button>
-      </div>
-    </div>
   </div>
 
-  <script>
-    let myCode = '';
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">단어장</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item active">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
 
-    async function loadStats() {
+  <script type="module">
+    import { initFirebase, getUserProfile, updateUserName, addFriend as addFirebaseFriend, getFriends, getLeaderboard } from './firebase-config.js';
+
+    let currentUser = null;
+    let currentTab = 'leaderboard';
+
+    async function init() {
       try {
-        // 연속 학습 계산
-        const streak = calculateStreak();
-        document.getElementById('streakDays').textContent = streak;
-        
-        // 달력 렌더링 (최근 28일)
-        renderCalendar();
-        
-        // 배지 체크
-        checkBadges();
-        
-        // 주간 차트
-        renderWeeklyChart();
-        
-        // 친구 코드 생성/불러오기
-        myCode = localStorage.getItem('friendCode');
-        if (!myCode) {
-          myCode = generateFriendCode();
-          localStorage.setItem('friendCode', myCode);
-        }
-        document.getElementById('friendCode').textContent = myCode;
-        
-        // 리더보드
-        renderLeaderboard();
-        
+        currentUser = await initFirebase();
+        await loadAllData();
       } catch (e) {
-        console.error(e);
+        console.error('초기화 실패:', e);
       } finally {
         document.getElementById('loading').style.display = 'none';
       }
+    }
+
+    async function loadAllData() {
+      const profile = await getUserProfile();
+      
+      if (profile) {
+        document.getElementById('userName').textContent = profile.name;
+        document.getElementById('friendCode').textContent = profile.friendCode;
+        document.getElementById('totalWords').textContent = profile.totalWords || 0;
+      }
+      
+      calculateStreak();
+      renderCalendar();
+      checkBadges();
+      renderWeeklyChart();
+      await loadLeaderboard();
+      await loadFriends();
     }
 
     function calculateStreak() {
       const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
       const dates = Object.keys(stats).sort().reverse();
       
-      if (dates.length === 0) return 0;
+      if (dates.length === 0) {
+        document.getElementById('streakDays').textContent = '0';
+        document.getElementById('streakDisplay').textContent = '0';
+        return;
+      }
       
       const today = new Date().toISOString().split('T')[0];
       let streak = 0;
@@ -442,18 +737,19 @@
         if (stats[dateStr] && stats[dateStr].sessions > 0) {
           streak++;
         } else {
-          if (dateStr !== today) break; // 오늘 아직 안 했으면 어제까지만
+          if (dateStr !== today) break;
         }
         checkDate.setDate(checkDate.getDate() - 1);
       }
       
-      return streak;
+      document.getElementById('streakDays').textContent = streak;
+      document.getElementById('streakDisplay').textContent = streak;
     }
 
     function renderCalendar() {
       const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
       const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
-      
       const today = new Date();
       
       for (let i = 27; i >= 0; i--) {
@@ -476,42 +772,21 @@
     function checkBadges() {
       const studied = JSON.parse(localStorage.getItem('studied') || '{}');
       const completedWords = Object.keys(studied).length;
-      const streak = calculateStreak();
+      const streak = parseInt(document.getElementById('streakDays').textContent);
       
-      // 배지 1: 시작 (1단어 이상)
-      if (completedWords >= 1) {
-        document.getElementById('badge1').classList.add('unlocked');
-      }
+      if (completedWords >= 1) document.getElementById('badge1').classList.add('unlocked');
+      if (completedWords >= 50) document.getElementById('badge2').classList.add('unlocked');
+      if (streak >= 7) document.getElementById('badge3').classList.add('unlocked');
+      if (completedWords >= 100) document.getElementById('badge4').classList.add('unlocked');
       
-      // 배지 2: 100단어
-      if (completedWords >= 100) {
-        document.getElementById('badge2').classList.add('unlocked');
-      }
-      
-      // 배지 3: 7일 연속
-      if (streak >= 7) {
-        document.getElementById('badge3').classList.add('unlocked');
-      }
-      
-      // 배지 4: 500단어
-      if (completedWords >= 500) {
-        document.getElementById('badge4').classList.add('unlocked');
-      }
-      
-      // 배지 5: 완벽 숙달 (정답률 90% 이상 단어 100개)
       const mastered = Object.values(studied).filter(r => r.correctCount >= 5).length;
-      if (mastered >= 100) {
-        document.getElementById('badge5').classList.add('unlocked');
-      }
-      
-      // 배지 6: 30일 완성
-      if (completedWords >= 1500) {
-        document.getElementById('badge6').classList.add('unlocked');
-      }
+      if (mastered >= 50) document.getElementById('badge5').classList.add('unlocked');
+      if (completedWords >= 100) document.getElementById('badge6').classList.add('unlocked');
     }
 
     function renderWeeklyChart() {
       const bars = document.getElementById('chartBars');
+      bars.innerHTML = '';
       const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
       
       const days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -530,64 +805,136 @@
         const bar = document.createElement('div');
         bar.className = 'chart-bar';
         bar.style.height = height + 'px';
-        bar.innerHTML = `<div class="chart-label">${dayName}</div>`;
+        bar.innerHTML = `
+          <div class="chart-value">${count}</div>
+          <div class="chart-label">${dayName}</div>
+        `;
         
         bars.appendChild(bar);
       }
     }
 
-    function renderLeaderboard() {
-      const leaderboard = document.getElementById('leaderboard');
-      const myStats = JSON.parse(localStorage.getItem('studied') || '{}');
-      const myWords = Object.keys(myStats).length;
-      
-      // 임시 랭킹 데이터 (실제로는 서버에서 가져와야 함)
-      const rankings = [
-        { name: '철수', words: 520, isMe: false },
-        { name: '영희', words: 380, isMe: false },
-        { name: '나', words: myWords, isMe: true },
-        { name: '민수', words: myWords - 30, isMe: false },
-        { name: '지혜', words: myWords - 50, isMe: false }
-      ].sort((a, b) => b.words - a.words);
-      
-      rankings.forEach((user, index) => {
-        const item = document.createElement('div');
-        item.className = 'leaderboard-item' + (user.isMe ? ' me' : '');
+    async function loadLeaderboard() {
+      try {
+        const leaderboard = await getLeaderboard();
+        const container = document.getElementById('leaderboard');
+        container.innerHTML = '';
         
-        let rankClass = '';
-        let rankEmoji = `${index + 1}위`;
-        
-        if (index === 0) { rankClass = 'first'; rankEmoji = '🥇'; }
-        else if (index === 1) { rankClass = 'second'; rankEmoji = '🥈'; }
-        else if (index === 2) { rankClass = 'third'; rankEmoji = '🥉'; }
-        
-        item.innerHTML = `
-          <div class="rank ${rankClass}">${rankEmoji}</div>
-          <div class="user-info">
-            <div class="user-name">${user.name}</div>
-            <div class="user-words">${user.words}개 단어</div>
-          </div>
-        `;
-        
-        leaderboard.appendChild(item);
-      });
-    }
-
-    function generateFriendCode() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let code = '';
-      for (let i = 0; i < 6; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
+        leaderboard.forEach((user, index) => {
+          const isMe = user.id === currentUser.uid;
+          const item = document.createElement('div');
+          item.className = 'leaderboard-item' + (isMe ? ' me' : '');
+          
+          let rankClass = '';
+          let rankText = `${index + 1}위`;
+          
+          if (index === 0) { rankClass = 'first'; rankText = '🥇'; }
+          else if (index === 1) { rankClass = 'second'; rankText = '🥈'; }
+          else if (index === 2) { rankClass = 'third'; rankText = '🥉'; }
+          
+          if (isMe) {
+            document.getElementById('rankPosition').textContent = `${index + 1}위`;
+          }
+          
+          item.innerHTML = `
+            <div class="rank ${rankClass}">${rankText}</div>
+            <div class="user-info">
+              <div class="user-name">${user.name}</div>
+              <div class="user-words">${user.totalWords || 0}개 단어</div>
+            </div>
+            ${isMe ? '<div class="user-badge">나</div>' : ''}
+          `;
+          
+          container.appendChild(item);
+        });
+      } catch (e) {
+        console.error('리더보드 로드 실패:', e);
       }
-      return code;
     }
 
-    function copyFriendCode() {
-      navigator.clipboard.writeText(myCode);
-      alert('친구 코드가 복사되었습니다!\n친구에게 공유해보세요.');
+    async function loadFriends() {
+      try {
+        const friends = await getFriends();
+        const container = document.getElementById('friendsList');
+        container.innerHTML = '';
+        
+        if (friends.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">👥</div>
+              <div class="empty-text">아직 친구가 없습니다<br/>친구 코드로 추가해보세요!</div>
+            </div>
+          `;
+          return;
+        }
+        
+        friends.forEach(friend => {
+          const item = document.createElement('div');
+          item.className = 'friend-item';
+          item.innerHTML = `
+            <div class="friend-avatar">😊</div>
+            <div class="friend-details">
+              <div class="friend-name">${friend.name}</div>
+              <div class="friend-words">${friend.totalWords || 0}개 단어 학습 중</div>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      } catch (e) {
+        console.error('친구 목록 로드 실패:', e);
+      }
     }
 
-    loadStats();
+    window.switchTab = function(tab) {
+      currentTab = tab;
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      if (tab === 'leaderboard') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('leaderboard-tab').classList.add('active');
+      } else {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('friends-tab').classList.add('active');
+      }
+    };
+
+    window.editName = async function() {
+      const newName = prompt('새 닉네임을 입력하세요', document.getElementById('userName').textContent);
+      if (newName && newName.trim()) {
+        await updateUserName(newName.trim());
+        document.getElementById('userName').textContent = newName.trim();
+      }
+    };
+
+    window.addFriend = async function() {
+      const codeInput = document.getElementById('friendCodeInput');
+      const code = codeInput.value.trim().toUpperCase();
+      
+      if (!code || code.length !== 6) {
+        alert('올바른 친구 코드를 입력하세요 (6자리)');
+        return;
+      }
+      
+      const result = await addFirebaseFriend(code);
+      
+      if (result.success) {
+        alert(`✅ ${result.friend.name}님을 친구로 추가했습니다!`);
+        codeInput.value = '';
+        await loadFriends();
+        await loadLeaderboard();
+      } else {
+        alert(`❌ ${result.error}`);
+      }
+    };
+
+    init();
   </script>
 </body>
 </html>
