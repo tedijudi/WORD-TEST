@@ -5,41 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#10b981" />
   <title>완료한 단어 - WordSwipe</title>
+  <link rel="stylesheet" href="common.css" />
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --success: #10b981;
-      --bg-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    }
-
-    html, body { height: 100%; overflow-x: hidden; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-gradient);
-      position: relative;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 25% 35%, rgba(255,255,255,0.12) 0%, transparent 50%),
-        radial-gradient(circle at 75% 65%, rgba(255,255,255,0.08) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
     .container {
       max-width: 600px;
       margin: 0 auto;
       min-height: 100vh;
-      padding: max(20px, env(safe-area-inset-top)) 16px max(80px, env(safe-area-inset-bottom)) 16px;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(100px, env(safe-area-inset-bottom)) 16px;
     }
 
     header {
@@ -101,44 +74,13 @@
       font-weight: 900;
       color: white;
       margin-bottom: 4px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     .stat-label {
       font-size: 12px;
       color: rgba(255,255,255,0.85);
       font-weight: 700;
-    }
-
-    .filter-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .filter-tab {
-      padding: 10px 18px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      color: white;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-
-    .filter-tab.active {
-      background: white;
-      color: var(--success);
-      border-color: white;
-    }
-
-    .filter-tab:active {
-      transform: scale(0.96);
     }
 
     .word-grid {
@@ -188,9 +130,9 @@
     }
 
     .word-term {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 900;
-      color: #1e293b;
+      color: var(--gray-900);
       letter-spacing: -0.3px;
     }
 
@@ -204,28 +146,35 @@
     }
 
     .word-meaning {
-      font-size: 16px;
+      font-size: 18px;
       color: var(--success);
       font-weight: 700;
       margin-bottom: 10px;
     }
 
     .word-def {
-      font-size: 13px;
-      color: #64748b;
+      font-size: 14px;
+      color: var(--gray-600);
       font-style: italic;
       line-height: 1.4;
       margin-bottom: 10px;
     }
 
     .word-example {
-      font-size: 14px;
-      color: #475569;
+      font-size: 15px;
+      color: var(--gray-700);
       line-height: 1.4;
       padding: 10px;
       background: rgba(16, 185, 129, 0.05);
       border-left: 3px solid var(--success);
       border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .word-translation {
+      font-size: 13px;
+      color: var(--gray-500);
+      line-height: 1.3;
     }
 
     .word-meta {
@@ -238,12 +187,12 @@
 
     .meta-item {
       font-size: 11px;
-      color: #64748b;
+      color: var(--gray-600);
       font-weight: 700;
     }
 
     .meta-item strong {
-      color: #1e293b;
+      color: var(--gray-900);
     }
 
     .restudy-btn {
@@ -290,48 +239,52 @@
       margin-bottom: 24px;
     }
 
-    .empty-btn {
-      display: inline-block;
-      background: white;
-      color: var(--success);
-      padding: 12px 24px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      transition: all 0.2s ease;
-    }
-
-    .empty-btn:active {
-      transform: scale(0.96);
-    }
-
-    .loading {
+    .bottom-nav {
       position: fixed;
-      inset: 0;
-      background: var(--bg-gradient);
-      display: grid;
-      place-items: center;
-      z-index: 999;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      min-width: 70px;
+    }
+
+    .nav-item:active { transform: scale(0.94); }
+    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
+
+    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
       color: white;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      white-space: nowrap;
     }
   </style>
 </head>
-<body>
+<body style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
@@ -352,8 +305,8 @@
         <div class="stat-label">완료</div>
       </div>
       <div class="stat-box">
-        <div class="stat-value" id="avgAccuracy">0%</div>
-        <div class="stat-label">평균 정확도</div>
+        <div class="stat-value" id="avgCorrect">0</div>
+        <div class="stat-label">평균 정답</div>
       </div>
       <div class="stat-box">
         <div class="stat-value" id="needReview">0</div>
@@ -361,43 +314,53 @@
       </div>
     </div>
 
-    <div class="filter-tabs">
-      <button class="filter-tab active" data-filter="all">전체</button>
-      <button class="filter-tab" data-filter="recent">최근 학습</button>
-      <button class="filter-tab" data-filter="mastered">완전 숙달</button>
-      <button class="filter-tab" data-filter="review">복습 필요</button>
-    </div>
-
     <div class="word-grid" id="wordGrid"></div>
   </div>
 
-  <script>
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">단어장</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initFirebase, saveToCloud } from './firebase-config.js';
+
     let ALL_DATA = [];
     let completedWords = [];
-    let currentFilter = 'all';
 
-    async function loadCompletedWords() {
+    async function init() {
       try {
+        await initFirebase();
+        
         const res = await fetch('words.json');
         const json = await res.json();
-        
-        ALL_DATA = json.days.flatMap(d => d.words);
+        ALL_DATA = json.words;
         
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-        
-        // 완료한 단어 필터링
         completedWords = ALL_DATA.filter(item => studied[item.w]);
         
         if (completedWords.length === 0) {
           showEmpty();
         } else {
           updateStats();
-          renderWords(completedWords);
+          renderWords();
         }
-        
       } catch (e) {
-        alert('데이터를 불러올 수 없습니다.');
-        console.error(e);
+        console.error('초기화 실패:', e);
       } finally {
         document.getElementById('loading').style.display = 'none';
       }
@@ -408,16 +371,14 @@
       
       document.getElementById('totalCompleted').textContent = completedWords.length;
       
-      // 평균 정확도 계산 (correctCount 기반)
       const totalCorrect = completedWords.reduce((sum, item) => {
         return sum + (studied[item.w]?.correctCount || 0);
       }, 0);
-      const avgAcc = completedWords.length > 0 
-        ? Math.round((totalCorrect / completedWords.length) * 20) // 5회 만점 기준
+      const avgCorrect = completedWords.length > 0 
+        ? Math.round(totalCorrect / completedWords.length)
         : 0;
-      document.getElementById('avgAccuracy').textContent = Math.min(100, avgAcc) + '%';
+      document.getElementById('avgCorrect').textContent = avgCorrect;
       
-      // 복습 필요 단어 (마지막 학습 3일 이상 지남)
       const now = Date.now();
       const needReview = completedWords.filter(item => {
         const lastReview = studied[item.w]?.lastReview || 0;
@@ -428,13 +389,13 @@
       document.getElementById('needReview').textContent = needReview;
     }
 
-    function renderWords(words) {
+    function renderWords() {
       const wordGrid = document.getElementById('wordGrid');
       wordGrid.innerHTML = '';
       
       const studied = JSON.parse(localStorage.getItem('studied') || '{}');
       
-      words.forEach(item => {
+      completedWords.forEach(item => {
         const record = studied[item.w] || {};
         const lastReview = record.lastReview || Date.now();
         const daysSince = Math.floor((Date.now() - lastReview) / (24 * 60 * 60 * 1000));
@@ -446,12 +407,11 @@
           <div class="word-front">
             <div class="word-header">
               <div class="word-term">${item.w}</div>
-              <div class="word-badge">Day ${daysSince}</div>
+              <div class="word-badge">${daysSince}일 전</div>
             </div>
             <div class="word-meaning">${item.m}</div>
             <div class="word-meta">
               <div class="meta-item">정답 <strong>${correctCount}회</strong></div>
-              <div class="meta-item">간격 <strong>${record.interval || 1}일</strong></div>
             </div>
           </div>
           
@@ -460,16 +420,20 @@
               <div class="word-term">${item.w}</div>
               <div class="word-badge">뒤집기</div>
             </div>
+            <div class="word-meaning">${item.m}</div>
             <div class="word-def">${item.def}</div>
             <div class="word-example">${item.ex.replace('_____', item.w)}</div>
-            <div style="font-size:13px; color:#64748b; margin-top:8px;">${item.t}</div>
-            <button class="restudy-btn" onclick="restudyWord('${item.w}')">다시 학습하기</button>
+            <div class="word-translation">${item.t}</div>
+            <button class="restudy-btn" data-word="${item.w}">다시 학습하기</button>
           </div>
         `;
         
-        // 카드 뒤집기
         card.onclick = (e) => {
-          if (e.target.classList.contains('restudy-btn')) return;
+          if (e.target.classList.contains('restudy-btn')) {
+            const word = e.target.dataset.word;
+            restudyWord(word);
+            return;
+          }
           card.classList.toggle('flipped');
         };
         
@@ -480,15 +444,15 @@
     function restudyWord(word) {
       const studied = JSON.parse(localStorage.getItem('studied') || '{}');
       
-      // 학습 기록 초기화
       if (studied[word]) {
-        studied[word].interval = 1;
-        studied[word].lastReview = Date.now();
+        studied[word].lastReview = Date.now() - (4 * 24 * 60 * 60 * 1000); // 4일 전으로 설정
         localStorage.setItem('studied', JSON.stringify(studied));
+        saveToCloud();
       }
       
-      alert(`"${word}" 복습 모드로 추가되었습니다!`);
-      location.reload();
+      alert(`✅ "${word}"를 복습 목록에 추가했습니다!`);
+      updateStats();
+      renderWords();
     }
 
     function showEmpty() {
@@ -504,53 +468,12 @@
             학습을 시작하면<br/>
             완료한 단어가 여기에 표시됩니다.
           </div>
-          <a href="index.html" class="empty-btn">학습 시작하기</a>
+          <a href="index.html" class="btn btn-primary">학습 시작하기</a>
         </div>
       `;
     }
 
-    // 필터 탭
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('filter-tab')) {
-        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        
-        currentFilter = e.target.dataset.filter;
-        applyFilter();
-      }
-    });
-
-    function applyFilter() {
-      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-      const now = Date.now();
-      
-      let filtered = [...completedWords];
-      
-      if (currentFilter === 'recent') {
-        // 최근 3일 이내 학습
-        filtered = completedWords.filter(item => {
-          const lastReview = studied[item.w]?.lastReview || 0;
-          const daysPassed = (now - lastReview) / (24 * 60 * 60 * 1000);
-          return daysPassed <= 3;
-        });
-      } else if (currentFilter === 'mastered') {
-        // 정답 5회 이상
-        filtered = completedWords.filter(item => {
-          return (studied[item.w]?.correctCount || 0) >= 5;
-        });
-      } else if (currentFilter === 'review') {
-        // 복습 필요 (3일 이상 지남)
-        filtered = completedWords.filter(item => {
-          const lastReview = studied[item.w]?.lastReview || 0;
-          const daysPassed = (now - lastReview) / (24 * 60 * 60 * 1000);
-          return daysPassed > 3;
-        });
-      }
-      
-      renderWords(filtered);
-    }
-
-    loadCompletedWords();
+    init();
   </script>
 </body>
 </html>
