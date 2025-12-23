@@ -423,7 +423,14 @@
       window.location.href = 'onboarding.html';
     }
 
-    if ('serviceWorker' in navigator) {
+/*
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/WORD-TEST/service-worker.js')
+    .then(reg => console.log('✅ Service Worker 등록:', reg))
+    .catch(err => console.error('❌ Service Worker 등록 실패:', err));
+}
+*/
+
       navigator.serviceWorker.register('/WORD-TEST/service-worker.js')
         .then(reg => console.log('✅ Service Worker 등록:', reg))
         .catch(err => console.error('❌ Service Worker 등록 실패:', err));
@@ -673,3 +680,4 @@
   </script>
 </body>
 </html>
+
