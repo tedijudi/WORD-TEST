@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#10b981" />
+  <title>연습 모드 - WordSwipe</title>
+  
+  <link rel="manifest" href="/WORD-TEST/manifest.json" />
+  <link rel="stylesheet" href="common.css" />
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .main-container {
+      max-width: 480px;
+      margin: 0 auto;
+      height: calc(var(--vvh, 1vh) * 100);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 
+        max(12px, env(safe-area-inset-top)) 
+        12px 
+        max(100px, env(safe-area-inset-bottom) + 90px) 
+        12px;
+      overflow: hidden;
+    }
+
+    header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      flex: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .progress-indicator {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .sound-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s;
+    }
+
+    .sound-btn:active {
+      transform: scale(0.9);
+      background: rgba(255,255,255,0.3);
+    }
+
+    main {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .deck {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      perspective: 1200px;
+    }
+
+    .card {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(40px);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 28px;
+      box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.25),
+        0 10px 24px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      touch-action: none;
+      cursor: grab;
+      overflow: hidden;
+    }
+
+    .card:active { cursor: grabbing; }
+
+    .card.enter {
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardEnter {
+      from { transform: translateY(-15%) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .word-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .word-main {
+      flex: 1;
+    }
+
+    .word-term {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--gray-900);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .word-meaning {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .mnemonic-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.08));
+      border: 2px solid rgba(16,185,129,0.15);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .mnemonic-label {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--success);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mnemonic-label::before {
+      content: '💡';
+      font-size: 14px;
+    }
+
+    .mnemonic-text {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+
+    .example-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.06));
+      border: 2px solid rgba(16,185,129,0.12);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .example-label {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--success);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .example-label::before {
+      content: '📖';
+      font-size: 14px;
+    }
+
+    .example-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--gray-800);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .translation {
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.4;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(16,185,129,0.2);
+    }
+
+    .swipe-hint {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 700;
+      padding: 12px;
+      background: rgba(16,185,129,0.05);
+      border-radius: 12px;
+      margin-top: auto;
+    }
+
+    .slide-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .slide-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(16,185,129,0.3);
+      transition: all 0.3s;
+    }
+
+    .slide-dot.active {
+      width: 20px;
+      border-radius: 3px;
+      background: rgba(16,185,129,0.8);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      padding: 12px 12px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      min-width: 60px;
+    }
+
+    .nav-item:active { transform: scale(0.94); }
+    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
+
+    .nav-icon { font-size: 20px; line-height: 1; }
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div>
+      <div class="loading-spinner"></div>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <header>
+      <h1 class="app-title">📚 연습 모드</h1>
+      <span class="progress-indicator" id="progress">1/20</span>
+      <button class="sound-btn" id="soundBtn">🔊</button>
+    </header>
+
+    <main>
+      <div class="deck" id="deck"></div>
+    </main>
+
+    <div class="slide-indicator" id="slideIndicator"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="practice.html" class="nav-item active">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">연습</div>
+    </a>
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">✍️</div>
+      <div class="nav-label">시험</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initFirebase, saveToCloud } from './firebase-config.js';
+
+    function setVVH() {
+      const vv = window.visualViewport;
+      const h = vv ? vv.height : window.innerHeight;
+      document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
+    }
+    window.addEventListener('resize', setVVH);
+    window.visualViewport?.addEventListener('resize', setVVH);
+    setVVH();
+
+    let DATA = [];
+    let idx = 0;
+    let currentCard = null;
+    let synth = window.speechSynthesis;
+    let voices = [];
+
+    const deckEl = document.getElementById('deck');
+    const loadingEl = document.getElementById('loading');
+    const soundBtn = document.getElementById('soundBtn');
+    const progressEl = document.getElementById('progress');
+    const indicatorEl = document.getElementById('slideIndicator');
+
+    async function init() {
+      try {
+        await initFirebase();
+        
+        const res = await fetch('words.json');
+        const json = await res.json();
+        DATA = json.words;
+        
+        // 음성 로드
+        loadVoices();
+        
+        // 슬라이드 인디케이터 생성
+        renderIndicator();
+        
+        renderCard(true);
+        updateUI();
+      } catch (e) {
+        console.error('초기화 실패:', e);
+      } finally {
+        loadingEl.style.display = 'none';
+      }
+    }
+
+    function loadVoices() {
+      voices = synth.getVoices();
+      if (voices.length === 0) {
+        synth.onvoiceschanged = () => {
+          voices = synth.getVoices();
+        };
+      }
+    }
+
+    function speak(text) {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // 최적 음성 선택 (영어)
+      const enVoice = voices.find(v => 
+        v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Samantha'))
+      ) || voices.find(v => v.lang.startsWith('en'));
+      
+      if (enVoice) utterance.voice = enVoice;
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9; // 약간 느리게
+      utterance.pitch = 1;
+      
+      synth.speak(utterance);
+    }
+
+    soundBtn.onclick = () => {
+      if (DATA[idx]) {
+        speak(DATA[idx].w);
+        soundBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => soundBtn.style.transform = '', 200);
+      }
+    };
+
+    function renderIndicator() {
+      indicatorEl.innerHTML = '';
+      const maxDots = Math.min(DATA.length, 10); // 최대 10개만 표시
+      const step = Math.floor(DATA.length / maxDots);
+      
+      for (let i = 0; i < maxDots; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'slide-dot';
+        indicatorEl.appendChild(dot);
+      }
+      updateIndicator();
+    }
+
+    function updateIndicator() {
+      const dots = indicatorEl.querySelectorAll('.slide-dot');
+      const maxDots = dots.length;
+      const step = Math.floor(DATA.length / maxDots);
+      const activeIndex = Math.floor(idx / step);
+      
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === activeIndex);
+      });
+    }
+
+    function renderCard(enter = false) {
+      if (idx >= DATA.length) {
+        showComplete();
+        return;
+      }
+
+      const item = DATA[idx];
+
+      const card = document.createElement('div');
+      card.className = 'card' + (enter ? ' enter' : '');
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="word-header">
+            <div class="word-main">
+              <div class="word-term">${item.w}</div>
+              <div class="word-meaning">${item.m}</div>
+            </div>
+          </div>
+
+          <div class="mnemonic-box">
+            <div class="mnemonic-label">연상 문장</div>
+            <div class="mnemonic-text">${item.mnemonic}</div>
+          </div>
+
+          <div class="example-box">
+            <div class="example-label">예문</div>
+            <div class="example-text">${item.ex.replace('_____', item.w)}</div>
+            <div class="translation">${item.t}</div>
+          </div>
+
+          <div class="swipe-hint">← 이전 / 다음 →</div>
+        </div>
+      `;
+
+      deckEl.appendChild(card);
+      currentCard = card;
+
+      attachSwipe(card);
+      
+      // 진행률 저장
+      savePracticeProgress();
+    }
+
+    function savePracticeProgress() {
+      const practiced = JSON.parse(localStorage.getItem('practiced') || '{}');
+      const word = DATA[idx].w;
+      
+      if (!practiced[word]) {
+        practiced[word] = { count: 0, lastPractice: Date.now() };
+      }
+      practiced[word].count++;
+      practiced[word].lastPractice = Date.now();
+      
+      localStorage.setItem('practiced', JSON.stringify(practiced));
+      saveToCloud();
+    }
+
+    function attachSwipe(card) {
+      let startX = 0, curX = 0, dragging = false;
+
+      card.onpointerdown = e => {
+        dragging = true;
+        startX = e.clientX || e.touches[0].clientX;
+        card.style.transition = 'none';
+      };
+
+      card.onpointermove = e => {
+        if (!dragging) return;
+        curX = (e.clientX || e.touches[0].clientX) - startX;
+        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
+      };
+
+      card.onpointerup = () => {
+        if (!dragging) return;
+        dragging = false;
+        
+        if (curX > 100) {
+          // 이전
+          card.style.transition = 'transform 0.3s ease';
+          card.style.transform = 'translateX(150%) rotate(20deg)';
+          setTimeout(() => {
+            card.remove();
+            idx = Math.max(0, idx - 1);
+            renderCard(true);
+            updateUI();
+          }, 300);
+        } else if (curX < -100) {
+          // 다음
+          card.style.transition = 'transform 0.3s ease';
+          card.style.transform = 'translateX(-150%) rotate(-20deg)';
+          setTimeout(() => {
+            card.remove();
+            idx++;
+            renderCard(true);
+            updateUI();
+          }, 300);
+        } else {
+          card.style.transition = 'transform 0.2s ease';
+          card.style.transform = '';
+        }
+        curX = 0;
+      };
+    }
+
+    function showComplete() {
+      deckEl.innerHTML = `
+        <div class="card">
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
+            <div style="font-size:80px; margin-bottom:24px;">✅</div>
+            <h2 style="font-size:32px; font-weight:900; color:#10b981; margin-bottom:16px;">연습 완료!</h2>
+            <p style="font-size:16px; color:#64748b; margin-bottom:24px;">모든 단어를 확인했습니다</p>
+            <a href="practice.html" class="btn btn-primary" style="background:linear-gradient(135deg,#10b981,#059669);">처음부터 다시</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateUI() {
+      progressEl.textContent = `${idx + 1}/${DATA.length}`;
+      updateIndicator();
+    }
+
+    init();
+  </script>
+</body>
+</html>
