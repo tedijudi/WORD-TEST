@@ -391,4 +391,27 @@ h1, h2, h3, h4, h5, h6 {
     user-select: none;
   }
 }
+/* ========================================
+   페이지별 색상 시스템
+   ======================================== */
+
+/* 연습 모드 - 초록색 */
+body.practice-mode {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* 시험 모드 - 보라색 (기본) */
+body.exam-mode {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+/* 복습 모드 - 주황색 */
+body.review-mode {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* 통계 - 파란색 */
+body.stats-mode {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
 
