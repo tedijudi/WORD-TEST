@@ -83,6 +83,21 @@
 
     .card:active { cursor: grabbing; }
 
+    .card.enter {
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardEnter {
+      from {
+        transform: translateY(-15%) scale(0.9) rotateX(12deg);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1) rotateX(0);
+        opacity: 1;
+      }
+    }
+
     .card-inner {
       width: 100%;
       height: 100%;
@@ -91,18 +106,6 @@
       flex-direction: column;
       gap: 12px;
       overflow: hidden;
-    }
-
-    .review-badge {
-      background: linear-gradient(135deg, var(--secondary), var(--accent));
-      color: white;
-      padding: 8px 12px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 800;
-      text-align: center;
-      letter-spacing: 0.3px;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
     }
 
     .definition-box, .example-box {
@@ -214,9 +217,15 @@
       border-color: var(--success);
       color: white;
       box-shadow: 0 8px 24px rgba(16,185,129,0.4);
+      animation: correctPulse 0.5s ease;
     }
 
     .choice.correct .choice-meaning { color: rgba(255,255,255,0.95); }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
 
     .choice.wrong {
       background: linear-gradient(135deg, var(--error), #dc2626);
@@ -233,6 +242,8 @@
       25% { transform: translateX(-10px); }
       75% { transform: translateX(10px); }
     }
+
+    .choice.disabled { opacity: 0.6; pointer-events: none; }
 
     .swipe-hint {
       text-align: center;
@@ -282,8 +293,8 @@
       transform: translateX(-50%);
       z-index: 100;
       display: flex;
-      gap: 12px;
-      padding: 12px 16px;
+      gap: 8px;
+      padding: 12px 12px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(30px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -298,29 +309,29 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: transparent;
       border: none;
       border-radius: 16px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
-      min-width: 70px;
+      min-width: 60px;
     }
 
     .nav-item:active { transform: scale(0.94); }
     .nav-item.active { background: rgba(255, 255, 255, 0.25); }
 
-    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-icon { font-size: 20px; line-height: 1; }
     .nav-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: white;
       white-space: nowrap;
     }
   </style>
 </head>
-<body>
+<body style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
@@ -340,29 +351,28 @@
     </main>
   </div>
 
- <nav class="bottom-nav">
-  <a href="practice.html" class="nav-item">
-    <div class="nav-icon">📚</div>
-    <div class="nav-label">연습</div>
-  </a>
-  <a href="index.html" class="nav-item">
-    <div class="nav-icon">✍️</div>
-    <div class="nav-label">시험</div>
-  </a>
-  <a href="wordsets.html" class="nav-item">
-    <div class="nav-icon">📖</div>
-    <div class="nav-label">목록</div>
-  </a>
-  <a href="review.html" class="nav-item">
-    <div class="nav-icon">🔁</div>
-    <div class="nav-label">복습</div>
-  </a>
-  <a href="stats.html" class="nav-item">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">통계</div>
-  </a>
-</nav>
-
+  <nav class="bottom-nav">
+    <a href="practice.html" class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">연습</div>
+    </a>
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">✍️</div>
+      <div class="nav-label">시험</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item active">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
 
   <script type="module">
     import { initFirebase, saveToCloud } from './firebase-config.js';
@@ -396,7 +406,6 @@
         const json = await res.json();
         ALL_DATA = json.words;
         
-        // 복습 대상 단어 필터링
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
         const now = Date.now();
         
@@ -404,7 +413,6 @@
           const record = studied[item.w];
           if (!record) return false;
           
-          // 3일 이상 지난 단어
           const daysPassed = (now - record.lastReview) / (24 * 60 * 60 * 1000);
           return daysPassed >= 3;
         });
@@ -435,11 +443,9 @@
       const choices = generateChoices(item);
 
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'card enter';
       card.innerHTML = `
         <div class="card-inner">
-          <div class="review-badge">복습 카드</div>
-          
           <div class="definition-box">
             <div class="label">Definition</div>
             <div class="definition-text">${item.def}</div>
@@ -495,7 +501,6 @@
       } else {
         okCount++;
         
-        // 학습 기록 업데이트
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
         if (studied[item.w]) {
           studied[item.w].lastReview = Date.now();
@@ -522,11 +527,13 @@
 
     function attachSwipe(card) {
       let startX = 0, curX = 0, dragging = false;
+      let startTime = 0;
 
       card.onpointerdown = e => {
         if (!answered) return;
         dragging = true;
         startX = e.clientX || e.touches[0].clientX;
+        startTime = Date.now();
       };
 
       card.onpointermove = e => {
@@ -539,7 +546,12 @@
         if (!dragging) return;
         dragging = false;
         
-        if (Math.abs(curX) > 100) {
+        const threshold = 60;
+        const timeElapsed = Date.now() - startTime;
+        const velocity = Math.abs(curX) / timeElapsed;
+        const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
+        
+        if (shouldSwipe) {
           card.style.transition = 'transform 0.3s ease';
           card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
           setTimeout(() => {
