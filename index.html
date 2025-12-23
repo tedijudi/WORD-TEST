@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="common.css" />
   
   <style>
+    /* 기존 스타일 유지 */
     .main-container {
       max-width: 480px;
       margin: 0 auto;
@@ -36,6 +37,30 @@
       color: white;
       flex: 1;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sync-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .sync-indicator.syncing {
+      background: #f59e0b;
+    }
+
+    .sync-indicator.offline {
+      background: #ef4444;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
     .stat-badge {
@@ -49,6 +74,7 @@
       border: 1px solid rgba(255,255,255,0.2);
     }
 
+    /* 나머지 스타일 동일 */
     main {
       flex: 1 1 auto;
       min-height: 0;
@@ -93,7 +119,6 @@
       overflow: hidden;
     }
 
-    /* ✅ 하단 고정 네비게이션 */
     .bottom-nav {
       position: fixed;
       bottom: max(16px, env(safe-area-inset-bottom) + 8px);
@@ -127,19 +152,10 @@
       min-width: 70px;
     }
 
-    .nav-item:active {
-      transform: scale(0.94);
-    }
+    .nav-item:active { transform: scale(0.94); }
+    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
 
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.25);
-    }
-
-    .nav-icon {
-      font-size: 24px;
-      line-height: 1;
-    }
-
+    .nav-icon { font-size: 24px; line-height: 1; }
     .nav-label {
       font-size: 11px;
       font-weight: 700;
@@ -293,13 +309,16 @@
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
-      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">Firebase 연결 중...</p>
     </div>
   </div>
 
   <div class="main-container">
     <header>
-      <h1 class="app-title">📚 단어장</h1>
+      <h1 class="app-title">
+        📚 단어장
+        <span class="sync-indicator" id="syncIndicator"></span>
+      </h1>
       <span class="stat-badge" id="statCurrent">1/100</span>
       <span class="stat-badge">✅ <span id="statOk">0</span></span>
     </header>
@@ -309,7 +328,6 @@
     </main>
   </div>
 
-  <!-- ✅ 하단 네비게이션 -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item active">
       <div class="nav-icon">📚</div>
@@ -329,7 +347,9 @@
     </a>
   </nav>
 
-  <script>
+  <script type="module">
+    import { initFirebase, saveToCloud, getUserProfile, updateUserName } from './firebase-config.js';
+
     // visualViewport 높이
     function setVVH() {
       const vv = window.visualViewport;
@@ -352,17 +372,32 @@
 
     const deckEl = document.getElementById('deck');
     const loadingEl = document.getElementById('loading');
+    const syncIndicator = document.getElementById('syncIndicator');
 
-    async function loadWords() {
+    // Firebase 초기화 및 데이터 로드
+    async function init() {
       try {
+        // Firebase 초기화
+        syncIndicator.classList.add('syncing');
+        await initFirebase();
+        syncIndicator.classList.remove('syncing');
+        
+        // 프로필 확인
+        const profile = await getUserProfile();
+        console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
+        
+        // 단어 데이터 로드
         const res = await fetch('words.json');
         const json = await res.json();
         DATA = json.words;
         order = shuffle([...DATA.keys()]);
+        
         renderCard();
         updateUI();
       } catch (e) {
-        alert('단어 파일을 불러올 수 없습니다.');
+        console.error('초기화 실패:', e);
+        syncIndicator.classList.add('offline');
+        alert('Firebase 연결 실패. 오프라인 모드로 계속합니다.');
       } finally {
         loadingEl.style.display = 'none';
       }
@@ -433,7 +468,25 @@
       const isCorrect = selected === item.w;
 
       if (!isCorrect) vibrate([100, 50, 100]);
-      else okCount++;
+      else {
+        okCount++;
+        
+        // ✅ 학습 데이터 저장
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        if (!studied[item.w]) {
+          studied[item.w] = {
+            correctCount: 0,
+            interval: 1,
+            lastReview: Date.now()
+          };
+        }
+        studied[item.w].correctCount++;
+        studied[item.w].lastReview = Date.now();
+        localStorage.setItem('studied', JSON.stringify(studied));
+        
+        // ✅ 클라우드 저장 (비동기)
+        saveToCloud();
+      }
 
       currentCard.querySelectorAll('.choice').forEach((c, i) => {
         const meaningEl = c.querySelector(`[data-idx="${i}"]`);
@@ -487,6 +540,18 @@
     }
 
     function showComplete() {
+      // 통계 저장
+      const today = new Date().toISOString().split('T')[0];
+      const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
+      if (!stats[today]) {
+        stats[today] = { sessions: 0, correct: 0, wrong: 0 };
+      }
+      stats[today].sessions++;
+      stats[today].correct += okCount;
+      localStorage.setItem('wordswipe_stats', JSON.stringify(stats));
+      
+      saveToCloud();
+      
       deckEl.innerHTML = `
         <div class="card">
           <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
@@ -513,7 +578,7 @@
       return a;
     }
 
-    loadWords();
+    init();
   </script>
 </body>
 </html>
