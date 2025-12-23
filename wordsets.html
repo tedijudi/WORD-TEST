@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#6366f1" />
+  <title>단어장 선택 - WordSwipe</title>
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --accent: #ec4899;
+      --success: #10b981;
+      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    }
+
+    html, body { 
+      height: 100%; 
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-gradient);
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)) 16px;
+    }
+
+    header {
+      margin-bottom: 24px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      color: white;
+      text-decoration: none;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s ease;
+      margin-bottom: 16px;
+    }
+
+    .back-btn:active {
+      transform: scale(0.96);
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+      font-weight: 600;
+    }
+
+    .progress-overview {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .progress-stat {
+      text-align: center;
+    }
+
+    .progress-stat-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .progress-stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 700;
+    }
+
+    .overall-progress {
+      background: rgba(255,255,255,0.2);
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .overall-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, white, rgba(255,255,255,0.9));
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    }
+
+    .day-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 80px;
+    }
+
+    .day-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      padding: 20px 16px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 4px 16px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .day-card:active {
+      transform: scale(0.96);
+    }
+
+    .day-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .day-card.completed::before {
+      opacity: 1;
+    }
+
+    .day-card.current {
+      border-color: var(--accent);
+      box-shadow: 
+        0 8px 24px rgba(236, 72, 153, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .day-card.locked {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .day-number {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .day-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1.3;
+    }
+
+    .day-words {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .day-progress {
+      background: rgba(99, 102, 241, 0.1);
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: auto;
+    }
+
+    .day-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 999px;
+      transition: width 0.5s ease;
+    }
+
+    .day-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 20px;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-gradient);
+      display: grid;
+      place-items: center;
+      z-index: 999;
+      color: white;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div>
+      <div class="loading-spinner"></div>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <a href="index.html" class="back-btn">← 돌아가기</a>
+      <h1>📚 단어장 선택</h1>
+      <p class="subtitle">경선식 영단어 30일 완성</p>
+    </header>
+
+    <div class="progress-overview">
+      <div class="progress-stats">
+        <div class="progress-stat">
+          <div class="progress-stat-value" id="totalDays">0</div>
+          <div class="progress-stat-label">전체 Day</div>
+        </div>
+        <div class="progress-stat">
+          <div class="progress-stat-value" id="completedDays">0</div>
+          <div class="progress-stat-label">완료</div>
+        </div>
+        <div class="progress-stat">
+          <div class="progress-stat-value" id="totalWords">0</div>
+          <div class="progress-stat-label">총 단어</div>
+        </div>
+      </div>
+      <div class="overall-progress">
+        <div class="overall-progress-bar" id="overallProgressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="day-grid" id="dayGrid"></div>
+  </div>
+
+  <script>
+    async function loadWordSets() {
+      try {
+        const res = await fetch('words.json');
+        const json = await res.json();
+        
+        const { metadata, days } = json;
+        const currentDay = parseInt(localStorage.getItem('currentDay') || '1');
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        
+        // 전체 통계
+        document.getElementById('totalDays').textContent = metadata.totalDays;
+        document.getElementById('totalWords').textContent = metadata.totalWords;
+        
+        // 완료된 Day 계산
+        const completedCount = days.filter(d => {
+          const dayStudied = d.words.every(w => studied[w.w]);
+          return dayStudied;
+        }).length;
+        
+        document.getElementById('completedDays').textContent = completedCount;
+        
+        const overallProgress = (completedCount / metadata.totalDays * 100).toFixed(1);
+        document.getElementById('overallProgressBar').style.width = overallProgress + '%';
+        
+        // Day 카드 렌더링
+        const dayGrid = document.getElementById('dayGrid');
+        
+        days.forEach(day => {
+          const card = document.createElement('a');
+          card.href = '#';
+          card.className = 'day-card';
+          
+          // 진행률 계산
+          const studiedWords = day.words.filter(w => studied[w.w]).length;
+          const progress = (studiedWords / day.words.length * 100).toFixed(0);
+          
+          // 상태 결정
+          const isCompleted = studiedWords === day.words.length;
+          const isCurrent = day.day === currentDay;
+          const isLocked = day.day > currentDay && !isCompleted;
+          
+          if (isCompleted) card.classList.add('completed');
+          if (isCurrent) card.classList.add('current');
+          if (isLocked) card.classList.add('locked');
+          
+          // 배지
+          let badge = '';
+          if (isCompleted) badge = '✅';
+          else if (isCurrent) badge = '🔥';
+          else if (isLocked) badge = '🔒';
+          
+          card.innerHTML = `
+            ${badge ? `<div class="day-badge">${badge}</div>` : ''}
+            <div class="day-number">Day ${day.day}</div>
+            <div class="day-title">${day.title}</div>
+            <div class="day-words">${day.words.length}개 단어</div>
+            <div class="day-progress">
+              <div class="day-progress-bar" style="width: ${progress}%"></div>
+            </div>
+          `;
+          
+          card.onclick = (e) => {
+            e.preventDefault();
+            if (isLocked) {
+              alert('이전 Day를 먼저 완료해주세요!');
+              return;
+            }
+            localStorage.setItem('currentDay', day.day);
+            window.location.href = 'index.html';
+          };
+          
+          dayGrid.appendChild(card);
+        });
+        
+      } catch (e) {
+        alert('데이터를 불러올 수 없습니다.');
+        console.error(e);
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    loadWordSets();
+  </script>
+</body>
+</html>
