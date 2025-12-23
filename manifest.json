@@ -1,0 +1,55 @@
+{
+  "name": "WordSwipe - 영단어 학습",
+  "short_name": "WordSwipe",
+  "description": "스와이프로 배우는 스마트 영단어 학습 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6366f1",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "학습 시작",
+      "short_name": "학습",
+      "description": "단어 학습 시작하기",
+      "url": "/index.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "복습",
+      "short_name": "복습",
+      "description": "복습 모드",
+      "url": "/review.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "통계",
+      "short_name": "통계",
+      "description": "학습 통계 확인",
+      "url": "/stats.html",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
