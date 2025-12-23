@@ -4,121 +4,51 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#6366f1" />
-  <title>WordSwipe - 경선식 영단어</title>
+  <title>단어장 - WordSwipe</title>
+  <link rel="stylesheet" href="common.css" />
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --vvh: 1vh;
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --accent: #ec4899;
-      --success: #10b981;
-      --error: #ef4444;
-      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-    }
-
-    /* ✅ 갤럭시 Z플립5 최적화 (720x1680, 세로로 길다) */
-    @media (min-height: 1600px) {
-      :root {
-        --card-scale: 1.1; /* 카드 크게 */
-      }
-    }
-
-    /* ✅ 아이폰13미니 (375x812) */
-    @media (max-height: 700px) and (max-width: 400px) {
-      :root {
-        --card-scale: 0.92;
-      }
-    }
-
-    html, body { height: 100%; overflow: hidden; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-gradient);
-      position: relative;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    /* 배경 패턴 */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.06) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .container {
-      max-width: min(480px, 100vw);
+    .main-container {
+      max-width: 480px;
       margin: 0 auto;
       height: calc(var(--vvh, 1vh) * 100);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       padding: 
         max(12px, env(safe-area-inset-top)) 
         12px 
-        max(80px, env(safe-area-inset-bottom) + 70px) 
+        max(90px, env(safe-area-inset-bottom) + 80px) 
         12px;
-      position: relative;
-      z-index: 1;
       overflow: hidden;
     }
 
-    /* ✅ 헤더 극도 최소화 */
     header {
       flex: 0 0 auto;
-      backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 10px 14px;
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    h1 {
-      font-size: 17px;
-      font-weight: 800;
+    .app-title {
+      font-size: 20px;
+      font-weight: 900;
       color: white;
-      letter-spacing: -0.3px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.15);
       flex: 1;
-      white-space: nowrap;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
-    .day-badge {
-      font-size: 12px;
-      font-weight: 800;
-      color: white;
-      background: rgba(255,255,255,0.2);
-      padding: 5px 10px;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-mini {
-      font-size: 12px;
+    .stat-badge {
+      font-size: 13px;
       font-weight: 700;
-      color: rgba(255,255,255,0.95);
-      background: rgba(255,255,255,0.18);
-      padding: 5px 9px;
-      border-radius: 10px;
-      white-space: nowrap;
+      color: white;
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* ✅ 메인 카드 영역 */
     main {
       flex: 1 1 auto;
       min-height: 0;
@@ -130,651 +60,295 @@
 
     .deck {
       width: 100%;
-      max-width: 440px;
       height: 100%;
       position: relative;
       perspective: 1200px;
-      overflow: hidden;
-    }
-
-    .card-stack {
-      position: absolute;
-      inset: 0;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
-      transform: scale(0.96) translateY(6px);
-      opacity: 0.4;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     .card {
       position: absolute;
       inset: 0;
-      background: 
-        linear-gradient(135deg, 
-          rgba(255,255,255,0.98) 0%, 
-          rgba(255,255,255,0.92) 100%
-        );
-      backdrop-filter: blur(40px) saturate(150%);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.6);
       border-radius: 28px;
       box-shadow: 
         0 25px 70px rgba(0, 0, 0, 0.25),
         0 10px 24px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
       touch-action: none;
-      will-change: transform;
       cursor: grab;
       overflow: hidden;
-      transform: scale(var(--card-scale, 1));
     }
 
     .card:active { cursor: grabbing; }
-    .card.enter { 
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
-    }
-
-    @keyframes cardEnter {
-      from { 
-        transform: translateY(-15%) scale(0.9) rotateX(12deg); 
-        opacity: 0; 
-      }
-      to { 
-        transform: translateY(0) scale(var(--card-scale, 1)) rotateX(0); 
-        opacity: 1; 
-      }
-    }
 
     .card-inner {
       width: 100%;
       height: 100%;
-      padding: 16px 14px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       overflow: hidden;
     }
 
-    /* 정의/예문 박스 */
+    /* ✅ 하단 고정 네비게이션 */
+    .bottom-nav {
+      position: fixed;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all var(--transition-base);
+      min-width: 70px;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .nav-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+    }
+
     .definition-box, .example-box {
       border-radius: 18px;
-      padding: 12px 14px;
+      padding: 14px 16px;
       flex: 0 0 auto;
-      position: relative;
-      overflow: hidden;
     }
 
     .definition-box {
-      background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.08), 
-        rgba(139, 92, 246, 0.08)
-      );
-      border: 2px solid rgba(99, 102, 241, 0.15);
-    }
-
-    .definition-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, var(--primary), var(--secondary));
-      border-radius: 0 4px 4px 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
+      border: 2px solid rgba(99,102,241,0.15);
     }
 
     .example-box {
-      background: linear-gradient(135deg, 
-        rgba(139, 92, 246, 0.06), 
-        rgba(236, 72, 153, 0.06)
-      );
-      border: 2px solid rgba(139, 92, 246, 0.12);
+      background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(236,72,153,0.06));
+      border: 2px solid rgba(139,92,246,0.12);
     }
 
-    .definition-label, .example-label {
+    .label {
       font-size: 10px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .definition-label { 
+      margin-bottom: 8px;
       color: var(--primary);
     }
 
-    .definition-label::before {
-      content: '📖';
-      font-size: 12px;
-    }
-
-    .example-label { 
-      color: var(--secondary);
-    }
-
-    .example-label::before {
-      content: '💬';
-      font-size: 12px;
-    }
-
     .definition-text {
-      font-size: 14px;
-      line-height: 1.4;
-      color: #1e293b;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--gray-800);
       font-weight: 600;
       font-style: italic;
     }
 
     .example-text {
-      font-size: 15px;
-      line-height: 1.45;
-      color: #1e293b;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--gray-800);
       font-weight: 600;
     }
 
     .blank {
       display: inline-block;
-      min-width: 80px;
+      min-width: 90px;
       border-bottom: 3px solid var(--primary);
       text-align: center;
-      padding: 0 4px;
+      padding: 0 6px;
       color: var(--primary);
       font-weight: 900;
-      animation: blinkBorder 1.5s infinite;
-    }
-
-    @keyframes blinkBorder {
-      0%, 100% { border-color: var(--primary); }
-      50% { border-color: var(--accent); }
     }
 
     .translation {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 2px dashed rgba(99, 102, 241, 0.2);
-      font-size: 13px;
-      color: #64748b;
-      line-height: 1.35;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px dashed rgba(99,102,241,0.2);
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.4;
       opacity: 0;
       max-height: 0;
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all var(--transition-slow);
     }
 
-    .translation.show { 
-      opacity: 1; 
-      max-height: 120px; 
-    }
+    .translation.show { opacity: 1; max-height: 150px; }
 
-    /* ✅ 선택지 */
     .choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       margin-top: auto;
-      flex: 0 0 auto;
     }
 
     .choice {
       background: white;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--gray-200);
       border-radius: 16px;
-      padding: 10px 8px;
-      font-size: 14px;
+      padding: 12px 10px;
+      font-size: 15px;
       font-weight: 800;
-      color: #1e293b;
+      color: var(--gray-800);
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      transition: all var(--transition-base);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       align-items: center;
       justify-content: center;
-      min-height: 52px;
-      touch-action: manipulation;
-      -webkit-user-select: none;
-      user-select: none;
-      box-shadow: 
-        0 2px 8px rgba(0,0,0,0.04),
-        inset 0 1px 0 rgba(255,255,255,0.8);
+      min-height: 56px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    @media (max-height: 700px) {
-      .choice {
-        min-height: 46px;
-        font-size: 13px;
-        padding: 8px 6px;
-      }
-    }
-
-    .choice::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.06), 
-        rgba(139, 92, 246, 0.06)
-      );
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .choice:active { 
-      transform: scale(0.96); 
-    }
-
-    .choice:hover::before {
-      opacity: 1;
-    }
-
-    .choice-word { 
-      position: relative; 
-      z-index: 1; 
-      line-height: 1.2; 
-    }
+    .choice:active { transform: scale(0.96); }
 
     .choice-meaning {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--secondary);
       font-weight: 700;
       opacity: 0;
-      transform: translateY(-3px);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-      z-index: 1;
-      line-height: 1.1;
+      transition: all var(--transition-bounce);
     }
 
-    .choice-meaning.show { 
-      opacity: 1; 
-      transform: translateY(0); 
-    }
+    .choice-meaning.show { opacity: 1; }
 
     .choice.correct {
-      background: linear-gradient(135deg, var(--success), #059669);
+      background: var(--gradient-success);
       border-color: var(--success);
       color: white;
-      box-shadow: 
-        0 8px 24px rgba(16, 185, 129, 0.4),
-        inset 0 1px 0 rgba(255,255,255,0.3);
-      animation: correctPulse 0.5s ease;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.4);
     }
 
-    .choice.correct .choice-meaning { 
-      color: rgba(255,255,255,0.95); 
-    }
-
-    @keyframes correctPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
+    .choice.correct .choice-meaning { color: rgba(255,255,255,0.95); }
 
     .choice.wrong {
       background: linear-gradient(135deg, var(--error), #dc2626);
       border-color: var(--error);
       color: white;
-      box-shadow: 
-        0 8px 24px rgba(239, 68, 68, 0.4),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-      animation: wrongShake 0.5s ease;
+      box-shadow: 0 8px 24px rgba(239,68,68,0.4);
+      animation: shake 0.5s ease;
     }
 
-    .choice.wrong .choice-meaning { 
-      color: rgba(255,255,255,0.95); 
-    }
+    .choice.wrong .choice-meaning { color: rgba(255,255,255,0.95); }
 
-    @keyframes wrongShake {
+    @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-8px) rotate(-1deg); }
-      40% { transform: translateX(8px) rotate(1deg); }
-      60% { transform: translateX(-6px) rotate(-0.5deg); }
-      80% { transform: translateX(6px) rotate(0.5deg); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
 
-    .choice.disabled { 
-      opacity: 0.6; 
-      cursor: not-allowed; 
-      pointer-events: none; 
-    }
-
-    /* 스와이프 힌트 */
     .swipe-hint {
       text-align: center;
-      font-size: 12px;
-      color: rgba(30, 41, 59, 0.5);
-      font-weight: 800;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      flex: 0 0 auto;
-      margin-top: 6px;
-      letter-spacing: 0.3px;
-    }
-
-    .swipe-hint.show { 
-      opacity: 1; 
-      transform: translateY(0); 
-    }
-
-    /* 스와이프 오버레이 */
-    .swipe-overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 10;
-      border-radius: 28px;
-    }
-
-    .swipe-overlay.ok { 
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 70%); 
-    }
-
-    .swipe-overlay.again { 
-      background: radial-gradient(circle, rgba(236, 72, 153, 0.2), transparent 70%); 
-    }
-
-    .swipe-icon { 
-      font-size: 72px; 
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); 
-    }
-
-    /* ✅ 플로팅 네비게이션 */
-    .floating-nav {
-      position: fixed;
-      bottom: max(20px, env(safe-area-inset-bottom) + 10px);
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .fab-menu {
-      display: flex;
-      gap: 12px;
-      opacity: 0;
-      transform: translateY(20px) scale(0.8);
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .fab-menu.open {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: all;
-    }
-
-    .fab-item {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      box-shadow: 
-        0 8px 24px rgba(99, 102, 241, 0.4),
-        inset 0 1px 0 rgba(255,255,255,0.3);
-      transition: all 0.2s ease;
-      position: relative;
-      text-decoration: none;
-    }
-
-    .fab-item:active {
-      transform: scale(0.92);
-    }
-
-    .fab-item::after {
-      content: attr(data-label);
-      position: absolute;
-      bottom: -22px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
+      font-size: 13px;
+      color: var(--gray-500);
       font-weight: 700;
-      white-space: nowrap;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 3px 8px;
-      border-radius: 6px;
       opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
+      transition: all var(--transition-bounce);
+      margin-top: 8px;
     }
 
-    .fab-item:hover::after {
-      opacity: 1;
-    }
-
-    .fab-main {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--secondary));
-      color: white;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      box-shadow: 
-        0 12px 32px rgba(236, 72, 153, 0.5),
-        inset 0 2px 0 rgba(255,255,255,0.4);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .fab-main:active {
-      transform: scale(0.94);
-    }
-
-    .fab-main.open {
-      transform: rotate(45deg);
-    }
-
-    /* 완료 화면 */
-    .complete-screen {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 20px;
-      padding: 24px;
-    }
-
-    .complete-icon { 
-      font-size: 80px; 
-      animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes bounceIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .complete-title {
-      font-size: 32px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .complete-stats {
-      background: rgba(99, 102, 241, 0.08);
-      padding: 20px 28px;
-      border-radius: 20px;
-      display: flex;
-      gap: 28px;
-      border: 2px solid rgba(99, 102, 241, 0.15);
-    }
-
-    .stat-item { 
-      text-align: center; 
-    }
-
-    .stat-value { 
-      font-size: 36px; 
-      font-weight: 900; 
-      color: #1e293b; 
-      margin-bottom: 4px; 
-    }
-
-    .stat-label { 
-      font-size: 13px; 
-      color: #64748b; 
-      font-weight: 800; 
-    }
-
-    .share-btn {
-      margin-top: 12px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-      transition: all 0.2s ease;
-    }
-
-    .share-btn:active { 
-      transform: scale(0.96); 
-    }
-
-    /* 스와이프 애니메이션 */
-    @keyframes swipeRight { 
-      to { 
-        transform: translateX(160%) rotate(18deg); 
-        opacity: 0; 
-      } 
-    }
-
-    @keyframes swipeLeft { 
-      to { 
-        transform: translateX(-160%) rotate(-18deg); 
-        opacity: 0; 
-      } 
-    }
-
-    /* 로딩 */
-    .loading {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-gradient);
-      display: grid;
-      place-items: center;
-      z-index: 999;
-      color: white;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .swipe-hint.show { opacity: 1; }
   </style>
 </head>
 <body>
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
-      <p style="margin-top:16px; font-size:16px; font-weight:700;">단어 불러오는 중...</p>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
     </div>
   </div>
 
-  <div class="container">
+  <div class="main-container">
     <header>
-      <h1>WordSwipe</h1>
-      <span class="day-badge" id="dayBadge">Day 1</span>
-      <span class="stat-mini"><span id="statCurrent">1/50</span></span>
-      <span class="stat-mini">✅ <span id="statOk">0</span></span>
+      <h1 class="app-title">📚 단어장</h1>
+      <span class="stat-badge" id="statCurrent">1/100</span>
+      <span class="stat-badge">✅ <span id="statOk">0</span></span>
     </header>
 
     <main>
-      <div class="deck" id="deck">
-        <div class="card-stack"></div>
-      </div>
+      <div class="deck" id="deck"></div>
     </main>
   </div>
 
-  <!-- ✅ 플로팅 네비게이션 -->
-  <div class="floating-nav">
-    <div class="fab-menu" id="fabMenu">
-      <a href="wordsets.html" class="fab-item" data-label="단어장">📚</a>
-      <a href="review.html" class="fab-item" data-label="복습">🔁</a>
-      <a href="stats.html" class="fab-item" data-label="통계">📊</a>
-      <a href="completed.html" class="fab-item" data-label="완료">✅</a>
-    </div>
-    <button class="fab-main" id="fabMain">+</button>
-  </div>
+  <!-- ✅ 하단 네비게이션 -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">단어장</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
 
   <script>
-    // ✅ visualViewport 높이 고정
+    // visualViewport 높이
     function setVVH() {
       const vv = window.visualViewport;
       const h = vv ? vv.height : window.innerHeight;
       document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
     }
-
     window.addEventListener('resize', setVVH);
     window.visualViewport?.addEventListener('resize', setVVH);
-    window.visualViewport?.addEventListener('scroll', setVVH);
     setVVH();
 
-    // ✅ 플로팅 네비 토글
-    const fabMain = document.getElementById('fabMain');
-    const fabMenu = document.getElementById('fabMenu');
-    let menuOpen = false;
-
-    fabMain.onclick = () => {
-      menuOpen = !menuOpen;
-      fabMenu.classList.toggle('open', menuOpen);
-      fabMain.classList.toggle('open', menuOpen);
-    };
-
-    // ✅ 진동 피드백
+    // 진동
     function vibrate(pattern) {
-      if (navigator.vibrate) {
-        navigator.vibrate(pattern);
-      }
+      if (navigator.vibrate) navigator.vibrate(pattern);
     }
 
-    // ✅ 데이터 로드
     let DATA = [];
-    let currentDay = 1;
     let order = [];
-    let idx = 0, okCount = 0, againCount = 0;
+    let idx = 0, okCount = 0;
     let answered = false, currentCard = null;
-    let wrongWords = []; // 틀린 단어 추적
 
     const deckEl = document.getElementById('deck');
     const loadingEl = document.getElementById('loading');
@@ -783,120 +357,60 @@
       try {
         const res = await fetch('words.json');
         const json = await res.json();
-        
-        // 로컬스토리지에서 현재 Day 불러오기
-        currentDay = parseInt(localStorage.getItem('currentDay') || '1');
-        
-        const dayData = json.days.find(d => d.day === currentDay);
-        if (dayData) {
-          DATA = dayData.words;
-          document.getElementById('dayBadge').textContent = `Day ${currentDay}`;
-          init();
-        } else {
-          alert('단어 데이터가 없습니다.');
-        }
+        DATA = json.words;
+        order = shuffle([...DATA.keys()]);
+        renderCard();
+        updateUI();
       } catch (e) {
         alert('단어 파일을 불러올 수 없습니다.');
-        console.error(e);
       } finally {
         loadingEl.style.display = 'none';
       }
     }
 
-    function init() {
-      // ✅ 복합 복습 알고리즘: SRS 80% + 틀린단어 20%
-      const srsWords = getSRSWords(); // SRS 대상 단어
-      const wrongPool = wrongWords.map(wi => wi); // 틀린 단어 인덱스
-      
-      const base = [...DATA.keys()];
-      let pool = [...base];
-      
-      // 틀린 단어 20% 가중치
-      wrongPool.forEach(wi => {
-        if (Math.random() < 0.2) pool.push(wi);
-      });
-      
-      order = shuffle(pool);
-      idx = 0;
-      renderCard(true);
-      updateUI();
-    }
-
-    function getSRSWords() {
-      // SRS 로직 (간격 반복)
-      const now = Date.now();
-      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-      const srsPool = [];
-      
-      DATA.forEach((item, i) => {
-        const record = studied[item.w];
-        if (!record) return; // 처음 보는 단어
-        
-        const interval = record.interval || 1; // 1일, 3일, 7일, 14일...
-        const nextReview = record.lastReview + (interval * 24 * 60 * 60 * 1000);
-        
-        if (now >= nextReview) {
-          srsPool.push(i);
-        }
-      });
-      
-      return srsPool;
-    }
-
-    function renderCard(enter = false) {
-      answered = false;
-
+    function renderCard() {
       if (idx >= order.length) {
         showComplete();
         return;
       }
 
+      answered = false;
       const item = DATA[order[idx]];
       const choices = generateChoices(item);
 
       const card = document.createElement('div');
-      card.className = 'card' + (enter ? ' enter' : '');
-      
+      card.className = 'card';
       card.innerHTML = `
         <div class="card-inner">
           <div class="definition-box">
-            <div class="definition-label">Definition</div>
+            <div class="label">Definition</div>
             <div class="definition-text">${item.def}</div>
           </div>
 
           <div class="example-box">
-            <div class="example-label">Example</div>
+            <div class="label">Example</div>
             <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
             <div class="translation" id="translation">${item.t}</div>
           </div>
 
-          <div class="choices" id="choices">
+          <div class="choices">
             ${choices.map((c, i) => `
               <div class="choice" data-word="${c.w}" data-idx="${i}">
                 <div class="choice-word">${c.w}</div>
-                <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
+                <div class="choice-meaning" data-idx="${i}">${c.m}</div>
               </div>
             `).join('')}
           </div>
 
           <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
         </div>
-
-        <div class="swipe-overlay ok"><div class="swipe-icon">✓</div></div>
-        <div class="swipe-overlay again"><div class="swipe-icon">↺</div></div>
       `;
 
       deckEl.appendChild(card);
       currentCard = card;
 
       card.querySelectorAll('.choice').forEach(btn => {
-        const btnIdx = btn.dataset.idx;
-        const meaningEl = btn.querySelector(`[data-meaning-idx="${btnIdx}"]`);
-
-        btn.onclick = () => {
-          meaningEl.classList.add('show');
-          selectChoice(btn, item);
-        };
+        btn.onclick = () => selectChoice(btn, item);
       });
 
       attachSwipe(card);
@@ -905,19 +419,10 @@
     function generateChoices(item) {
       const similar = DATA
         .filter(d => d.w !== item.w)
-        .map(d => ({ w: d.w, m: d.m, sim: similarity(item.w, d.w) }))
-        .sort((a, b) => b.sim - a.sim)
-        .slice(0, 3);
-
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(d => ({ w: d.w, m: d.m }));
       return shuffle([...similar, { w: item.w, m: item.m }]);
-    }
-
-    function similarity(a, b) {
-      let score = 0;
-      for (let i = 0; i < Math.min(a.length, b.length); i++) {
-        if (a[i] === b[i]) score++;
-      }
-      return score - Math.abs(a.length - b.length) * 0.5;
     }
 
     function selectChoice(btn, item) {
@@ -927,22 +432,13 @@
       const selected = btn.dataset.word;
       const isCorrect = selected === item.w;
 
-      // ✅ 오답 진동
-      if (!isCorrect) {
-        vibrate([100, 50, 100]); // 긴 진동
-        if (!wrongWords.includes(order[idx])) {
-          wrongWords.push(order[idx]);
-        }
-      } else {
-        okCount++;
-        updateSRS(item.w, true);
-      }
+      if (!isCorrect) vibrate([100, 50, 100]);
+      else okCount++;
 
-      currentCard.querySelectorAll('.choice').forEach((c, idx2) => {
-        c.classList.add('disabled');
-        const meaningEl = c.querySelector(`[data-meaning-idx="${idx2}"]`);
+      currentCard.querySelectorAll('.choice').forEach((c, i) => {
+        const meaningEl = c.querySelector(`[data-idx="${i}"]`);
         meaningEl.classList.add('show');
-
+        
         if (c.dataset.word === item.w) c.classList.add('correct');
         else if (c.dataset.word === selected) c.classList.add('wrong');
       });
@@ -952,168 +448,60 @@
 
       currentCard.querySelector('#translation').classList.add('show');
       currentCard.querySelector('#swipeHint').classList.add('show');
-
-      // 1초 후 자동 넘김 (선택)
-      // setTimeout(() => swipeResolve('right'), 1500);
-    }
-
-    function updateSRS(word, correct) {
-      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-      
-      if (!studied[word]) {
-        studied[word] = {
-          interval: 1,
-          lastReview: Date.now(),
-          correctCount: 0
-        };
-      }
-      
-      if (correct) {
-        studied[word].correctCount++;
-        // 간격 증가: 1 → 3 → 7 → 14 → 30일
-        const intervals = [1, 3, 7, 14, 30];
-        const nextIdx = Math.min(studied[word].correctCount, intervals.length - 1);
-        studied[word].interval = intervals[nextIdx];
-        studied[word].lastReview = Date.now();
-      }
-      
-      localStorage.setItem('studied', JSON.stringify(studied));
     }
 
     function attachSwipe(card) {
-      const okOverlay = card.querySelector('.swipe-overlay.ok');
-      const againOverlay = card.querySelector('.swipe-overlay.again');
-      let startX = 0, curX = 0, dragging = false, startT = 0;
+      let startX = 0, curX = 0, dragging = false;
 
-      const onDown = e => {
+      card.onpointerdown = e => {
         if (!answered) return;
         dragging = true;
-        startX = getX(e);
-        startT = Date.now();
-        card.style.transition = 'none';
+        startX = e.clientX || e.touches[0].clientX;
       };
 
-      const onMove = e => {
+      card.onpointermove = e => {
         if (!dragging) return;
-        curX = getX(e) - startX;
-        const rot = curX * 0.04;
-        card.style.transform = `translate3d(${curX}px, 0, 0) rotate(${rot}deg)`;
-        const prog = Math.min(1, Math.abs(curX) / 150);
-        okOverlay.style.opacity = curX > 0 ? prog : 0;
-        againOverlay.style.opacity = curX < 0 ? prog : 0;
+        curX = (e.clientX || e.touches[0].clientX) - startX;
+        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
       };
 
-      const onUp = () => {
+      card.onpointerup = () => {
         if (!dragging) return;
         dragging = false;
-        const dt = Date.now() - startT;
-        const vel = Math.abs(curX) / dt;
-        const threshold = 100;
-
-        if (curX > threshold || (vel > 0.5 && curX > 0)) {
-          card.style.animation = 'swipeRight 0.3s ease forwards';
-          setTimeout(() => swipeResolve('right'), 300);
-        } else if (curX < -threshold || (vel > 0.5 && curX < 0)) {
-          card.style.animation = 'swipeLeft 0.3s ease forwards';
-          setTimeout(() => swipeResolve('left'), 300);
+        
+        if (Math.abs(curX) > 100) {
+          card.style.transition = 'transform 0.3s ease';
+          card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
+          setTimeout(() => {
+            card.remove();
+            idx++;
+            renderCard();
+            updateUI();
+          }, 300);
         } else {
-          card.style.transition = 'transform 0.25s ease';
+          card.style.transition = 'transform 0.2s ease';
           card.style.transform = '';
-          okOverlay.style.opacity = 0;
-          againOverlay.style.opacity = 0;
         }
         curX = 0;
       };
-
-      card.onpointerdown = onDown;
-      card.onpointermove = onMove;
-      card.onpointerup = onUp;
-      card.onpointercancel = onUp;
-    }
-
-    function swipeResolve(dir) {
-      if (dir === 'right') {
-        idx++;
-      } else {
-        againCount++;
-        order.push(order[idx]);
-        idx++;
-      }
-
-      if (currentCard) currentCard.remove();
-      renderCard(true);
-      updateUI();
     }
 
     function showComplete() {
-      saveStats();
-
-      const card = document.createElement('div');
-      card.className = 'card enter';
-      card.innerHTML = `
-        <div class="card-inner">
-          <div class="complete-screen">
-            <div class="complete-icon">🎉</div>
-            <div class="complete-title">Day ${currentDay} 완료!</div>
-            <div class="complete-stats">
-              <div class="stat-item">
-                <div class="stat-value">${okCount}</div>
-                <div class="stat-label">정답</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value">${againCount}</div>
-                <div class="stat-label">복습</div>
-              </div>
-            </div>
-            <button class="share-btn" onclick="shareResult()">📤 결과 공유하기</button>
+      deckEl.innerHTML = `
+        <div class="card">
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
+            <div style="font-size:80px; margin-bottom:24px;">🎉</div>
+            <h2 class="text-gradient" style="font-size:32px; margin-bottom:16px;">완료!</h2>
+            <p style="font-size:16px; color:#64748b; margin-bottom:24px;">✅ ${okCount}개 정답</p>
+            <a href="index.html" class="btn btn-primary">다시 시작</a>
           </div>
         </div>
       `;
-      deckEl.appendChild(card);
-      currentCard = card;
     }
 
     function updateUI() {
-      document.getElementById('statCurrent').textContent = `${Math.min(idx + 1, order.length)}/${order.length}`;
+      document.getElementById('statCurrent').textContent = `${idx + 1}/${order.length}`;
       document.getElementById('statOk').textContent = okCount;
-    }
-
-    function saveStats() {
-      const today = new Date().toISOString().split('T')[0];
-      const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
-      
-      if (!stats[today]) {
-        stats[today] = { sessions: 0, correct: 0, wrong: 0 };
-      }
-      
-      stats[today].sessions++;
-      stats[today].correct += okCount;
-      stats[today].wrong += againCount;
-      
-      localStorage.setItem('wordswipe_stats', JSON.stringify(stats));
-    }
-
-    async function shareResult() {
-      const text = `WordSwipe Day ${currentDay} 완료! 🎉\n\n✅ 정답: ${okCount}\n🔁 복습: ${againCount}`;
-      
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'WordSwipe 학습 결과',
-            text: text,
-            url: window.location.href
-          });
-        } catch (e) {
-          console.log('공유 취소');
-        }
-      } else {
-        navigator.clipboard.writeText(text);
-        alert('결과가 클립보드에 복사되었습니다!');
-      }
-    }
-
-    function getX(e) { 
-      return e.touches ? e.touches[0].clientX : e.clientX; 
     }
 
     function shuffle(arr) {
