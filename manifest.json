@@ -25,9 +25,16 @@
   "categories": ["education", "productivity"],
   "shortcuts": [
     {
-      "name": "학습 시작",
-      "short_name": "학습",
-      "description": "단어 학습 시작하기",
+      "name": "연습 모드",
+      "short_name": "연습",
+      "description": "단어 연습하기",
+      "url": "/WORD-TEST/practice.html",
+      "icons": [{ "src": "/WORD-TEST/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "시험 모드",
+      "short_name": "시험",
+      "description": "단어 시험보기",
       "url": "/WORD-TEST/index.html",
       "icons": [{ "src": "/WORD-TEST/icon-192.png", "sizes": "192x192" }]
     },
