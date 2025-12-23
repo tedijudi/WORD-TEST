@@ -236,8 +236,8 @@
       transform: translateX(-50%);
       z-index: 100;
       display: flex;
-      gap: 12px;
-      padding: 12px 16px;
+      gap: 8px;
+      padding: 12px 12px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(30px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -252,22 +252,22 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       background: transparent;
       border: none;
       border-radius: 16px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
-      min-width: 70px;
+      min-width: 60px;
     }
 
     .nav-item:active { transform: scale(0.94); }
     .nav-item.active { background: rgba(255, 255, 255, 0.25); }
 
-    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-icon { font-size: 20px; line-height: 1; }
     .nav-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: white;
       white-space: nowrap;
@@ -324,7 +324,7 @@
           <div class="progress-stat-label">완료</div>
         </div>
         <div class="progress-stat">
-          <div class="progress-stat-value" id="totalWordsCount">100</div>
+          <div class="progress-stat-value" id="totalWordsCount">20</div>
           <div class="progress-stat-label">총 단어</div>
         </div>
       </div>
@@ -337,28 +337,27 @@
   </div>
 
   <nav class="bottom-nav">
-  <a href="practice.html" class="nav-item">
-    <div class="nav-icon">📚</div>
-    <div class="nav-label">연습</div>
-  </a>
-  <a href="index.html" class="nav-item">
-    <div class="nav-icon">✍️</div>
-    <div class="nav-label">시험</div>
-  </a>
-  <a href="wordsets.html" class="nav-item">
-    <div class="nav-icon">📖</div>
-    <div class="nav-label">목록</div>
-  </a>
-  <a href="review.html" class="nav-item">
-    <div class="nav-icon">🔁</div>
-    <div class="nav-label">복습</div>
-  </a>
-  <a href="stats.html" class="nav-item">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">통계</div>
-  </a>
-</nav>
-
+    <a href="practice.html" class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">연습</div>
+    </a>
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">✍️</div>
+      <div class="nav-label">시험</div>
+    </a>
+    <a href="wordsets.html" class="nav-item active">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
 
   <script type="module">
     import { initFirebase } from './firebase-config.js';
@@ -369,7 +368,7 @@
         await loadWordSets();
       } catch (e) {
         console.error('초기화 실패:', e);
-        await loadWordSets(); // 오프라인 모드
+        await loadWordSets();
       } finally {
         document.getElementById('loading').style.display = 'none';
       }
@@ -384,7 +383,6 @@
         const totalWords = json.words.length;
         const studiedCount = Object.keys(studied).length;
         
-        // 통계 업데이트
         document.getElementById('totalSets').textContent = '1';
         document.getElementById('totalWordsCount').textContent = totalWords;
         document.getElementById('completedSets').textContent = studiedCount === totalWords ? '1' : '0';
@@ -392,7 +390,6 @@
         const progress = (studiedCount / totalWords * 100).toFixed(1);
         document.getElementById('overallProgressBar').style.width = progress + '%';
         
-        // 단어장 카드 렌더링
         const container = document.getElementById('setsContainer');
         const isCompleted = studiedCount === totalWords;
         
