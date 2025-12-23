@@ -202,7 +202,6 @@
 
     .translation.show { opacity: 1; max-height: 150px; }
 
-    /* ✨ 연상 문장 박스 (정답 후 표시) */
     .mnemonic-box {
       background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.08));
       border: 2px solid rgba(16,185,129,0.15);
@@ -269,8 +268,6 @@
       justify-content: center;
       min-height: 56px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
-      touch-action: manipulation;
     }
 
     .choice:active { transform: scale(0.96); }
@@ -373,43 +370,6 @@
       color: white;
       white-space: nowrap;
     }
-
-    .complete-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      padding: 40px;
-      text-align: center;
-    }
-
-    .complete-icon {
-      font-size: 80px;
-      margin-bottom: 24px;
-      animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes bounceIn {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .complete-title {
-      font-size: 32px;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 16px;
-    }
-
-    .complete-text {
-      font-size: 16px;
-      color: var(--gray-600);
-      margin-bottom: 24px;
-    }
   </style>
 </head>
 <body>
@@ -459,12 +419,10 @@
   </nav>
 
   <script type="module">
-    // 온보딩 체크
     if (!localStorage.getItem('onboardingCompleted')) {
       window.location.href = 'onboarding.html';
     }
 
-    // Service Worker 등록
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/WORD-TEST/service-worker.js')
         .then(reg => console.log('✅ Service Worker 등록:', reg))
@@ -485,9 +443,7 @@
     function vibrate(pattern) {
       try {
         if (navigator.vibrate) navigator.vibrate(pattern);
-      } catch (e) {
-        console.log('진동 지원 안됨');
-      }
+      } catch (e) {}
     }
 
     let DATA = [];
@@ -634,7 +590,7 @@
       if (blankEl) blankEl.textContent = item.w;
 
       currentCard.querySelector('#translation').classList.add('show');
-      currentCard.querySelector('#mnemonicBox').classList.add('show'); // ✨ 연상 문장 표시
+      currentCard.querySelector('#mnemonicBox').classList.add('show');
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
@@ -673,13 +629,6 @@
         }
         curX = 0;
       };
-
-      card.onpointercancel = () => {
-        dragging = false;
-        card.style.transition = 'transform 0.2s ease';
-        card.style.transform = '';
-        curX = 0;
-      };
     }
 
     function showComplete() {
@@ -696,10 +645,10 @@
       
       deckEl.innerHTML = `
         <div class="card">
-          <div class="complete-screen">
-            <div class="complete-icon">🎉</div>
-            <h2 class="complete-title">완료!</h2>
-            <p class="complete-text">✅ ${okCount}개 정답</p>
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
+            <div style="font-size:80px; margin-bottom:24px; animation: bounceIn 0.8s;">🎉</div>
+            <h2 style="font-size:32px; font-weight:900; background:linear-gradient(135deg,#6366f1,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:16px;">완료!</h2>
+            <p style="font-size:16px; color:#64748b; margin-bottom:24px;">✅ ${okCount}개 정답</p>
             <a href="index.html" class="btn btn-primary">다시 시작</a>
           </div>
         </div>
