@@ -4,116 +4,49 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <meta name="theme-color" content="#8b5cf6" />
-  <title>복습 모드 - WordSwipe</title>
+  <title>복습 - WordSwipe</title>
+  <link rel="stylesheet" href="common.css" />
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --vvh: 1vh;
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --accent: #ec4899;
-      --success: #10b981;
-      --bg-gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-    }
-
-    html, body { height: 100%; overflow: hidden; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-gradient);
-      position: relative;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, rgba(255,255,255,0.08) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    .container {
+    .main-container {
       max-width: 480px;
       margin: 0 auto;
       height: calc(var(--vvh, 1vh) * 100);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       padding: 
         max(12px, env(safe-area-inset-top)) 
         12px 
-        max(80px, env(safe-area-inset-bottom) + 70px) 
+        max(90px, env(safe-area-inset-bottom) + 80px) 
         12px;
-      position: relative;
-      z-index: 1;
       overflow: hidden;
     }
 
     header {
       flex: 0 0 auto;
-      backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 20px;
-      padding: 10px 14px;
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .back-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      display: grid;
-      place-items: center;
-      text-decoration: none;
-      font-size: 18px;
-      transition: all 0.2s ease;
-    }
-
-    .back-btn:active {
-      transform: scale(0.94);
-    }
-
-    h1 {
-      font-size: 17px;
-      font-weight: 800;
+    .app-title {
+      font-size: 20px;
+      font-weight: 900;
       color: white;
-      letter-spacing: -0.3px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.15);
       flex: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
-    .review-mode {
-      font-size: 12px;
-      font-weight: 800;
-      color: white;
-      background: rgba(255,255,255,0.2);
-      padding: 5px 10px;
-      border-radius: 10px;
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-mini {
-      font-size: 12px;
+    .stat-badge {
+      font-size: 13px;
       font-weight: 700;
-      color: rgba(255,255,255,0.95);
-      background: rgba(255,255,255,0.18);
-      padding: 5px 9px;
-      border-radius: 10px;
-      white-space: nowrap;
+      color: white;
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     main {
@@ -127,67 +60,36 @@
 
     .deck {
       width: 100%;
-      max-width: 440px;
       height: 100%;
       position: relative;
       perspective: 1200px;
-      overflow: hidden;
-    }
-
-    .card-stack {
-      position: absolute;
-      inset: 0;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(8px);
-      transform: scale(0.96) translateY(6px);
-      opacity: 0.4;
     }
 
     .card {
       position: absolute;
       inset: 0;
-      background: 
-        linear-gradient(135deg, 
-          rgba(255,255,255,0.98) 0%, 
-          rgba(255,255,255,0.92) 100%
-        );
-      backdrop-filter: blur(40px) saturate(150%);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(40px);
       border: 2px solid rgba(255, 255, 255, 0.6);
       border-radius: 28px;
       box-shadow: 
         0 25px 70px rgba(0, 0, 0, 0.25),
         0 10px 24px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
       touch-action: none;
-      will-change: transform;
       cursor: grab;
       overflow: hidden;
     }
 
     .card:active { cursor: grabbing; }
-    .card.enter { 
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
-    }
-
-    @keyframes cardEnter {
-      from { 
-        transform: translateY(-15%) scale(0.9) rotateX(12deg); 
-        opacity: 0; 
-      }
-      to { 
-        transform: translateY(0) scale(1) rotateX(0); 
-        opacity: 1; 
-      }
-    }
 
     .card-inner {
       width: 100%;
       height: 100%;
-      padding: 16px 14px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       overflow: hidden;
     }
 
@@ -205,255 +107,216 @@
 
     .definition-box, .example-box {
       border-radius: 18px;
-      padding: 12px 14px;
+      padding: 14px 16px;
       flex: 0 0 auto;
-      position: relative;
-      overflow: hidden;
     }
 
     .definition-box {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.08));
-      border: 2px solid rgba(139, 92, 246, 0.15);
+      background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(236,72,153,0.08));
+      border: 2px solid rgba(139,92,246,0.15);
     }
 
     .example-box {
-      background: linear-gradient(135deg, rgba(236, 72, 153, 0.06), rgba(139, 92, 246, 0.06));
-      border: 2px solid rgba(236, 72, 153, 0.12);
+      background: linear-gradient(135deg, rgba(236,72,153,0.06), rgba(139,92,246,0.06));
+      border: 2px solid rgba(236,72,153,0.12);
     }
 
-    .definition-label, .example-label {
+    .label {
       font-size: 10px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      margin-bottom: 8px;
+      color: var(--secondary);
     }
 
-    .definition-label { color: var(--secondary); }
-    .definition-label::before { content: '📖'; font-size: 12px; }
-
-    .example-label { color: var(--accent); }
-    .example-label::before { content: '💬'; font-size: 12px; }
-
     .definition-text {
-      font-size: 14px;
-      line-height: 1.4;
-      color: #1e293b;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--gray-800);
       font-weight: 600;
       font-style: italic;
     }
 
     .example-text {
-      font-size: 15px;
-      line-height: 1.45;
-      color: #1e293b;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--gray-800);
       font-weight: 600;
     }
 
     .blank {
       display: inline-block;
-      min-width: 80px;
+      min-width: 90px;
       border-bottom: 3px solid var(--secondary);
       text-align: center;
-      padding: 0 4px;
+      padding: 0 6px;
       color: var(--secondary);
       font-weight: 900;
     }
 
     .translation {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 2px dashed rgba(139, 92, 246, 0.2);
-      font-size: 13px;
-      color: #64748b;
-      line-height: 1.35;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px dashed rgba(139,92,246,0.2);
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.4;
       opacity: 0;
       max-height: 0;
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all var(--transition-slow);
     }
 
-    .translation.show { opacity: 1; max-height: 120px; }
+    .translation.show { opacity: 1; max-height: 150px; }
 
     .choices {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       margin-top: auto;
-      flex: 0 0 auto;
     }
 
     .choice {
       background: white;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--gray-200);
       border-radius: 16px;
-      padding: 10px 8px;
-      font-size: 14px;
+      padding: 12px 10px;
+      font-size: 15px;
       font-weight: 800;
-      color: #1e293b;
+      color: var(--gray-800);
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      transition: all var(--transition-base);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       align-items: center;
       justify-content: center;
-      min-height: 52px;
-      touch-action: manipulation;
-      user-select: none;
+      min-height: 56px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    .choice::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(236, 72, 153, 0.06));
-      opacity: 0;
-      transition: opacity 0.2s ease;
     }
 
     .choice:active { transform: scale(0.96); }
 
-    .choice-word, .choice-meaning { position: relative; z-index: 1; }
-
     .choice-meaning {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--secondary);
       font-weight: 700;
       opacity: 0;
-      transform: translateY(-3px);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all var(--transition-bounce);
     }
 
-    .choice-meaning.show { opacity: 1; transform: translateY(0); }
+    .choice-meaning.show { opacity: 1; }
 
     .choice.correct {
-      background: linear-gradient(135deg, var(--success), #059669);
+      background: var(--gradient-success);
       border-color: var(--success);
       color: white;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 8px 24px rgba(16,185,129,0.4);
     }
 
     .choice.correct .choice-meaning { color: rgba(255,255,255,0.95); }
 
     .choice.wrong {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      border-color: #ef4444;
+      background: linear-gradient(135deg, var(--error), #dc2626);
+      border-color: var(--error);
       color: white;
-      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
-      animation: wrongShake 0.5s ease;
+      box-shadow: 0 8px 24px rgba(239,68,68,0.4);
+      animation: shake 0.5s ease;
     }
 
     .choice.wrong .choice-meaning { color: rgba(255,255,255,0.95); }
 
-    @keyframes wrongShake {
+    @keyframes shake {
       0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-8px); }
-      40% { transform: translateX(8px); }
-      60% { transform: translateX(-6px); }
-      80% { transform: translateX(6px); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
     }
-
-    .choice.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
 
     .swipe-hint {
       text-align: center;
-      font-size: 12px;
-      color: rgba(30, 41, 59, 0.5);
-      font-weight: 800;
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 700;
       opacity: 0;
-      transform: translateY(6px);
-      transition: all 0.3s ease;
-      flex: 0 0 auto;
-      margin-top: 6px;
+      transition: all var(--transition-bounce);
+      margin-top: 8px;
     }
 
-    .swipe-hint.show { opacity: 1; transform: translateY(0); }
-
-    .swipe-overlay {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 10;
-      border-radius: 28px;
-    }
-
-    .swipe-overlay.ok { background: radial-gradient(circle, rgba(16, 185, 129, 0.2), transparent 70%); }
-    .swipe-overlay.again { background: radial-gradient(circle, rgba(236, 72, 153, 0.2), transparent 70%); }
-
-    .swipe-icon { font-size: 72px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+    .swipe-hint.show { opacity: 1; }
 
     .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px;
       text-align: center;
-      padding: 60px 30px;
-      color: white;
     }
 
     .empty-icon {
       font-size: 80px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .empty-title {
       font-size: 24px;
       font-weight: 900;
+      color: var(--gray-900);
       margin-bottom: 12px;
     }
 
     .empty-text {
       font-size: 15px;
-      opacity: 0.9;
+      color: var(--gray-600);
       line-height: 1.5;
       margin-bottom: 24px;
     }
 
-    .empty-btn {
-      display: inline-block;
-      background: white;
-      color: var(--secondary);
-      padding: 12px 24px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
-
-    @keyframes swipeRight { to { transform: translateX(160%) rotate(18deg); opacity: 0; } }
-    @keyframes swipeLeft { to { transform: translateX(-160%) rotate(-18deg); opacity: 0; } }
-
-    .loading {
+    .bottom-nav {
       position: fixed;
-      inset: 0;
-      background: var(--bg-gradient);
-      display: grid;
-      place-items: center;
-      z-index: 999;
+      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(30px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      min-width: 70px;
+    }
+
+    .nav-item:active { transform: scale(0.94); }
+    .nav-item.active { background: rgba(255, 255, 255, 0.25); }
+
+    .nav-icon { font-size: 24px; line-height: 1; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 700;
       color: white;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(255,255,255,0.2);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -461,41 +324,55 @@
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
-      <p style="margin-top:16px; font-size:16px; font-weight:700;">복습 카드 준비 중...</p>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">복습 준비 중...</p>
     </div>
   </div>
 
-  <div class="container">
+  <div class="main-container">
     <header>
-      <a href="index.html" class="back-btn">←</a>
-      <h1>🔁 복습 모드</h1>
-      <span class="review-mode" id="reviewMode">SRS</span>
-      <span class="stat-mini"><span id="statCurrent">0/0</span></span>
-      <span class="stat-mini">✅ <span id="statOk">0</span></span>
+      <h1 class="app-title">🔁 복습</h1>
+      <span class="stat-badge" id="statCurrent">0/0</span>
+      <span class="stat-badge">✅ <span id="statOk">0</span></span>
     </header>
 
     <main>
-      <div class="deck" id="deck">
-        <div class="card-stack"></div>
-      </div>
+      <div class="deck" id="deck"></div>
     </main>
   </div>
 
-  <script>
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">단어장</div>
+    </a>
+    <a href="wordsets.html" class="nav-item">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label">목록</div>
+    </a>
+    <a href="review.html" class="nav-item active">
+      <div class="nav-icon">🔁</div>
+      <div class="nav-label">복습</div>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">통계</div>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initFirebase, saveToCloud } from './firebase-config.js';
+
     function setVVH() {
       const vv = window.visualViewport;
       const h = vv ? vv.height : window.innerHeight;
       document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
     }
-
     window.addEventListener('resize', setVVH);
     window.visualViewport?.addEventListener('resize', setVVH);
     setVVH();
 
     function vibrate(pattern) {
-      if (navigator.vibrate) {
-        navigator.vibrate(pattern);
-      }
+      if (navigator.vibrate) navigator.vibrate(pattern);
     }
 
     let ALL_DATA = [];
@@ -507,132 +384,86 @@
     const deckEl = document.getElementById('deck');
     const loadingEl = document.getElementById('loading');
 
-    async function loadReviewWords() {
+    async function init() {
       try {
+        await initFirebase();
         const res = await fetch('words.json');
         const json = await res.json();
+        ALL_DATA = json.words;
         
-        // 모든 Day의 단어 합치기
-        ALL_DATA = json.days.flatMap(d => d.words);
+        // 복습 대상 단어 필터링
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        const now = Date.now();
         
-        // ✅ 복합 복습 알고리즘
-        const srsWords = getSRSWords(); // 간격 반복 대상 (80%)
-        const wrongWords = getWrongWords(); // 틀린 단어 (20%)
-        
-        // 80:20 비율로 섞기
-        const reviewPool = [];
-        const srsCount = Math.ceil(srsWords.length * 0.8);
-        const wrongCount = Math.ceil(wrongWords.length * 0.2);
-        
-        reviewPool.push(...srsWords.slice(0, srsCount));
-        reviewPool.push(...wrongWords.slice(0, wrongCount));
-        
-        DATA = reviewPool;
+        DATA = ALL_DATA.filter(item => {
+          const record = studied[item.w];
+          if (!record) return false;
+          
+          // 3일 이상 지난 단어
+          const daysPassed = (now - record.lastReview) / (24 * 60 * 60 * 1000);
+          return daysPassed >= 3;
+        });
         
         if (DATA.length === 0) {
           showEmpty();
         } else {
-          document.getElementById('reviewMode').textContent = `SRS ${srsWords.length} + 틀린단어 ${wrongWords.length}`;
           order = shuffle([...DATA.keys()]);
-          init();
+          renderCard();
+          updateUI();
         }
-        
       } catch (e) {
-        alert('데이터를 불러올 수 없습니다.');
-        console.error(e);
+        console.error('초기화 실패:', e);
+        showEmpty();
       } finally {
         loadingEl.style.display = 'none';
       }
     }
 
-    function getSRSWords() {
-      const now = Date.now();
-      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-      const srsPool = [];
-      
-      ALL_DATA.forEach((item, i) => {
-        const record = studied[item.w];
-        if (!record) return;
-        
-        const interval = record.interval || 1;
-        const nextReview = record.lastReview + (interval * 24 * 60 * 60 * 1000);
-        
-        if (now >= nextReview) {
-          srsPool.push(item);
-        }
-      });
-      
-      return srsPool;
-    }
-
-    function getWrongWords() {
-      const wrongIndices = JSON.parse(localStorage.getItem('wrongWords') || '[]');
-      return wrongIndices.map(wi => ALL_DATA[wi]).filter(Boolean);
-    }
-
-    function init() {
-      idx = 0;
-      okCount = 0;
-      renderCard(true);
-      updateUI();
-    }
-
-    function renderCard(enter = false) {
-      answered = false;
-
+    function renderCard() {
       if (idx >= order.length) {
         showComplete();
         return;
       }
 
+      answered = false;
       const item = DATA[order[idx]];
       const choices = generateChoices(item);
 
       const card = document.createElement('div');
-      card.className = 'card' + (enter ? ' enter' : '');
-      
+      card.className = 'card';
       card.innerHTML = `
         <div class="card-inner">
           <div class="review-badge">복습 카드</div>
           
           <div class="definition-box">
-            <div class="definition-label">Definition</div>
+            <div class="label">Definition</div>
             <div class="definition-text">${item.def}</div>
           </div>
 
           <div class="example-box">
-            <div class="example-label">Example</div>
+            <div class="label">Example</div>
             <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
             <div class="translation" id="translation">${item.t}</div>
           </div>
 
-          <div class="choices" id="choices">
+          <div class="choices">
             ${choices.map((c, i) => `
               <div class="choice" data-word="${c.w}" data-idx="${i}">
                 <div class="choice-word">${c.w}</div>
-                <div class="choice-meaning" data-meaning-idx="${i}">${c.m}</div>
+                <div class="choice-meaning" data-idx="${i}">${c.m}</div>
               </div>
             `).join('')}
           </div>
 
           <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
         </div>
-
-        <div class="swipe-overlay ok"><div class="swipe-icon">✓</div></div>
-        <div class="swipe-overlay again"><div class="swipe-icon">↺</div></div>
       `;
 
       deckEl.appendChild(card);
       currentCard = card;
 
       card.querySelectorAll('.choice').forEach(btn => {
-        const btnIdx = btn.dataset.idx;
-        const meaningEl = btn.querySelector(`[data-meaning-idx="${btnIdx}"]`);
-
-        btn.onclick = () => {
-          meaningEl.classList.add('show');
-          selectChoice(btn, item);
-        };
+        btn.onclick = () => selectChoice(btn, item);
       });
 
       attachSwipe(card);
@@ -641,19 +472,10 @@
     function generateChoices(item) {
       const similar = ALL_DATA
         .filter(d => d.w !== item.w)
-        .map(d => ({ w: d.w, m: d.m, sim: similarity(item.w, d.w) }))
-        .sort((a, b) => b.sim - a.sim)
-        .slice(0, 3);
-
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3)
+        .map(d => ({ w: d.w, m: d.m }));
       return shuffle([...similar, { w: item.w, m: item.m }]);
-    }
-
-    function similarity(a, b) {
-      let score = 0;
-      for (let i = 0; i < Math.min(a.length, b.length); i++) {
-        if (a[i] === b[i]) score++;
-      }
-      return score - Math.abs(a.length - b.length) * 0.5;
     }
 
     function selectChoice(btn, item) {
@@ -667,14 +489,21 @@
         vibrate([100, 50, 100]);
       } else {
         okCount++;
-        updateSRS(item.w, true);
+        
+        // 학습 기록 업데이트
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        if (studied[item.w]) {
+          studied[item.w].lastReview = Date.now();
+          studied[item.w].correctCount = (studied[item.w].correctCount || 0) + 1;
+          localStorage.setItem('studied', JSON.stringify(studied));
+          saveToCloud();
+        }
       }
 
-      currentCard.querySelectorAll('.choice').forEach((c, idx2) => {
-        c.classList.add('disabled');
-        const meaningEl = c.querySelector(`[data-meaning-idx="${idx2}"]`);
+      currentCard.querySelectorAll('.choice').forEach((c, i) => {
+        const meaningEl = c.querySelector(`[data-idx="${i}"]`);
         meaningEl.classList.add('show');
-
+        
         if (c.dataset.word === item.w) c.classList.add('correct');
         else if (c.dataset.word === selected) c.classList.add('wrong');
       });
@@ -686,106 +515,40 @@
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
-    function updateSRS(word, correct) {
-      const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-      
-      if (!studied[word]) {
-        studied[word] = { interval: 1, lastReview: Date.now(), correctCount: 0 };
-      }
-      
-      if (correct) {
-        studied[word].correctCount++;
-        const intervals = [1, 3, 7, 14, 30];
-        const nextIdx = Math.min(studied[word].correctCount, intervals.length - 1);
-        studied[word].interval = intervals[nextIdx];
-        studied[word].lastReview = Date.now();
-      }
-      
-      localStorage.setItem('studied', JSON.stringify(studied));
-    }
-
     function attachSwipe(card) {
-      const okOverlay = card.querySelector('.swipe-overlay.ok');
-      const againOverlay = card.querySelector('.swipe-overlay.again');
-      let startX = 0, curX = 0, dragging = false, startT = 0;
+      let startX = 0, curX = 0, dragging = false;
 
-      const onDown = e => {
+      card.onpointerdown = e => {
         if (!answered) return;
         dragging = true;
-        startX = getX(e);
-        startT = Date.now();
-        card.style.transition = 'none';
+        startX = e.clientX || e.touches[0].clientX;
       };
 
-      const onMove = e => {
+      card.onpointermove = e => {
         if (!dragging) return;
-        curX = getX(e) - startX;
-        const rot = curX * 0.04;
-        card.style.transform = `translate3d(${curX}px, 0, 0) rotate(${rot}deg)`;
-        const prog = Math.min(1, Math.abs(curX) / 150);
-        okOverlay.style.opacity = curX > 0 ? prog : 0;
-        againOverlay.style.opacity = curX < 0 ? prog : 0;
+        curX = (e.clientX || e.touches[0].clientX) - startX;
+        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
       };
 
-      const onUp = () => {
+      card.onpointerup = () => {
         if (!dragging) return;
         dragging = false;
-        const dt = Date.now() - startT;
-        const vel = Math.abs(curX) / dt;
-        const threshold = 100;
-
-        if (curX > threshold || (vel > 0.5 && curX > 0)) {
-          card.style.animation = 'swipeRight 0.3s ease forwards';
-          setTimeout(() => swipeResolve('right'), 300);
-        } else if (curX < -threshold || (vel > 0.5 && curX < 0)) {
-          card.style.animation = 'swipeLeft 0.3s ease forwards';
-          setTimeout(() => swipeResolve('left'), 300);
+        
+        if (Math.abs(curX) > 100) {
+          card.style.transition = 'transform 0.3s ease';
+          card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
+          setTimeout(() => {
+            card.remove();
+            idx++;
+            renderCard();
+            updateUI();
+          }, 300);
         } else {
-          card.style.transition = 'transform 0.25s ease';
+          card.style.transition = 'transform 0.2s ease';
           card.style.transform = '';
-          okOverlay.style.opacity = 0;
-          againOverlay.style.opacity = 0;
         }
         curX = 0;
       };
-
-      card.onpointerdown = onDown;
-      card.onpointermove = onMove;
-      card.onpointerup = onUp;
-      card.onpointercancel = onUp;
-    }
-
-    function swipeResolve(dir) {
-      if (dir === 'right') {
-        idx++;
-      } else {
-        order.push(order[idx]);
-        idx++;
-      }
-
-      if (currentCard) currentCard.remove();
-      renderCard(true);
-      updateUI();
-    }
-
-    function showComplete() {
-      const card = document.createElement('div');
-      card.className = 'card enter';
-      card.innerHTML = `
-        <div class="card-inner">
-          <div style="text-align:center; padding:60px 30px;">
-            <div style="font-size:80px; margin-bottom:20px;">🎉</div>
-            <div style="font-size:28px; font-weight:900; color:#1e293b; margin-bottom:12px;">복습 완료!</div>
-            <div style="font-size:15px; color:#64748b; margin-bottom:24px;">
-              ✅ ${okCount}개 정답
-            </div>
-            <a href="index.html" style="display:inline-block; background:linear-gradient(135deg, var(--secondary), var(--accent)); color:white; padding:14px 28px; border-radius:999px; text-decoration:none; font-weight:800; box-shadow:0 6px 20px rgba(139,92,246,0.4);">
-              메인으로
-            </a>
-          </div>
-        </div>
-      `;
-      deckEl.appendChild(card);
     }
 
     function showEmpty() {
@@ -796,20 +559,31 @@
             <div class="empty-title">복습할 단어가 없습니다</div>
             <div class="empty-text">
               학습한 단어가 복습 시기가 되면<br/>
-              이곳에 자동으로 표시됩니다.
+              자동으로 이곳에 표시됩니다.
             </div>
-            <a href="index.html" class="empty-btn">학습 시작하기</a>
+            <a href="index.html" class="btn btn-primary">학습 시작하기</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function showComplete() {
+      deckEl.innerHTML = `
+        <div class="card">
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:40px; text-align:center;">
+            <div style="font-size:80px; margin-bottom:24px;">🎉</div>
+            <h2 class="text-gradient" style="font-size:32px; margin-bottom:16px;">복습 완료!</h2>
+            <p style="font-size:16px; color:#64748b; margin-bottom:24px;">✅ ${okCount}개 복습 완료</p>
+            <a href="index.html" class="btn btn-primary">메인으로</a>
           </div>
         </div>
       `;
     }
 
     function updateUI() {
-      document.getElementById('statCurrent').textContent = `${Math.min(idx + 1, order.length)}/${order.length}`;
+      document.getElementById('statCurrent').textContent = `${idx + 1}/${order.length}`;
       document.getElementById('statOk').textContent = okCount;
     }
-
-    function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
 
     function shuffle(arr) {
       const a = [...arr];
@@ -820,7 +594,7 @@
       return a;
     }
 
-    loadReviewWords();
+    init();
   </script>
 </body>
 </html>
