@@ -601,42 +601,57 @@ if ('serviceWorker' in navigator) {
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
-    function attachSwipe(card) {
-      let startX = 0, curX = 0, dragging = false;
+ function attachSwipe(card) {
+  let startX = 0, curX = 0, dragging = false;
+  let startTime = 0;
 
-      card.onpointerdown = e => {
-        if (!answered) return;
-        dragging = true;
-        startX = e.clientX || e.touches[0].clientX;
-        card.style.transition = 'none';
-      };
+  card.onpointerdown = e => {
+    if (!answered) return;
+    dragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    startTime = Date.now();
+    card.style.transition = 'none';
+  };
 
-      card.onpointermove = e => {
-        if (!dragging) return;
-        curX = (e.clientX || e.touches[0].clientX) - startX;
-        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
-      };
+  card.onpointermove = e => {
+    if (!dragging) return;
+    curX = (e.clientX || e.touches[0].clientX) - startX;
+    card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
+  };
 
-      card.onpointerup = () => {
-        if (!dragging) return;
-        dragging = false;
-        
-        if (Math.abs(curX) > 100) {
-          card.style.transition = 'transform 0.3s ease';
-          card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
-          setTimeout(() => {
-            card.remove();
-            idx++;
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else {
-          card.style.transition = 'transform 0.2s ease';
-          card.style.transform = '';
-        }
-        curX = 0;
-      };
+  card.onpointerup = () => {
+    if (!dragging) return;
+    dragging = false;
+    
+    const threshold = 60;
+    const timeElapsed = Date.now() - startTime;
+    const velocity = Math.abs(curX) / timeElapsed;
+    const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
+    
+    if (shouldSwipe) {
+      card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
+      setTimeout(() => {
+        card.remove();
+        idx++;
+        renderCard(true);
+        updateUI();
+      }, 300);
+    } else {
+      card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      card.style.transform = '';
     }
+    curX = 0;
+  };
+
+  card.onpointercancel = () => {
+    dragging = false;
+    card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    card.style.transform = '';
+    curX = 0;
+  };
+}
+
 
     function showComplete() {
       const today = new Date().toISOString().split('T')[0];
@@ -680,4 +695,5 @@ if ('serviceWorker' in navigator) {
   </script>
 </body>
 </html>
+
 
