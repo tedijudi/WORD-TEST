@@ -511,14 +511,16 @@
       saveToCloud();
     }
 
-    function attachSwipe(card) {
-      let startX = 0, curX = 0, dragging = false;
+function attachSwipe(card) {
+  let startX = 0, curX = 0, dragging = false;
+  let startTime = 0; // 추가
 
-      card.onpointerdown = e => {
-        dragging = true;
-        startX = e.clientX || e.touches[0].clientX;
-        card.style.transition = 'none';
-      };
+  card.onpointerdown = e => {
+    dragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    startTime = Date.now(); // 추가
+    card.style.transition = 'none';
+  };
 
       card.onpointermove = e => {
         if (!dragging) return;
@@ -530,11 +532,15 @@ card.onpointerup = () => {
   if (!dragging) return;
   dragging = false;
   
-  const threshold = 60; // 60px로 감도 향상
-  const velocity = Math.abs(curX);
+  const threshold = 60; // 거리 기준
+  const timeElapsed = Date.now() - startTime;
+  const velocity = Math.abs(curX) / timeElapsed; // 속도 계산
   
-  if (curX > threshold) {
-    // 이전 카드
+  // 빠르게 스와이프하면 거리 짧아도 인식
+  const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
+  
+  if (shouldSwipe && curX > 0) {
+    // 이전
     card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
     card.style.transform = 'translateX(150%) rotate(20deg)';
     setTimeout(() => {
@@ -543,8 +549,8 @@ card.onpointerup = () => {
       renderCard(true);
       updateUI();
     }, 300);
-  } else if (curX < -threshold) {
-    // 다음 카드
+  } else if (shouldSwipe && curX < 0) {
+    // 다음
     card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
     card.style.transform = 'translateX(-150%) rotate(-20deg)';
     setTimeout(() => {
@@ -560,7 +566,6 @@ card.onpointerup = () => {
   }
   curX = 0;
 };
-
 
     }
 
