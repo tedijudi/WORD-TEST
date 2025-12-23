@@ -5,12 +5,12 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gsta
 
 // ⚠️ Firebase Console에서 복사한 설정값으로 교체하세요!
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "wordswipe.firebaseapp.com",
-  projectId: "wordswipe",
-  storageBucket: "wordswipe.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef"
+  apiKey: "AIzaSyBU5lC91UCeDadz4IVnd0byy5Ts3wcFAys",
+  authDomain: "wordswipe-2f209.firebaseapp.com",
+  projectId: "wordswipe-2f209",
+  storageBucket: "wordswipe-2f209.firebasestorage.app",
+  messagingSenderId: "223111111558",
+  appId: "1:223111111558:web:8f058aa9c2afe4d2194207"
 };
 
 const app = initializeApp(firebaseConfig);
