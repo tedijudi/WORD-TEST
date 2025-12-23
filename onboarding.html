@@ -178,6 +178,35 @@
     .skip-btn:active {
       transform: scale(0.94);
     }
+
+    /* 이름 입력 */
+    .name-input-container {
+      margin-bottom: 24px;
+    }
+
+    .name-input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .name-input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .name-input:focus {
+      border-color: white;
+      background: rgba(255,255,255,0.25);
+    }
   </style>
 </head>
 <body>
@@ -199,11 +228,11 @@
       <!-- Slide 2 -->
       <div class="slide" data-slide="1">
         <div class="slide-icon">📚</div>
-        <div class="slide-title">경선식 영단어</div>
+        <div class="slide-title">체계적인 학습</div>
         <div class="slide-text">
-          30일 완성 프로그램으로<br/>
-          체계적으로 단어를 정복하세요.<br/>
-          하루 50단어, 총 1500단어!
+          100개의 엄선된 단어로<br/>
+          체계적으로 실력을 키워보세요.<br/>
+          Definition, Example까지 완벽하게!
         </div>
       </div>
 
@@ -218,8 +247,27 @@
         </div>
       </div>
 
-      <!-- Slide 4 -->
+      <!-- Slide 4: 이름 입력 -->
       <div class="slide" data-slide="3">
+        <div class="slide-icon">😊</div>
+        <div class="slide-title">어떻게 불러드릴까요?</div>
+        <div class="slide-text">
+          닉네임을 입력해주세요<br/>
+          (나중에 변경 가능합니다)
+        </div>
+        <div class="name-input-container">
+          <input 
+            type="text" 
+            class="name-input" 
+            id="userName" 
+            placeholder="닉네임 입력"
+            maxlength="10"
+          />
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide" data-slide="4">
         <div class="slide-icon">🚀</div>
         <div class="slide-title">준비 완료!</div>
         <div class="slide-text">
@@ -234,6 +282,7 @@
       <div class="dot"></div>
       <div class="dot"></div>
       <div class="dot"></div>
+      <div class="dot"></div>
     </div>
 
     <div class="btn-group">
@@ -242,9 +291,9 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
     let currentSlide = 0;
-    const totalSlides = 4;
+    const totalSlides = 5;
 
     function updateSlide() {
       document.querySelectorAll('.slide').forEach((slide, index) => {
@@ -260,7 +309,19 @@
 
       prevBtn.style.display = currentSlide > 0 ? 'inline-block' : 'none';
       
-      if (currentSlide === totalSlides - 1) {
+      if (currentSlide === 3) {
+        // 이름 입력 슬라이드
+        nextBtn.textContent = '다음';
+        nextBtn.onclick = () => {
+          const name = document.getElementById('userName').value.trim();
+          if (!name) {
+            alert('닉네임을 입력해주세요!');
+            return;
+          }
+          localStorage.setItem('userName', name);
+          nextSlide();
+        };
+      } else if (currentSlide === totalSlides - 1) {
         nextBtn.textContent = '시작하기';
         nextBtn.onclick = start;
       } else {
@@ -269,33 +330,32 @@
       }
     }
 
-    function nextSlide() {
+    window.nextSlide = function() {
       if (currentSlide < totalSlides - 1) {
         currentSlide++;
         updateSlide();
       }
     }
 
-    function prevSlide() {
+    window.prevSlide = function() {
       if (currentSlide > 0) {
         currentSlide--;
         updateSlide();
       }
     }
 
-    function skip() {
+    window.skip = function() {
+      const name = prompt('닉네임을 입력하세요 (선택)', '학습자');
+      if (name && name.trim()) {
+        localStorage.setItem('userName', name.trim());
+      }
       start();
     }
 
-    function start() {
+    window.start = function() {
       localStorage.setItem('onboardingCompleted', 'true');
       window.location.href = 'index.html';
     }
-
-    // 자동 넘김 (선택사항)
-    // setInterval(() => {
-    //   if (currentSlide < totalSlides - 1) nextSlide();
-    // }, 3000);
   </script>
 </body>
 </html>
