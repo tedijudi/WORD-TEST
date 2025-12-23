@@ -17,20 +17,28 @@
   <link rel="stylesheet" href="common.css" />
   
   <style>
-    .main-container {
-      max-width: 480px;
-      margin: 0 auto;
-      height: calc(var(--vvh, 1vh) * 100);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 
-        max(12px, env(safe-area-inset-top)) 
-        12px 
-        max(90px, env(safe-area-inset-bottom) + 80px) 
-        12px;
-      overflow: hidden;
-    }
+   .main-container {
+  max-width: 480px;
+  margin: 0 auto;
+  height: calc(var(--vvh, 1vh) * 100);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 
+    max(12px, env(safe-area-inset-top)) 
+    12px 
+    max(100px, env(safe-area-inset-bottom) + 90px) 
+    12px;
+  overflow: hidden;
+}
+
+/* 아이폰13미니 최적화 */
+@media (max-width: 390px) and (max-height: 844px) {
+  .main-container {
+    padding-bottom: max(110px, env(safe-area-inset-bottom) + 100px);
+  }
+}
+
 
     header {
       flex: 0 0 auto;
@@ -234,6 +242,8 @@
       justify-content: center;
       min-height: 56px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+     -webkit-tap-highlight-color: rgba(99, 102, 241, 0.1);
+  touch-action: manipulation;
     }
 
     @media (max-height: 700px) {
@@ -484,9 +494,20 @@
     // ========================================
     // 진동 피드백
     // ========================================
-    function vibrate(pattern) {
-      if (navigator.vibrate) navigator.vibrate(pattern);
+function vibrate(pattern) {
+  try {
+    if (navigator.vibrate) {
+      navigator.vibrate(pattern);
     }
+    // iOS 대체 진동 (Haptic Feedback)
+    if (window.Taptic && window.Taptic.impact) {
+      window.Taptic.impact({ style: 'medium' });
+    }
+  } catch (e) {
+    console.log('진동 지원 안됨');
+  }
+}
+
 
     // ========================================
     // 전역 변수
@@ -757,5 +778,6 @@
   </script>
 </body>
 </html>
+
 
 
