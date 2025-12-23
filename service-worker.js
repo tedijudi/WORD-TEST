@@ -1,17 +1,18 @@
 const CACHE_NAME = 'wordswipe-v1.0.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/wordsets.html',
-  '/review.html',
-  '/completed.html',
-  '/stats.html',
-  '/onboarding.html',
-  '/common.css',
-  '/words.json',
-  '/firebase-config.js',
-  '/manifest.json'
+  '/WORD-TEST/',
+  '/WORD-TEST/index.html',
+  '/WORD-TEST/wordsets.html',
+  '/WORD-TEST/review.html',
+  '/WORD-TEST/completed.html',
+  '/WORD-TEST/stats.html',
+  '/WORD-TEST/onboarding.html',
+  '/WORD-TEST/common.css',
+  '/WORD-TEST/words.json',
+  '/WORD-TEST/firebase-config.js',
+  '/WORD-TEST/manifest.json'
 ];
+
 
 // 설치 이벤트
 self.addEventListener('install', event => {
