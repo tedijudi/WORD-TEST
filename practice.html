@@ -101,7 +101,7 @@
         0 25px 70px rgba(0, 0, 0, 0.25),
         0 10px 24px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
-      touch-action: none;
+      touch-action: pan-y;
       cursor: grab;
       overflow: hidden;
     }
@@ -319,7 +319,7 @@
   <div class="main-container">
     <header>
       <h1 class="app-title">📚 연습 모드</h1>
-      <span class="progress-indicator" id="progress">1/20</span>
+      <span class="progress-indicator" id="progress">1/30</span>
       <button class="sound-btn" id="soundBtn">🔊</button>
     </header>
 
@@ -434,7 +434,6 @@
     function renderIndicator() {
       indicatorEl.innerHTML = '';
       const maxDots = Math.min(DATA.length, 10);
-      const step = Math.floor(DATA.length / maxDots);
       
       for (let i = 0; i < maxDots; i++) {
         const dot = document.createElement('div');
@@ -447,7 +446,7 @@
     function updateIndicator() {
       const dots = indicatorEl.querySelectorAll('.slide-dot');
       const maxDots = dots.length;
-      const step = Math.floor(DATA.length / maxDots);
+      const step = Math.ceil(DATA.length / maxDots);
       const activeIndex = Math.floor(idx / step);
       
       dots.forEach((dot, i) => {
@@ -511,27 +510,47 @@
     }
 
     function attachSwipe(card) {
-  let startX = 0, curX = 0, dragging = false;
-  let startTime = 0;
+      let startX = 0, startY = 0, curX = 0, dragging = false;
+      let startTime = 0;
+      let isDragging = false;
 
-  card.onpointerdown = e => {
-    // if (!answered) return; ← 이 줄 삭제!
-    dragging = true;
-    startX = e.clientX || e.touches[0].clientX;
-    startTime = Date.now();
-    card.style.transition = 'none';
-  };
-
+      card.onpointerdown = e => {
+        startX = e.clientX || e.touches?.[0]?.clientX || 0;
+        startY = e.clientY || e.touches?.[0]?.clientY || 0;
+        startTime = Date.now();
+        dragging = true;
+        isDragging = false;
+        card.style.transition = 'none';
+      };
 
       card.onpointermove = e => {
         if (!dragging) return;
-        curX = (e.clientX || e.touches[0].clientX) - startX;
-        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
+        
+        const currentX = e.clientX || e.touches?.[0]?.clientX || 0;
+        const currentY = e.clientY || e.touches?.[0]?.clientY || 0;
+        
+        curX = currentX - startX;
+        const curY = currentY - startY;
+        
+        if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
+          isDragging = true;
+        }
+        
+        if (isDragging && Math.abs(curX) > Math.abs(curY)) {
+          e.preventDefault();
+          card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
+        }
       };
 
       card.onpointerup = () => {
         if (!dragging) return;
         dragging = false;
+        
+        if (!isDragging) {
+          card.style.transform = '';
+          curX = 0;
+          return;
+        }
         
         const threshold = 60;
         const timeElapsed = Date.now() - startTime;
@@ -561,10 +580,12 @@
           card.style.transform = '';
         }
         curX = 0;
+        isDragging = false;
       };
 
       card.onpointercancel = () => {
         dragging = false;
+        isDragging = false;
         card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
         card.style.transform = '';
         curX = 0;
