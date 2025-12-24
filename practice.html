@@ -418,33 +418,42 @@
     const progressEl = document.getElementById('progress');
     const indicatorEl = document.getElementById('slideIndicator');
 
-    async function init() {
-      try {
-        await initFirebase();
-        
-        const res = await fetch(`words.json?t=${Date.now()}`);
-        const json = await res.json();
-        ALL_SETS = json.wordSets;
-        
-        // 선택된 세트의 단어만 로드
-        const currentSet = ALL_SETS.find(set => set.id === selectedSet);
-        if (currentSet) {
-          DATA = currentSet.words;
-          console.log(`📚 ${currentSet.name} 로드 (${DATA.length}개)`);
-        } else {
-          DATA = ALL_SETS[0].words;
-        }
-        
-        loadVoices();
-        renderIndicator();
-        renderCard(true);
-        updateUI();
-      } catch (e) {
-        console.error('초기화 실패:', e);
-      } finally {
-        loadingEl.style.display = 'none';
-      }
+async function init() {
+  try {
+    // Firebase 연결 시도 (실패해도 진행)
+    try {
+      await initFirebase();
+    } catch (firebaseError) {
+      console.warn('⚠️ Firebase 오프라인 모드:', firebaseError.message);
     }
+    
+    // 단어 데이터 로드
+    const res = await fetch(`words.json?t=${Date.now()}`);
+    const json = await res.json();
+    ALL_SETS = json.wordSets;
+    
+    // 선택된 세트의 단어만 로드
+    const currentSet = ALL_SETS.find(set => set.id === selectedSet);
+    if (currentSet) {
+      DATA = currentSet.words;
+      console.log(`📚 ${currentSet.name} 로드 (${DATA.length}개)`);
+    } else {
+      DATA = ALL_SETS[0].words;
+    }
+    
+    loadVoices();
+    renderIndicator();
+    renderCard(true);
+    updateUI();
+    
+  } catch (e) {
+    console.error('❌ 초기화 실패:', e);
+    alert('데이터를 불러올 수 없습니다: ' + e.message);
+  } finally {
+    loadingEl.style.display = 'none';
+  }
+}
+
 
     function loadVoices() {
       voices = synth.getVoices();
