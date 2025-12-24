@@ -159,6 +159,86 @@
       "def": "to judge or assess",
       "ex": "Teachers _____ student performance.",
       "t": "교사들은 학생 성과를 평가한다."
+    },
+    {
+      "w": "evidence",
+      "m": "증거",
+      "mnemonic": "에비던스 → 에 비덴스 : 에비던스(evidence)가 비디오에 담긴 증거",
+      "def": "facts or information indicating something",
+      "ex": "There is clear _____ of climate change.",
+      "t": "기후 변화의 명백한 증거가 있다."
+    },
+    {
+      "w": "function",
+      "m": "기능",
+      "mnemonic": "펑션 → 펑 션 : 펑션(function) 키가 기능하는 모습",
+      "def": "the purpose or role of something",
+      "ex": "The main _____ of the heart is to pump blood.",
+      "t": "심장의 주요 기능은 혈액을 펌프질하는 것이다."
+    },
+    {
+      "w": "generate",
+      "m": "생성하다",
+      "mnemonic": "제너레이트 → 제너 레이터 : 제너레이터가 전기를 생성(generate)",
+      "def": "to produce or create",
+      "ex": "Wind turbines _____ electricity.",
+      "t": "풍력 터빈은 전기를 생성한다."
+    },
+    {
+      "w": "identify",
+      "m": "확인하다",
+      "mnemonic": "아이덴티파이 → 아이덴티티 파이 : 정체성(identity)을 확인(identify)",
+      "def": "to recognize or establish identity",
+      "ex": "Can you _____ the problem?",
+      "t": "문제를 확인할 수 있나요?"
+    },
+    {
+      "w": "indicate",
+      "m": "나타내다",
+      "mnemonic": "인디케이트 → 인디 케이터 : 인디케이터가 상태를 나타내(indicate)다",
+      "def": "to show or point out",
+      "ex": "The results _____ a positive trend.",
+      "t": "결과는 긍정적인 추세를 나타낸다."
+    },
+    {
+      "w": "interpret",
+      "m": "해석하다",
+      "mnemonic": "인터프릿 → 인터 프릿 : 통역사가 말을 해석(interpret)",
+      "def": "to explain the meaning of",
+      "ex": "How do you _____ this data?",
+      "t": "이 데이터를 어떻게 해석하나요?"
+    },
+    {
+      "w": "maintain",
+      "m": "유지하다",
+      "mnemonic": "메인테인 → 메인 테인 : 메인을 유지(maintain)하는 모습",
+      "def": "to keep in good condition",
+      "ex": "It's important to _____ good health.",
+      "t": "좋은 건강을 유지하는 것이 중요하다."
+    },
+    {
+      "w": "occur",
+      "m": "발생하다",
+      "mnemonic": "어커 → 어 커 : 어떤 일이 커지면서 발생(occur)",
+      "def": "to happen or take place",
+      "ex": "Accidents can _____ at any time.",
+      "t": "사고는 언제든지 발생할 수 있다."
+    },
+    {
+      "w": "predict",
+      "m": "예측하다",
+      "mnemonic": "프리딕트 → 프리 딕트 : 미리(pre) 예측(predict)하다",
+      "def": "to say what will happen in the future",
+      "ex": "It's hard to _____ the weather.",
+      "t": "날씨를 예측하기는 어렵다."
+    },
+    {
+      "w": "respond",
+      "m": "응답하다",
+      "mnemonic": "리스폰드 → 리 스폰드 : 다시(re) 응답(respond)하다",
+      "def": "to reply or react to something",
+      "ex": "Please _____ to my email.",
+      "t": "제 이메일에 응답해주세요."
     }
   ]
 }
