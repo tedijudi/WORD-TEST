@@ -562,7 +562,9 @@
           console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
         }
         
-        const res = await fetch('words.json');
+        // 타임스탬프로 항상 최신 파일 로드
+        const res = await fetch(`words.json?t=${Date.now()}`);
+
         const json = await res.json();
         ALL_SETS = json.wordSets;
         
@@ -851,3 +853,4 @@
   </script>
 </body>
 </html>
+
