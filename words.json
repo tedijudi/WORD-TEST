@@ -504,6 +504,22 @@
           "def": "complex and refined",
           "ex": "They use _____ technology.",
           "t": "그들은 정교한 기술을 사용한다."
+        },
+        {
+          "w": "confirm",
+          "m": "확인하다",
+          "mnemonic": "컨펌 → 콘 펌 : 콘을 펌프로 확인(confirm)하는 모습",
+          "def": "to verify as true",
+          "ex": "Please _____ your reservation.",
+          "t": "예약을 확인해주세요."
+        },
+        {
+          "w": "create",
+          "m": "창조하다",
+          "mnemonic": "크리에이트 → 크리 에이트 : 크리에이터가 창조(create)하는 모습",
+          "def": "to bring something into existence",
+          "ex": "Artists _____ beautiful works.",
+          "t": "예술가들은 아름다운 작품을 창조한다."
         }
       ]
     }
