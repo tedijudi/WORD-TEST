@@ -455,7 +455,7 @@
 
     async function loadWordSets() {
       try {
-        const res = await fetch('words.json');
+        const res = await fetch(`words.json?t=${Date.now()}`);
         const json = await res.json();
         
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
