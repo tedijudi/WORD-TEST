@@ -551,16 +551,24 @@
     const loadingEl = document.getElementById('loading');
     const syncIndicator = document.getElementById('syncIndicator');
 
-    async function init() {
-      try {
-        syncIndicator.classList.add('syncing');
-        await initFirebase();
-        syncIndicator.classList.remove('syncing');
-        
-        const profile = await getUserProfile();
-        if (profile) {
-          console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
-        }
+async function init() {
+  try {
+    syncIndicator.classList.add('syncing');
+    
+    // Firebase 시도하되 실패해도 계속 진행
+    try {
+      await initFirebase();
+      syncIndicator.classList.remove('syncing');
+      
+      const profile = await getUserProfile();
+      if (profile) {
+        console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
+      }
+    } catch (firebaseError) {
+      console.warn('⚠️ Firebase 연결 실패 (오프라인 모드)', firebaseError.message);
+      syncIndicator.classList.add('offline');
+      // 계속 진행!
+    }
         
         // 타임스탬프로 항상 최신 파일 로드
         const res = await fetch(`words.json?t=${Date.now()}`);
@@ -853,4 +861,5 @@
   </script>
 </body>
 </html>
+
 
