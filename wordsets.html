@@ -117,6 +117,8 @@
       box-shadow: 
         0 4px 16px rgba(0,0,0,0.08),
         inset 0 1px 0 rgba(255,255,255,0.9);
+      text-decoration: none;
+      display: block;
     }
 
     .set-card::before {
@@ -126,10 +128,19 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      transform: scaleX(0);
-      transform-origin: left;
       transition: transform 0.3s;
+    }
+
+    .set-card.basic::before {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .set-card.intermediate::before {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    }
+
+    .set-card.advanced::before {
+      background: linear-gradient(90deg, #8b5cf6, #a855f7);
     }
 
     .set-card.completed::before {
@@ -158,14 +169,47 @@
       flex: 1;
     }
 
+    .set-level {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .set-level.basic {
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+    }
+
+    .set-level.intermediate {
+      background: rgba(99, 102, 241, 0.15);
+      color: #4f46e5;
+    }
+
+    .set-level.advanced {
+      background: rgba(139, 92, 246, 0.15);
+      color: #7c3aed;
+    }
+
     .set-title {
       font-size: 20px;
       font-weight: 900;
       color: var(--gray-900);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .set-description {
+      font-size: 13px;
+      color: var(--gray-600);
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
     .set-meta {
@@ -178,15 +222,25 @@
       padding: 6px 12px;
       border-radius: 10px;
       font-size: 20px;
-      background: rgba(99,102,241,0.1);
+    }
+
+    .set-badge.basic {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .set-badge.intermediate {
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .set-badge.advanced {
+      background: rgba(139, 92, 246, 0.1);
     }
 
     .set-badge.completed {
-      background: rgba(16,185,129,0.1);
+      background: rgba(16,185,129,0.2);
     }
 
     .set-progress {
-      background: rgba(99, 102, 241, 0.1);
       height: 8px;
       border-radius: 999px;
       overflow: hidden;
@@ -194,12 +248,37 @@
       position: relative;
     }
 
+    .set-progress.basic {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .set-progress.intermediate {
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .set-progress.advanced {
+      background: rgba(139, 92, 246, 0.1);
+    }
+
     .set-progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
       border-radius: 999px;
       transition: width 0.5s ease;
+    }
+
+    .set-progress-bar.basic {
+      background: linear-gradient(90deg, #10b981, #059669);
+      box-shadow: 0 0 8px rgba(16,185,129,0.5);
+    }
+
+    .set-progress-bar.intermediate {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
       box-shadow: 0 0 8px rgba(99,102,241,0.5);
+    }
+
+    .set-progress-bar.advanced {
+      background: linear-gradient(90deg, #8b5cf6, #a855f7);
+      box-shadow: 0 0 8px rgba(139,92,246,0.5);
     }
 
     .set-progress-text {
@@ -316,7 +395,7 @@
     <div class="progress-overview">
       <div class="progress-stats">
         <div class="progress-stat">
-          <div class="progress-stat-value" id="totalSets">1</div>
+          <div class="progress-stat-value" id="totalSets">3</div>
           <div class="progress-stat-label">전체 세트</div>
         </div>
         <div class="progress-stat">
@@ -324,7 +403,7 @@
           <div class="progress-stat-label">완료</div>
         </div>
         <div class="progress-stat">
-          <div class="progress-stat-value" id="totalWordsCount">20</div>
+          <div class="progress-stat-value" id="totalWordsCount">60</div>
           <div class="progress-stat-label">총 단어</div>
         </div>
       </div>
@@ -380,56 +459,79 @@
         const json = await res.json();
         
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-        const totalWords = json.words.length;
-        const studiedCount = Object.keys(studied).length;
+        const wordSets = json.wordSets;
         
-        document.getElementById('totalSets').textContent = '1';
+        // 전체 통계
+        let totalWords = 0;
+        let totalStudied = 0;
+        let completedSetsCount = 0;
+        
+        wordSets.forEach(set => {
+          totalWords += set.words.length;
+          const setStudied = set.words.filter(w => studied[w.w]).length;
+          totalStudied += setStudied;
+          if (setStudied === set.words.length) completedSetsCount++;
+        });
+        
+        document.getElementById('totalSets').textContent = wordSets.length;
         document.getElementById('totalWordsCount').textContent = totalWords;
-        document.getElementById('completedSets').textContent = studiedCount === totalWords ? '1' : '0';
+        document.getElementById('completedSets').textContent = completedSetsCount;
         
-        const progress = (studiedCount / totalWords * 100).toFixed(1);
-        document.getElementById('overallProgressBar').style.width = progress + '%';
+        const overallProgress = (totalStudied / totalWords * 100).toFixed(1);
+        document.getElementById('overallProgressBar').style.width = overallProgress + '%';
         
+        // 세트 카드 렌더링
         const container = document.getElementById('setsContainer');
-        const isCompleted = studiedCount === totalWords;
+        container.innerHTML = '';
         
-        const card = document.createElement('div');
-        card.className = 'set-card' + (isCompleted ? ' completed' : '');
-        card.innerHTML = `
-          <div class="set-header">
-            <div class="set-info">
-              <div class="set-title">
-                📚 기본 단어장
+        wordSets.forEach((set, index) => {
+          const setStudied = set.words.filter(w => studied[w.w]).length;
+          const setProgress = (setStudied / set.words.length * 100).toFixed(1);
+          const isCompleted = setStudied === set.words.length;
+          
+          const icons = {
+            basic: '🌱',
+            intermediate: '🚀',
+            advanced: '💎'
+          };
+          
+          const card = document.createElement('a');
+          card.href = `index.html?set=${set.id}`;
+          card.className = `set-card ${set.id}${isCompleted ? ' completed' : ''}`;
+          card.innerHTML = `
+            <div class="set-header">
+              <div class="set-info">
+                <span class="set-level ${set.id}">${set.level}</span>
+                <div class="set-title">
+                  ${icons[set.id]} ${set.name}
+                </div>
+                <div class="set-description">${set.description}</div>
+                <div class="set-meta">${set.words.length}개 단어</div>
               </div>
-              <div class="set-meta">${totalWords}개 단어</div>
+              <div class="set-badge ${set.id} ${isCompleted ? 'completed' : ''}">
+                ${isCompleted ? '✅' : icons[set.id]}
+              </div>
             </div>
-            <div class="set-badge ${isCompleted ? 'completed' : ''}">
-              ${isCompleted ? '✅' : '📖'}
+            
+            <div class="set-progress ${set.id}">
+              <div class="set-progress-bar ${set.id}" style="width: ${setProgress}%"></div>
+              <div class="set-progress-text">${setStudied}/${set.words.length}</div>
             </div>
-          </div>
+            
+            <div class="set-stats">
+              <div class="set-stat">
+                <span>✅</span>
+                <span>${setStudied}개 완료</span>
+              </div>
+              <div class="set-stat">
+                <span>📊</span>
+                <span>${setProgress}% 진행</span>
+              </div>
+            </div>
+          `;
           
-          <div class="set-progress">
-            <div class="set-progress-bar" style="width: ${progress}%"></div>
-            <div class="set-progress-text">${studiedCount}/${totalWords}</div>
-          </div>
-          
-          <div class="set-stats">
-            <div class="set-stat">
-              <span>✅</span>
-              <span>${studiedCount}개 완료</span>
-            </div>
-            <div class="set-stat">
-              <span>📊</span>
-              <span>${progress}% 진행</span>
-            </div>
-          </div>
-        `;
-        
-        card.onclick = () => {
-          window.location.href = 'index.html';
-        };
-        
-        container.appendChild(card);
+          container.appendChild(card);
+        });
         
       } catch (e) {
         console.error('데이터 로드 실패:', e);
