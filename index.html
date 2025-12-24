@@ -74,6 +74,46 @@
       padding: 6px 12px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.2);
+
+      /* 스와이프 힌트 표시 */
+.swipe-indicators {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.swipe-indicators.show {
+  opacity: 1;
+}
+
+.swipe-indicator-left,
+.swipe-indicator-right {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.swipe-indicator-left.active {
+  transform: scale(1);
+}
+
+.swipe-indicator-right.active {
+  transform: scale(1);
+}
+
     }
 
     main {
@@ -514,8 +554,13 @@
 
       const card = document.createElement('div');
       card.className = 'card' + (enter ? ' enter' : '');
-      card.innerHTML = `
-        <div class="card-inner">
+card.innerHTML = `
+  <div class="swipe-indicators" id="swipeIndicators">
+    <div class="swipe-indicator-left" id="swipeLeft">↶</div>
+    <div class="swipe-indicator-right" id="swipeRight">✓</div>
+  </div>
+  <div class="card-inner">
+
           <div class="meaning-box">
             <div class="meaning-label">한글 뜻</div>
             <div class="meaning-text">${item.m}</div>
@@ -604,56 +649,80 @@
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
-    function attachSwipe(card) {
-      let startX = 0, curX = 0, dragging = false;
-      let startTime = 0;
+function attachSwipe(card) {
+  let startX = 0, curX = 0, dragging = false;
+  let startTime = 0;
+  
+  const indicators = card.querySelector('#swipeIndicators');
+  const leftIndicator = card.querySelector('#swipeLeft');
+  const rightIndicator = card.querySelector('#swipeRight');
 
-      card.onpointerdown = e => {
-        if (!answered) return;
-        dragging = true;
-        startX = e.clientX || e.touches[0].clientX;
-        startTime = Date.now();
-        card.style.transition = 'none';
-      };
+  card.onpointerdown = e => {
+    if (!answered) return;
+    dragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    startTime = Date.now();
+    card.style.transition = 'none';
+    indicators.classList.add('show');
+  };
 
-      card.onpointermove = e => {
-        if (!dragging) return;
-        curX = (e.clientX || e.touches[0].clientX) - startX;
-        card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
-      };
-
-      card.onpointerup = () => {
-        if (!dragging) return;
-        dragging = false;
-        
-        const threshold = 60;
-        const timeElapsed = Date.now() - startTime;
-        const velocity = Math.abs(curX) / timeElapsed;
-        const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
-        
-        if (shouldSwipe) {
-          card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
-          setTimeout(() => {
-            card.remove();
-            idx++;
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else {
-          card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-          card.style.transform = '';
-        }
-        curX = 0;
-      };
-
-      card.onpointercancel = () => {
-        dragging = false;
-        card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-        card.style.transform = '';
-        curX = 0;
-      };
+  card.onpointermove = e => {
+    if (!dragging) return;
+    curX = (e.clientX || e.touches[0].clientX) - startX;
+    card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
+    
+    // 인디케이터 활성화
+    if (curX > 30) {
+      leftIndicator.classList.add('active');
+      rightIndicator.classList.remove('active');
+    } else if (curX < -30) {
+      rightIndicator.classList.add('active');
+      leftIndicator.classList.remove('active');
+    } else {
+      leftIndicator.classList.remove('active');
+      rightIndicator.classList.remove('active');
     }
+  };
+
+  card.onpointerup = () => {
+    if (!dragging) return;
+    dragging = false;
+    
+    const threshold = 60;
+    const timeElapsed = Date.now() - startTime;
+    const velocity = Math.abs(curX) / timeElapsed;
+    const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
+    
+    if (shouldSwipe) {
+      card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
+      setTimeout(() => {
+        card.remove();
+        idx++;
+        renderCard(true);
+        updateUI();
+      }, 300);
+    } else {
+      card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      card.style.transform = '';
+      indicators.classList.remove('show');
+      leftIndicator.classList.remove('active');
+      rightIndicator.classList.remove('active');
+    }
+    curX = 0;
+  };
+
+  card.onpointercancel = () => {
+    dragging = false;
+    card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    card.style.transform = '';
+    indicators.classList.remove('show');
+    leftIndicator.classList.remove('active');
+    rightIndicator.classList.remove('active');
+    curX = 0;
+  };
+}
+
 
     function showComplete() {
       const today = new Date().toISOString().split('T')[0];
@@ -697,3 +766,4 @@
   </script>
 </body>
 </html>
+
