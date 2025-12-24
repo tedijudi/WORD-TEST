@@ -422,7 +422,7 @@
       try {
         await initFirebase();
         
-        const res = await fetch('words.json');
+        const res = await fetch(`words.json?t=${Date.now()}`);
         const json = await res.json();
         ALL_SETS = json.wordSets;
         
