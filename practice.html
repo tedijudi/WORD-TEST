@@ -511,15 +511,17 @@
     }
 
     function attachSwipe(card) {
-      let startX = 0, curX = 0, dragging = false;
-      let startTime = 0;
+  let startX = 0, curX = 0, dragging = false;
+  let startTime = 0;
 
-      card.onpointerdown = e => {
-        dragging = true;
-        startX = e.clientX || e.touches[0].clientX;
-        startTime = Date.now();
-        card.style.transition = 'none';
-      };
+  card.onpointerdown = e => {
+    // if (!answered) return; ← 이 줄 삭제!
+    dragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    startTime = Date.now();
+    card.style.transition = 'none';
+  };
+
 
       card.onpointermove = e => {
         if (!dragging) return;
