@@ -1,111 +1,86 @@
-// firebase-config.js
+// Firebase 설정 및 초기화
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, getDocs, onSnapshot, collection, query, where, orderBy, limit, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-
-// ⚠️ Firebase Console에서 복사한 설정값으로 교체하세요!
+// Firebase 프로젝트 설정 (여기에 본인의 Firebase 설정 입력)
 const firebaseConfig = {
-  apiKey: "AIzaSyBU5lC91UCeDadz4IVnd0byy5Ts3wcFAys",
-  authDomain: "wordswipe-2f209.firebaseapp.com",
-  projectId: "wordswipe-2f209",
-  storageBucket: "wordswipe-2f209.firebasestorage.app",
-  messagingSenderId: "223111111558",
-  appId: "1:223111111558:web:8f058aa9c2afe4d2194207"
+  apiKey: "여기에_본인의_API_키",
+  authDomain: "여기에_본인의_도메인",
+  projectId: "여기에_본인의_프로젝트ID",
+  storageBucket: "여기에_본인의_스토리지",
+  messagingSenderId: "여기에_본인의_메시징ID",
+  appId: "여기에_본인의_앱ID"
 };
 
+// Firebase 초기화
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 let currentUser = null;
-let syncEnabled = false;
 
-// ========================================
-// 사용자 초기화
-// ========================================
-
+// Firebase 초기화 함수
 export async function initFirebase() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         console.log('✅ Firebase 인증 완료:', user.uid);
         
-        // 프로필 확인/생성
-        await ensureUserProfile();
+        // 사용자 프로필 확인/생성
+        await ensureUserProfile(user);
         
-        // 실시간 동기화 시작
-        startRealtimeSync();
+        // 실시간 동기화 활성화
+        setupRealtimeSync(user.uid);
         
-        // 초기 데이터 로드
-        await loadFromCloud();
-        
-        syncEnabled = true;
         resolve(user);
       } else {
         // 익명 로그인
-        console.log('🔐 익명 로그인 시작...');
-        await signInAnonymously(auth);
+        try {
+          const result = await signInAnonymously(auth);
+          currentUser = result.user;
+          console.log('✅ Firebase 인증 완료:', result.user.uid);
+          
+          await ensureUserProfile(result.user);
+          setupRealtimeSync(result.user.uid);
+          
+          resolve(result.user);
+        } catch (error) {
+          console.error('❌ Firebase 인증 실패:', error);
+          reject(error);
+        }
       }
     });
   });
 }
 
-// ========================================
-// 프로필 관리
-// ========================================
-
-async function ensureUserProfile() {
-  const profileRef = doc(db, 'users', currentUser.uid);
-  const profileSnap = await getDoc(profileRef);
+// 사용자 프로필 확인/생성
+async function ensureUserProfile(user) {
+  const userRef = doc(db, 'users', user.uid);
+  const userSnap = await getDoc(userRef);
   
-  if (!profileSnap.exists()) {
-    // 새 사용자 - 이름 입력받기
-    const userName = prompt('닉네임을 입력하세요 (나중에 변경 가능)', '학습자');
+  if (!userSnap.exists()) {
+    // 새 사용자 프로필 생성
+    const userName = localStorage.getItem('userName') || '학습자';
     const friendCode = generateFriendCode();
     
-    await setDoc(profileRef, {
-      name: userName || '학습자',
+    await setDoc(userRef, {
+      uid: user.uid,
+      name: userName,
       friendCode: friendCode,
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now(),
       totalWords: 0,
-      streak: 0,
-      lastActive: new Date().toISOString()
+      totalSessions: 0
     });
     
     console.log('✅ 새 사용자 프로필 생성:', friendCode);
-  } else {
-    // 기존 사용자 - 마지막 활동 시간 업데이트
-    await updateDoc(profileRef, {
-      lastActive: new Date().toISOString()
-    });
   }
 }
 
-export async function updateUserName(newName) {
-  if (!currentUser) return;
-  
-  await updateDoc(doc(db, 'users', currentUser.uid), {
-    name: newName
-  });
-  
-  alert('✅ 닉네임이 변경되었습니다!');
-}
-
-export async function getUserProfile() {
-  if (!currentUser) return null;
-  
-  const snap = await getDoc(doc(db, 'users', currentUser.uid));
-  return snap.exists() ? snap.data() : null;
-}
-
-// ========================================
-// 친구 코드 생성
-// ========================================
-
+// 친구 코드 생성 (6자리 영숫자)
 function generateFriendCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 혼동 가능한 문자 제외
   let code = '';
   for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -113,216 +88,126 @@ function generateFriendCode() {
   return code;
 }
 
-// ========================================
-// 실시간 동기화
-// ========================================
-
-function startRealtimeSync() {
-  if (!currentUser) return;
+// 사용자 프로필 가져오기
+export async function getUserProfile() {
+  if (!currentUser) return null;
   
-  // studied 데이터 실시간 감시
-  onSnapshot(doc(db, 'users', currentUser.uid, 'data', 'studied'), (snapshot) => {
-    if (snapshot.exists()) {
-      const cloudData = snapshot.data();
+  const userRef = doc(db, 'users', currentUser.uid);
+  const userSnap = await getDoc(userRef);
+  
+  if (userSnap.exists()) {
+    return { uid: currentUser.uid, ...userSnap.data() };
+  }
+  return null;
+}
+
+// 실시간 동기화 설정
+function setupRealtimeSync(uid) {
+  console.log('📡 실시간 동기화 활성화');
+  
+  // studied 데이터 실시간 동기화
+  const studiedRef = doc(db, 'users', uid, 'data', 'studied');
+  onSnapshot(studiedRef, (doc) => {
+    if (doc.exists()) {
+      console.log('🔄 실시간 동기화: studied');
+      const cloudData = doc.data();
       const localData = JSON.parse(localStorage.getItem('studied') || '{}');
       
-      // 병합 (최신 우선)
-      const merged = mergeStudiedData(localData, cloudData);
+      // 클라우드 데이터가 더 최신이면 로컬 업데이트
+      const merged = { ...localData, ...cloudData };
       localStorage.setItem('studied', JSON.stringify(merged));
-      
-      console.log('🔄 실시간 동기화: studied');
     }
   });
   
-  // stats 데이터 실시간 감시
-  onSnapshot(doc(db, 'users', currentUser.uid, 'data', 'stats'), (snapshot) => {
-    if (snapshot.exists()) {
-      const cloudData = snapshot.data();
-      localStorage.setItem('wordswipe_stats', JSON.stringify(cloudData));
-      
+  // stats 데이터 실시간 동기화
+  const statsRef = doc(db, 'users', uid, 'data', 'stats');
+  onSnapshot(statsRef, (doc) => {
+    if (doc.exists()) {
       console.log('🔄 실시간 동기화: stats');
-    }
-  });
-  
-  console.log('📡 실시간 동기화 활성화');
-}
-
-function mergeStudiedData(local, cloud) {
-  const merged = {...cloud};
-  
-  Object.keys(local).forEach(word => {
-    if (!merged[word]) {
-      merged[word] = local[word];
-    } else {
-      // 더 최근 데이터 사용
-      const localTime = local[word].lastReview || 0;
-      const cloudTime = merged[word].lastReview || 0;
+      const cloudData = doc.data();
+      const localData = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
       
-      if (localTime > cloudTime) {
-        merged[word] = local[word];
-      }
+      const merged = { ...localData, ...cloudData };
+      localStorage.setItem('wordswipe_stats', JSON.stringify(merged));
     }
   });
-  
-  return merged;
 }
 
-// ========================================
-// 클라우드 저장/불러오기
-// ========================================
-
+// 클라우드에 데이터 저장
 export async function saveToCloud() {
-  if (!currentUser || !syncEnabled) return;
+  if (!currentUser) {
+    console.log('⚠️ 로그인 필요 - 클라우드 저장 건너뜀');
+    return;
+  }
   
   try {
     const studied = JSON.parse(localStorage.getItem('studied') || '{}');
     const stats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
     
-    // Firestore에 저장
-    await setDoc(doc(db, 'users', currentUser.uid, 'data', 'studied'), studied);
-    await setDoc(doc(db, 'users', currentUser.uid, 'data', 'stats'), stats);
+    // studied 저장
+    const studiedRef = doc(db, 'users', currentUser.uid, 'data', 'studied');
+    await setDoc(studiedRef, studied, { merge: true });
     
-    // 프로필 통계 업데이트
+    // stats 저장
+    const statsRef = doc(db, 'users', currentUser.uid, 'data', 'stats');
+    await setDoc(statsRef, stats, { merge: true });
+    
+    // 사용자 프로필 업데이트 (통계)
+    const userRef = doc(db, 'users', currentUser.uid);
     const totalWords = Object.keys(studied).length;
-    await updateDoc(doc(db, 'users', currentUser.uid), {
+    const totalSessions = Object.values(stats).reduce((sum, day) => sum + day.sessions, 0);
+    
+    await updateDoc(userRef, {
       totalWords: totalWords,
-      lastActive: new Date().toISOString()
+      totalSessions: totalSessions,
+      lastSync: Date.now()
     });
     
     console.log('☁️ 클라우드 저장 완료');
   } catch (error) {
-    console.error('❌ 저장 실패:', error);
+    console.error('❌ 클라우드 저장 실패:', error);
   }
 }
 
+// 클라우드에서 데이터 불러오기
 export async function loadFromCloud() {
-  if (!currentUser) return;
+  if (!currentUser) {
+    console.log('⚠️ 로그인 필요 - 클라우드 불러오기 건너뜀');
+    return;
+  }
   
   try {
-    const studiedSnap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'studied'));
-    const statsSnap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'stats'));
+    // studied 불러오기
+    const studiedRef = doc(db, 'users', currentUser.uid, 'data', 'studied');
+    const studiedSnap = await getDoc(studiedRef);
     
     if (studiedSnap.exists()) {
-      const cloudData = studiedSnap.data();
-      const localData = JSON.parse(localStorage.getItem('studied') || '{}');
-      const merged = mergeStudiedData(localData, cloudData);
+      const cloudStudied = studiedSnap.data();
+      const localStudied = JSON.parse(localStorage.getItem('studied') || '{}');
+      
+      // 병합 (클라우드 우선)
+      const merged = { ...localStudied, ...cloudStudied };
       localStorage.setItem('studied', JSON.stringify(merged));
     }
     
+    // stats 불러오기
+    const statsRef = doc(db, 'users', currentUser.uid, 'data', 'stats');
+    const statsSnap = await getDoc(statsRef);
+    
     if (statsSnap.exists()) {
-      localStorage.setItem('wordswipe_stats', JSON.stringify(statsSnap.data()));
+      const cloudStats = statsSnap.data();
+      const localStats = JSON.parse(localStorage.getItem('wordswipe_stats') || '{}');
+      
+      const merged = { ...localStats, ...cloudStats };
+      localStorage.setItem('wordswipe_stats', JSON.stringify(merged));
     }
     
     console.log('☁️ 클라우드 불러오기 완료');
   } catch (error) {
-    console.error('❌ 불러오기 실패:', error);
+    console.error('❌ 클라우드 불러오기 실패:', error);
   }
 }
 
-// ========================================
-// 친구 시스템
-// ========================================
-
-export async function findFriendByCode(friendCode) {
-  const q = query(
-    collection(db, 'users'),
-    where('friendCode', '==', friendCode.toUpperCase()),
-    limit(1)
-  );
-  
-  const snapshot = await getDocs(q);
-  
-  if (snapshot.empty) {
-    return null;
-  }
-  
-  const friendDoc = snapshot.docs[0];
-  return {
-    id: friendDoc.id,
-    ...friendDoc.data()
-  };
-}
-
-export async function addFriend(friendCode) {
-  if (!currentUser) return { success: false, error: '로그인이 필요합니다.' };
-  
-  const friend = await findFriendByCode(friendCode);
-  
-  if (!friend) {
-    return { success: false, error: '존재하지 않는 친구 코드입니다.' };
-  }
-  
-  if (friend.id === currentUser.uid) {
-    return { success: false, error: '자신을 친구로 추가할 수 없습니다.' };
-  }
-  
-  // 친구 목록에 추가
-  const friendsRef = doc(db, 'users', currentUser.uid, 'friends', friend.id);
-  await setDoc(friendsRef, {
-    name: friend.name,
-    friendCode: friend.friendCode,
-    addedAt: new Date().toISOString()
-  });
-  
-  return { success: true, friend: friend };
-}
-
-export async function getFriends() {
-  if (!currentUser) return [];
-  
-  const friendsSnap = await getDocs(collection(db, 'users', currentUser.uid, 'friends'));
-  
-  const friends = [];
-  for (const doc of friendsSnap.docs) {
-    const friendData = doc.data();
-    
-    // 친구의 최신 정보 가져오기
-    const friendProfileSnap = await getDoc(db.doc(db, 'users', doc.id));
-    if (friendProfileSnap.exists()) {
-      friends.push({
-        id: doc.id,
-        ...friendProfileSnap.data()
-      });
-    }
-  }
-  
-  return friends;
-}
-
-export async function getLeaderboard() {
-  const q = query(
-    collection(db, 'users'),
-    orderBy('totalWords', 'desc'),
-    limit(10)
-  );
-  
-  const snapshot = await getDocs(q);
-  
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-}
-
-// ========================================
-// 자동 저장 (10초마다)
-// ========================================
-
-setInterval(() => {
-  if (syncEnabled) {
-    saveToCloud();
-  }
-}, 10000);
-
-// ========================================
-// 페이지 종료 시 저장
-// ========================================
-
-window.addEventListener('beforeunload', () => {
-  if (syncEnabled) {
-    saveToCloud();
-  }
-});
 // 친구 코드로 친구 찾기
 export async function findFriendByCode(code) {
   if (!currentUser) {
@@ -337,7 +222,8 @@ export async function findFriendByCode(code) {
     throw new Error('친구를 찾을 수 없습니다');
   }
   
-  return querySnapshot.docs[0].data();
+  const friendDoc = querySnapshot.docs[0];
+  return { uid: friendDoc.id, ...friendDoc.data() };
 }
 
 // 친구 추가
@@ -370,9 +256,11 @@ export async function getFriends() {
   const snapshot = await getDocs(friendsRef);
   
   const friends = [];
-  for (const doc of snapshot.docs) {
-    const friendData = doc.data();
-    const friendProfile = await getDoc(doc(db, 'users', friendData.uid));
+  for (const docSnap of snapshot.docs) {
+    const friendData = docSnap.data();
+    const friendProfileRef = doc(db, 'users', friendData.uid);
+    const friendProfile = await getDoc(friendProfileRef);
+    
     if (friendProfile.exists()) {
       friends.push({
         ...friendData,
@@ -398,4 +286,5 @@ export async function getLeaderboard() {
     .slice(0, 10);
 }
 
-export { currentUser, db, auth };
+// 초기 로드 시 클라우드 데이터 불러오기
+loadFromCloud();
