@@ -1,7 +1,8 @@
 // firebase-config.js
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, doc, setDoc, getDoc, getDocs, onSnapshot, collection, query, where, orderBy, limit, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, getDocs, onSnapshot, collection, query, where, orderBy, limit, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
 
 // ⚠️ Firebase Console에서 복사한 설정값으로 교체하세요!
 const firebaseConfig = {
