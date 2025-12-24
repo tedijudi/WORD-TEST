@@ -322,5 +322,79 @@ window.addEventListener('beforeunload', () => {
     saveToCloud();
   }
 });
+// 친구 코드로 친구 찾기
+export async function findFriendByCode(code) {
+  if (!currentUser) {
+    throw new Error('로그인이 필요합니다');
+  }
+  
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('friendCode', '==', code));
+  const querySnapshot = await getDocs(q);
+  
+  if (querySnapshot.empty) {
+    throw new Error('친구를 찾을 수 없습니다');
+  }
+  
+  return querySnapshot.docs[0].data();
+}
+
+// 친구 추가
+export async function addFriendByCode(code) {
+  if (!currentUser) {
+    throw new Error('로그인이 필요합니다');
+  }
+  
+  const profile = await getUserProfile();
+  if (profile.friendCode === code) {
+    throw new Error('자기 자신은 추가할 수 없습니다');
+  }
+  
+  const friend = await findFriendByCode(code);
+  const friendRef = doc(db, 'users', currentUser.uid, 'friends', friend.uid);
+  
+  await setDoc(friendRef, {
+    uid: friend.uid,
+    name: friend.name,
+    friendCode: friend.friendCode,
+    addedAt: Date.now()
+  });
+}
+
+// 친구 목록 가져오기
+export async function getFriends() {
+  if (!currentUser) return [];
+  
+  const friendsRef = collection(db, 'users', currentUser.uid, 'friends');
+  const snapshot = await getDocs(friendsRef);
+  
+  const friends = [];
+  for (const doc of snapshot.docs) {
+    const friendData = doc.data();
+    const friendProfile = await getDoc(doc(db, 'users', friendData.uid));
+    if (friendProfile.exists()) {
+      friends.push({
+        ...friendData,
+        ...friendProfile.data()
+      });
+    }
+  }
+  
+  return friends;
+}
+
+// 리더보드 가져오기
+export async function getLeaderboard() {
+  if (!currentUser) return [];
+  
+  const friends = await getFriends();
+  const profile = await getUserProfile();
+  
+  const allUsers = [profile, ...friends];
+  
+  return allUsers
+    .sort((a, b) => (b.totalWords || 0) - (a.totalWords || 0))
+    .slice(0, 10);
+}
 
 export { currentUser, db, auth };
