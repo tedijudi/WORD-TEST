@@ -329,39 +329,46 @@
       padding: 16px 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       overflow-y: auto;
       box-sizing: border-box;
     }
 
+    /* 🔥 새로운 레이아웃: 단어 + 이미지 나란히 */
     .word-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 120px;
+      gap: 12px;
       align-items: center;
-      justify-content: space-between;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       border-bottom: 2px solid rgba(16, 185, 129, 0.15);
     }
 
-    .word-main { flex: 1; }
+    .word-main { 
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
     .word-term {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 900;
       color: var(--gray-900);
-      margin-bottom: 4px;
       letter-spacing: -0.5px;
+      line-height: 1.1;
     }
 
     .word-meaning {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--success);
+      line-height: 1.2;
     }
 
-    /* 이미지 박스 */
+    /* 🔥 이미지 박스 - 정사각형 */
     .image-box {
-      width: 100%;
-      aspect-ratio: 16 / 9;
+      width: 120px;
+      height: 120px;
       border-radius: 16px;
       background: linear-gradient(135deg, #f0fdf4, #dcfce7);
       background-size: cover;
@@ -371,8 +378,9 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 2px solid rgba(16,185,129,0.15);
+      border: 2px solid rgba(16,185,129,0.2);
       position: relative;
+      flex-shrink: 0;
     }
 
     .image-box img {
@@ -382,7 +390,7 @@
     }
 
     .image-box.loading {
-      font-size: 30px;
+      font-size: 40px;
       color: rgba(16,185,129,0.3);
       animation: imageLoading 1.5s ease-in-out infinite;
     }
@@ -394,7 +402,7 @@
 
     .image-box.error {
       background: linear-gradient(135deg, #fef3c7, #fde68a);
-      font-size: 24px;
+      font-size: 32px;
       color: rgba(245,158,11,0.5);
     }
 
@@ -564,14 +572,39 @@
       white-space: nowrap;
     }
 
+    /* 🔥 모바일 최적화 */
+    @media (max-width: 400px) {
+      .word-header {
+        grid-template-columns: 1fr 100px;
+      }
+      
+      .image-box {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .word-term { font-size: 28px; }
+      .word-meaning { font-size: 18px; }
+    }
+
+    /* 🔥 작은 화면 (아이폰 13 미니 등) */
     @media (max-height: 812px) {
       .card-inner {
         padding: 14px 12px;
-        gap: 8px;
+        gap: 10px;
       }
+      
+      .word-header {
+        grid-template-columns: 1fr 100px;
+      }
+      
+      .image-box {
+        width: 100px;
+        height: 100px;
+      }
+      
       .word-term { font-size: 26px; }
       .word-meaning { font-size: 16px; }
-      .image-box { aspect-ratio: 2 / 1; }
       .mnemonic-text, .example-text { font-size: 13px; }
       .translation { font-size: 12px; }
     }
@@ -749,7 +782,6 @@
     }
 
     function loadSet(setId) {
-      // 덱 완전 초기화
       deckEl.innerHTML = '';
       
       const currentSet = ALL_SETS.find(set => set.id === setId);
@@ -849,9 +881,8 @@
               <div class="word-term">${item.w}</div>
               <div class="word-meaning">${item.m}</div>
             </div>
+            <div class="image-box loading" id="imageBox">🖼️</div>
           </div>
-
-          <div class="image-box loading" id="imageBox">🖼️</div>
 
           <div class="mnemonic-box">
             <div class="mnemonic-label">연상 문장</div>
@@ -868,10 +899,8 @@
         </div>
       `;
 
-      // m_rich를 HTML로 렌더링
       card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
 
-      // 이미지 로딩
       const imageBox = card.querySelector('#imageBox');
       const img = new Image();
       const imageUrl = `images/${item.w}.webp`;
