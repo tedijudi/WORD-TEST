@@ -987,85 +987,88 @@
       updateUI();
     }
 
-    function renderCard(enter = false) {
-      if (idx >= order.length) {
-        showComplete();
-        return;
-      }
+ function renderCard(enter = false) {
+  if (idx >= order.length) {
+    showComplete();
+    return;
+  }
 
-      answered = false;
-      const item = DATA[order[idx]];
-      const choices = generateChoices(item);
+  answered = false;
+  const item = DATA[order[idx]];
+  const choices = generateChoices(item);
 
-      const card = document.createElement('div');
-      card.className = 'card' + (enter ? ' enter' : '');
-      card.innerHTML = `
-        <div class="swipe-indicators" id="swipeIndicators">
-          <div class="swipe-indicator-left" id="swipeLeft">🔄</div>
-          <div class="swipe-indicator-right" id="swipeRight">✅</div>
+  const card = document.createElement('div');
+  card.className = 'card' + (enter ? ' enter' : '');
+  card.innerHTML = `
+    <div class="swipe-indicators" id="swipeIndicators">
+      <div class="swipe-indicator-left" id="swipeLeft">🔄</div>
+      <div class="swipe-indicator-right" id="swipeRight">✅</div>
+    </div>
+    <div class="card-inner">
+      <div class="word-header">
+        <div class="word-main">
+          <div class="word-term" id="wordTerm" style="opacity: 0; max-height: 0; overflow: hidden; transition: all 0.3s;">ability</div>
+          <div class="word-meaning">${item.m}</div>
         </div>
-        <div class="card-inner">
-          <div class="word-header">
-            <div class="word-main">
-              <div class="word-term">${item.w}</div>
-              <div class="word-meaning">${item.m}</div>
-            </div>
-            <div class="image-box loading" id="imageBox">🖼️</div>
+        <div class="image-box loading" id="imageBox">🖼️</div>
+      </div>
+
+      <div class="example-box">
+        <div class="example-label">예문</div>
+        <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
+        <div class="translation" id="translation">${item.t}</div>
+      </div>
+
+      <div class="mnemonic-box" id="mnemonicBox">
+        <div class="mnemonic-label">연상 문장</div>
+        <div class="mnemonic-text" id="mnemonicText"></div>
+      </div>
+
+      <div class="choices">
+        ${choices.map((c, i) => `
+          <div class="choice" data-word="${c.w}" data-idx="${i}">
+            <div class="choice-word">${c.w}</div>
+            <div class="choice-meaning" data-idx="${i}">${c.m}</div>
           </div>
+        `).join('')}
+      </div>
 
-          <div class="example-box">
-            <div class="example-label">예문</div>
-            <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
-            <div class="translation" id="translation">${item.t}</div>
-          </div>
+      <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
+    </div>
+  `;
 
-          <div class="mnemonic-box" id="mnemonicBox">
-            <div class="mnemonic-label">연상 문장</div>
-            <div class="mnemonic-text" id="mnemonicText"></div>
-          </div>
+  // 🔥 실제 단어 저장 (숨김)
+  card.querySelector('#wordTerm').textContent = item.w;
+  card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
 
-          <div class="choices">
-            ${choices.map((c, i) => `
-              <div class="choice" data-word="${c.w}" data-idx="${i}">
-                <div class="choice-word">${c.w}</div>
-                <div class="choice-meaning" data-idx="${i}">${c.m}</div>
-              </div>
-            `).join('')}
-          </div>
+  const imageBox = card.querySelector('#imageBox');
+  const img = new Image();
+  const imageUrl = `images/${item.w}.webp`;
+  
+  img.onload = () => {
+    imageBox.innerHTML = '';
+    imageBox.appendChild(img);
+    imageBox.classList.remove('loading');
+  };
+  
+  img.onerror = () => {
+    imageBox.textContent = '🎨';
+    imageBox.classList.remove('loading');
+    imageBox.classList.add('error');
+  };
+  
+  img.src = imageUrl;
 
-          <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
-        </div>
-      `;
+  deckEl.appendChild(card);
+  currentCard = card;
 
-      card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
+  card.querySelectorAll('.choice').forEach(btn => {
+    btn.onclick = () => selectChoice(btn, item);
+  });
 
-      const imageBox = card.querySelector('#imageBox');
-      const img = new Image();
-      const imageUrl = `images/${item.w}.webp`;
-      
-      img.onload = () => {
-        imageBox.innerHTML = '';
-        imageBox.appendChild(img);
-        imageBox.classList.remove('loading');
-      };
-      
-      img.onerror = () => {
-        imageBox.textContent = '🎨';
-        imageBox.classList.remove('loading');
-        imageBox.classList.add('error');
-      };
-      
-      img.src = imageUrl;
+  attachSwipe(card);
+}
 
-      deckEl.appendChild(card);
-      currentCard = card;
-
-      card.querySelectorAll('.choice').forEach(btn => {
-        btn.onclick = () => selectChoice(btn, item);
-      });
-
-      attachSwipe(card);
-    }
 
     function generateChoices(item) {
       const similar = DATA
@@ -1293,3 +1296,4 @@
   </script>
 </body>
 </html>
+
