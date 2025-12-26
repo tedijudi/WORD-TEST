@@ -788,6 +788,20 @@
       if (!currentSet) return;
 
       DATA = [...currentSet.words];
+      
+      if (DATA.length === 0) {
+        deckEl.innerHTML = `
+          <div class="card">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:30px; text-align:center;">
+              <div style="font-size:70px; margin-bottom:20px;">📝</div>
+              <h2 style="font-size:24px; font-weight:900; color:var(--gray-700); margin-bottom:14px;">단어가 없습니다</h2>
+              <p style="font-size:14px; color:var(--gray-600);">다른 세트를 선택해주세요</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
       currentSetName.textContent = currentSet.name;
       currentSetIcon.textContent = levelIcons[currentSet.level];
 
