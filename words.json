@@ -41,210 +41,6 @@
           "audio_en": "",
           "audio_kr": "",
           "audio_mn": ""
-        },
-        {
-          "w": "provide",
-          "m": "제공하다",
-          "mnemonic": "프로 바이드(보이드)시, 팬들에게 최고의 서비스를 제공하다.",
-          "m_rich": "<b>프로 바이드(보이드)</b>시, 팬들에게 최고의 서비스를 <b>제공하다</b>.",
-          "img_prompt": "A professional chef proudly presenting a beautifully decorated dish to a customer. The chef is 'providing' the meal with a confident smile.",
-          "ex": "The hotel _____s free breakfast.",
-          "t": "그 호텔은 무료 아침 식사를 제공한다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "explain",
-          "m": "설명하다",
-          "mnemonic": "익스! 플레인 요거트의 장점을 열심히 설명하다.",
-          "m_rich": "<b>익스! 플레인</b> 요거트의 장점을 열심히 <b>설명하다</b>.",
-          "img_prompt": "A cheerful salesperson in a supermarket, holding a cup of plain yogurt and enthusiastically 'explaining' its benefits to a curious customer.",
-          "ex": "Can you _____ the rules of the game to me?",
-          "t": "게임 규칙을 저에게 설명해 주실 수 있나요?",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "purpose",
-          "m": "목적",
-          "mnemonic": "진주(펄)를 얻기 위해 멋진 포즈(퍼포즈)를 취하는 것, 그것이 내 목적이다.",
-          "m_rich": "진주(<b>펄</b>)를 얻기 위해 멋진 <b>포즈(퍼포즈)</b>를 취하는 것, 그것이 내 <b>목적</b>이다.",
-          "img_prompt": "An oyster doing a dramatic, funny 'pose' on a rock underwater. Inside its open shell is a giant, glowing pearl. The scene clearly shows its 'purpose'.",
-          "ex": "The _____ of this meeting is to plan our project.",
-          "t": "이 회의의 목적은 우리 프로젝트를 계획하는 것입니다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "result",
-          "m": "결과",
-          "mnemonic": "시험 결과가 좋아서, 아빠가 리조트를 예약했다!",
-          "m_rich": "시험 <b>결과</b>가 좋아서, 아빠가 <b>리조트</b>를 예약했다!",
-          "img_prompt": "A happy family with luggage, standing in front of a beautiful tropical 'resort'. A student is holding up a test paper with an 'A+' grade, showing the 'result'.",
-          "ex": "The _____ of the experiment was surprising.",
-          "t": "실험 결과는 놀라웠다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "protect",
-          "m": "보호하다",
-          "mnemonic": "프로는 텍(태클)으로부터 자기 몸을 보호해야 한다.",
-          "m_rich": "<b>프로</b>는 <b>텍(태클)</b>으로부터 자기 몸을 <b>보호해야</b> 한다.",
-          "img_prompt": "A soccer player creating a force field around themselves to block an incoming rough 'tackle' from an opponent. The force field emphasizes the act of 'protection'.",
-          "ex": "You should wear a helmet to _____ your head.",
-          "t": "머리를 보호하기 위해 헬멧을 써야 한다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "improve",
-          "m": "향상시키다",
-          "mnemonic": "임, 풀(프루)어봐. 이 수학 문제를 풀면 실력이 향상될 거야.",
-          "m_rich": "<b>임, 풀(프루)어봐.</b> 이 수학 문제를 풀면 실력이 <b>향상될</b> 거야.",
-          "img_prompt": "A wise teacher pointing at a complex math problem on a blackboard, encouraging a student. The student's head has a lightbulb above it that gets brighter as they 'improve'.",
-          "ex": "I want to _____ my English skills.",
-          "t": "저는 제 영어 실력을 향상시키고 싶어요.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "require",
-          "m": "요구하다",
-          "mnemonic": "보물 상자를 열려면 열쇠 콰이어(리콰이어)가 필요하다고 요구한다.",
-          "m_rich": "보물 상자를 열려면 <b>열쇠 콰이어(리콰이어)</b>가 필요하다고 <b>요구</b>한다.",
-          "img_prompt": "A giant, ancient treasure chest with a keyhole that has a sign next to it. The sign has a picture of a choir of keys (keys with little singing mouths) and text that reads 'Key Choir Required!'.",
-          "ex": "This job _____s computer skills.",
-          "t": "이 직업은 컴퓨터 기술을 요구한다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "opinion",
-          "m": "의견",
-          "mnemonic": "오! 피니언(피는구나). 저 꽃을 보니 갑자기 좋은 의견이 떠올랐어.",
-          "m_rich": "<b>오! 피니언(피는구나).</b> 저 꽃을 보니 갑자기 좋은 <b>의견</b>이 떠올랐어.",
-          "img_prompt": "A person having a 'eureka' moment. They see a flower suddenly bloom, and a bright lightbulb appears over their head, representing a new 'opinion'.",
-          "ex": "What's your _____ on this matter?",
-          "t": "이 문제에 대한 당신의 의견은 무엇인가요?",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "entire",
-          "m": "전체의",
-          "mnemonic": "이 타이어(인타이어)는 자동차 전체의 무게를 지탱한다.",
-          "m_rich": "<b>이 타이어(인타이어)</b>는 자동차 <b>전체의</b> 무게를 지탱한다.",
-          "img_prompt": "A close-up shot focusing on a single, strong tire supporting the entire weight of a huge truck. The contrast between the single tire and the huge vehicle emphasizes 'entire'.",
-          "ex": "I read the _____ book in one day.",
-          "t": "나는 그 책 전체를 하루 만에 읽었다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "prepare",
-          "m": "준비하다",
-          "mnemonic": "시험 전에 풀이 페이퍼(프리페어)를 보며 준비하다.",
-          "m_rich": "시험 전에 <b>풀이 페이퍼(프리페어)</b>를 보며 <b>준비하다</b>.",
-          "img_prompt": "A student sitting at a desk, carefully reviewing a 'paper' full of solved problems ('풀이 페이퍼') the night before an exam, getting 'prepared'.",
-          "ex": "She is _____ing for her final exams.",
-          "t": "그녀는 기말고사를 준비하고 있다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "damage",
-          "m": "손상",
-          "mnemonic": "상대에게 입힌 대미지가 건물의 손상으로 이어졌다.",
-          "m_rich": "상대에게 입힌 <b>대미지</b>가 건물의 <b>손상</b>으로 이어졌다.",
-          "img_prompt": "In a video game scene, a character lands a powerful punch on a wall. The word 'DAMAGE: 9999' floats in the air as cracks spread across the building.",
-          "ex": "The storm caused a lot of _____ to the house.",
-          "t": "폭풍이 집에 많은 손상을 입혔다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "discover",
-          "m": "발견하다",
-          "mnemonic": "디스(이) 커버를 열자, 새로운 대륙을 발견했다!",
-          "m_rich": "<b>디스(이) 커버</b>를 열자, 새로운 대륙을 <b>발견했다</b>!",
-          "img_prompt": "An old, dusty book lies on a table. A hand is opening 'this cover', and light pours out from the book, revealing a map of a new, undiscovered continent.",
-          "ex": "Columbus _____ed America in 1492.",
-          "t": "콜럼버스는 1492년에 아메리카를 발견했다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "suggest",
-          "m": "제안하다",
-          "mnemonic": "서, 제스처를 써가며 회의에서 아이디어를 제안하다.",
-          "m_rich": "<b>서, 제스처</b>를 써가며 회의에서 아이디어를 <b>제안하다</b>.",
-          "img_prompt": "A person in a business meeting standing up ('서') and using expressive hand 'gestures' to enthusiastically 'suggest' a new idea to their colleagues.",
-          "ex": "I _____ we go to the movies tonight.",
-          "t": "오늘 밤 영화 보러 가는 것을 제안합니다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "tradition",
-          "m": "전통",
-          "mnemonic": "트림하며 디저트 션(시원)하게 먹는 게 우리 집 전통이야.",
-          "m_rich": "<b>트림하며 디저트 션(시원)하게</b> 먹는 게 우리 집 <b>전통</b>이야.",
-          "img_prompt": "A funny family dinner scene where everyone, from grandpa to the kids, happily burps after eating a big, cool dessert together, as if it's a cherished 'tradition'.",
-          "ex": "It is a _____ to eat special food on New Year's Day.",
-          "t": "설날에 특별한 음식을 먹는 것은 전통이다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "industry",
-          "m": "산업",
-          "mnemonic": "인 더 스트리트에 공장 굴뚝이 많은 걸 보니, 이 도시는 산업이 발달했구나.",
-          "m_rich": "<b>인 더 스트리트</b>에 공장 굴뚝이 많은 걸 보니, 이 도시는 <b>산업</b>이 발달했구나.",
-          "img_prompt": "A view 'in the street' of a city where the background is filled with factories and smoke stacks, representing a heavy 'industry' hub.",
-          "ex": "The tourism _____ is very important for this city.",
-          "t": "관광 산업은 이 도시에 매우 중요하다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "continue",
-          "m": "계속하다",
-          "mnemonic": "큰 티를 뉴(new) 버전으로 계속해서 출시하다.",
-          "m_rich": "<b>큰 티<small>를</small> 뉴(new)</b> 버전으로 <b>계속해서</b> 출시하다.",
-          "img_prompt": "A clothing designer looking at a long line of mannequins. Each mannequin wears the same 'big T-shirt' but in a 'new' color or design, showing that the series 'continues'.",
-          "ex": "Please _____ with your story.",
-          "t": "이야기를 계속해 주세요.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "consider",
-          "m": "고려하다",
-          "mnemonic": "큰 시더(씨앗)를 어디에 심을지 신중히 고려하다.",
-          "m_rich": "<b>큰 시더(씨앗)</b>를 어디에 심을지 신중히 <b>고려하다</b>.",
-          "img_prompt": "A thoughtful farmer holding a giant, glowing seed ('큰 시더') in his hands, looking over his fields and carefully 'considering' the best spot to plant it.",
-          "ex": "We need to _____ all the options.",
-          "t": "우리는 모든 선택지를 고려해야 한다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
         }
       ]
     },
@@ -253,39 +49,14 @@
       "name": "초급 단어 2",
       "level": "Basic",
       "description": "기초 필수 영단어",
-      "words": [
-        {
-          "w": "recognize",
-          "m": "알아보다, 인정하다",
-          "mnemonic": "내 것 나이 쓰(recognize)! 이건 내 글씨체인 걸 바로 알아보겠네.",
-          "m_rich": "<b>내 것 나이 쓰(recognize)</b>! 이건 내 글씨체인 걸 바로 <b>알아보겠네</b>.",
-          "img_prompt": "A person looking at a handwritten note and a lightbulb goes off above their head. They are recognizing their own handwriting ('내 것 나이 쓰').",
-          "ex": "I didn't _____ you with your new haircut.",
-          "t": "새 머리 스타일 때문에 당신을 알아보지 못했어요.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        },
-        {
-          "w": "produce",
-          "m": "생산하다",
-          "mnemonic": "프로듀스 101은 아이돌을 생산하는 프로그램이다.",
-          "m_rich": "<b>프로듀스</b> 101은 아이돌을 <b>생산하는</b> 프로그램이다.",
-          "img_prompt": "A stage resembling the TV show 'Produce 101', with many aspiring idols on tiered platforms, as if they are products on an assembly line waiting to be 'produced'.",
-          "ex": "This factory _____s cars.",
-          "t": "이 공장은 자동차를 생산한다.",
-          "audio_en": "",
-          "audio_kr": "",
-          "audio_mn": ""
-        }
-      ]
+      "words": []
     },
     {
       "id": "basic_3",
       "name": "초급 단어 3",
       "level": "Basic",
       "description": "기초 필수 영단어",
-      "words":
+      "words": []
     },
     {
       "id": "intermediate_1",
@@ -327,5 +98,7 @@
       "name": "고급 단어 3",
       "level": "Advanced",
       "description": "고급 필수 영단어",
-      "words":
+      "words": []
+    }
+  ]
 }
