@@ -121,7 +121,7 @@
     }
 
     .set-dropdown.show {
-      max-height: 300px;
+      max-height: 400px;
       opacity: 1;
     }
 
@@ -467,7 +467,7 @@
 
     .mnemonic-box.show {
       opacity: 1;
-      max-height: 120px;
+      max-height: 150px;
     }
 
     .mnemonic-label {
@@ -492,6 +492,16 @@
       line-height: 1.4;
       color: var(--gray-800);
       font-weight: 600;
+    }
+
+    .mnemonic-text b {
+      color: var(--success);
+      font-weight: 900;
+    }
+
+    .mnemonic-text small {
+      font-size: 0.85em;
+      opacity: 0.7;
     }
 
     .choices {
@@ -656,7 +666,7 @@
       }
       
       .mnemonic-box.show {
-        max-height: 100px;
+        max-height: 120px;
       }
     }
   </style>
@@ -740,7 +750,7 @@
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    let selectedSet = urlParams.get('set') || localStorage.getItem('exam_set') || 'basic';
+    let selectedSet = urlParams.get('set') || localStorage.getItem('exam_set') || 'basic_1';
     let isRandom = localStorage.getItem('exam_random') === 'true';
 
     let DATA = [];
@@ -758,8 +768,7 @@
     const currentSetIcon = document.getElementById('currentSetIcon');
     const randomBtn = document.getElementById('randomBtn');
 
-    const setIcons = { basic: '🌱', intermediate: '🚀', advanced: '💎' };
-    const setShortNames = { basic: '기초', intermediate: '중급', advanced: '고급' };
+    const levelIcons = { Basic: '🌱', Intermediate: '🚀', Advanced: '💎' };
 
     if (isRandom) {
       randomBtn.classList.add('active');
@@ -826,10 +835,10 @@
     function renderSetSelector() {
       setDropdown.innerHTML = ALL_SETS.map(set => `
         <div class="set-option ${set.id === selectedSet ? 'active' : ''}" data-set="${set.id}">
-          <div class="set-option-icon">${setIcons[set.id]}</div>
+          <div class="set-option-icon">${levelIcons[set.level]}</div>
           <div class="set-option-info">
             <div class="set-option-name">${set.name}</div>
-            <div class="set-option-desc">${set.description}</div>
+            <div class="set-option-desc">${set.description || ''}</div>
           </div>
           <div class="set-option-count">${set.words.length}개</div>
         </div>
@@ -851,15 +860,14 @@
     }
 
     function loadSet(setId) {
-  // ✅ 덱 완전 초기화
-  deckEl.innerHTML = '';
-  
-  const currentSet = ALL_SETS.find(set => set.id === setId);
-  if (!currentSet) return;
+      deckEl.innerHTML = '';
+      
+      const currentSet = ALL_SETS.find(set => set.id === setId);
+      if (!currentSet) return;
 
-  DATA = [...currentSet.words];
-      currentSetName.textContent = setShortNames[setId];
-      currentSetIcon.textContent = setIcons[setId];
+      DATA = [...currentSet.words];
+      currentSetName.textContent = currentSet.name;
+      currentSetIcon.textContent = levelIcons[currentSet.level];
 
       if (isRandom) {
         const studied = JSON.parse(localStorage.getItem('studied') || '{}');
@@ -909,7 +917,7 @@
 
           <div class="mnemonic-box" id="mnemonicBox">
             <div class="mnemonic-label">연상 문장</div>
-            <div class="mnemonic-text">${item.mnemonic}</div>
+            <div class="mnemonic-text" id="mnemonicText"></div>
           </div>
 
           <div class="choices">
@@ -924,6 +932,8 @@
           <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
         </div>
       `;
+
+      card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
 
       deckEl.appendChild(card);
       currentCard = card;
@@ -1161,4 +1171,3 @@
   </script>
 </body>
 </html>
-
