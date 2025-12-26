@@ -698,10 +698,13 @@
     }
 
     function loadSet(setId) {
-      const currentSet = ALL_SETS.find(set => set.id === setId);
-      if (!currentSet) return;
+  // ✅ 덱 완전 초기화
+  deckEl.innerHTML = '';
+  
+  const currentSet = ALL_SETS.find(set => set.id === setId);
+  if (!currentSet) return;
 
-      DATA = [...currentSet.words];
+  DATA = [...currentSet.words];
       currentSetName.textContent = setShortNames[setId];
       currentSetIcon.textContent = setIcons[setId];
 
