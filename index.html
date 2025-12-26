@@ -379,6 +379,78 @@
       box-sizing: border-box;
     }
 
+    /* 🔥 단어 + 이미지 나란히 */
+    .word-header {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(99, 102, 241, 0.15);
+    }
+
+    .word-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .word-term {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gray-900);
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .word-meaning {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    /* 🔥 이미지 박스 - 정사각형 */
+    .image-box {
+      width: 100px;
+      height: 100px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid rgba(99,102,241,0.2);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-box.loading {
+      font-size: 36px;
+      color: rgba(99,102,241,0.3);
+      animation: imageLoading 1.5s ease-in-out infinite;
+    }
+
+    @keyframes imageLoading {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    .image-box.error {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      font-size: 28px;
+      color: rgba(245,158,11,0.5);
+    }
+
     .meaning-box {
       background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
       border: 2px solid rgba(99,102,241,0.15);
@@ -397,7 +469,7 @@
     }
 
     .meaning-text {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1.3;
       color: var(--gray-900);
       font-weight: 800;
@@ -641,23 +713,38 @@
       white-space: nowrap;
     }
 
+    @media (max-width: 400px) {
+      .word-header {
+        grid-template-columns: 1fr 90px;
+      }
+      .image-box {
+        width: 90px;
+        height: 90px;
+      }
+      .word-term { font-size: 24px; }
+      .word-meaning { font-size: 16px; }
+    }
+
     @media (max-height: 812px) {
       .card-inner {
         padding: 12px 10px;
         gap: 8px;
       }
       
-      .meaning-text {
-        font-size: 16px;
+      .word-header {
+        grid-template-columns: 1fr 90px;
       }
       
-      .example-text {
-        font-size: 13px;
+      .image-box {
+        width: 90px;
+        height: 90px;
       }
       
-      .mnemonic-text {
-        font-size: 12px;
-      }
+      .word-term { font-size: 24px; }
+      .word-meaning { font-size: 16px; }
+      .meaning-text { font-size: 15px; }
+      .example-text { font-size: 13px; }
+      .mnemonic-text { font-size: 12px; }
       
       .choice {
         min-height: 46px;
@@ -866,6 +953,20 @@
       if (!currentSet) return;
 
       DATA = [...currentSet.words];
+      
+      if (DATA.length === 0) {
+        deckEl.innerHTML = `
+          <div class="card">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:30px; text-align:center;">
+              <div style="font-size:70px; margin-bottom:20px;">📝</div>
+              <h2 style="font-size:24px; font-weight:900; color:var(--gray-700); margin-bottom:14px;">단어가 없습니다</h2>
+              <p style="font-size:14px; color:var(--gray-600);">다른 세트를 선택해주세요</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
       currentSetName.textContent = currentSet.name;
       currentSetIcon.textContent = levelIcons[currentSet.level];
 
@@ -904,9 +1005,12 @@
           <div class="swipe-indicator-right" id="swipeRight">✅</div>
         </div>
         <div class="card-inner">
-          <div class="meaning-box">
-            <div class="meaning-label">한글 뜻</div>
-            <div class="meaning-text">${item.m}</div>
+          <div class="word-header">
+            <div class="word-main">
+              <div class="word-term">${item.w}</div>
+              <div class="word-meaning">${item.m}</div>
+            </div>
+            <div class="image-box loading" id="imageBox">🖼️</div>
           </div>
 
           <div class="example-box">
@@ -934,6 +1038,24 @@
       `;
 
       card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
+
+      const imageBox = card.querySelector('#imageBox');
+      const img = new Image();
+      const imageUrl = `images/${item.w}.webp`;
+      
+      img.onload = () => {
+        imageBox.innerHTML = '';
+        imageBox.appendChild(img);
+        imageBox.classList.remove('loading');
+      };
+      
+      img.onerror = () => {
+        imageBox.textContent = '🎨';
+        imageBox.classList.remove('loading');
+        imageBox.classList.add('error');
+      };
+      
+      img.src = imageUrl;
 
       deckEl.appendChild(card);
       currentCard = card;
