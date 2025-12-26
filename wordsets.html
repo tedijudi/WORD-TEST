@@ -3,326 +3,239 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="theme-color" content="#6366f1" />
-  <title>단어장 목록 - WordSwipe</title>
+  <meta name="theme-color" content="#8b5cf6" />
+  <title>단어장 - WordSwipe</title>
+  
+  <link rel="manifest" href="/WORD-TEST/manifest.json" />
   <link rel="stylesheet" href="common.css" />
   
   <style>
+    :root {
+      --safe-top: max(12px, env(safe-area-inset-top));
+      --safe-bottom: max(12px, env(safe-area-inset-bottom));
+      --nav-height: 72px;
+    }
+
+    body {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      padding: 
+        var(--safe-top) 
+        0 
+        calc(var(--safe-bottom) + var(--nav-height) + 12px) 
+        0;
+      min-height: calc(var(--vvh, 1vh) * 100);
+      box-sizing: border-box;
+    }
+
     .container {
-      max-width: 600px;
+      max-width: 480px;
       margin: 0 auto;
-      min-height: 100vh;
-      padding: max(20px, env(safe-area-inset-top)) 16px max(100px, env(safe-area-inset-bottom)) 16px;
+      padding: 0 16px;
     }
 
     header {
-      margin-bottom: 24px;
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      color: white;
-      text-decoration: none;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      transition: all 0.2s ease;
-      margin-bottom: 16px;
-    }
-
-    .back-btn:active { transform: scale(0.96); }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 900;
-      color: white;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.2);
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      font-size: 15px;
-      color: rgba(255,255,255,0.9);
-      font-weight: 600;
-    }
-
-    .progress-overview {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    }
-
-    .progress-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .progress-stat {
+      padding: 20px 0;
       text-align: center;
     }
 
-    .progress-stat-value {
-      font-size: 32px;
+    .page-title {
+      font-size: 28px;
       font-weight: 900;
       color: white;
-      margin-bottom: 4px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
-    .progress-stat-label {
-      font-size: 12px;
+    .page-subtitle {
+      font-size: 14px;
       color: rgba(255,255,255,0.85);
-      font-weight: 700;
+      font-weight: 600;
     }
 
-    .overall-progress {
-      background: rgba(255,255,255,0.2);
-      height: 10px;
-      border-radius: 999px;
-      overflow: hidden;
-      position: relative;
+    .level-section {
+      margin-bottom: 24px;
     }
 
-    .overall-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, white, rgba(255,255,255,0.9));
-      border-radius: 999px;
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 0 12px rgba(255,255,255,0.6);
-    }
-
-    .set-card {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 
-        0 4px 16px rgba(0,0,0,0.08),
-        inset 0 1px 0 rgba(255,255,255,0.9);
-      text-decoration: none;
-      display: block;
-    }
-
-    .set-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      transition: transform 0.3s;
-    }
-
-    .set-card.basic::before {
-      background: linear-gradient(90deg, #10b981, #059669);
-    }
-
-    .set-card.intermediate::before {
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    }
-
-    .set-card.advanced::before {
-      background: linear-gradient(90deg, #8b5cf6, #a855f7);
-    }
-
-    .set-card.completed::before {
-      transform: scaleX(1);
-    }
-
-    .set-card:active {
-      transform: scale(0.98);
-    }
-
-    .set-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 
-        0 12px 32px rgba(0,0,0,0.15),
-        inset 0 1px 0 rgba(255,255,255,0.9);
-    }
-
-    .set-header {
+    .level-header {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
       margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
-    .set-info {
+    .level-icon {
+      font-size: 24px;
+    }
+
+    .level-info {
       flex: 1;
     }
 
-    .set-level {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-
-    .set-level.basic {
-      background: rgba(16, 185, 129, 0.15);
-      color: #059669;
-    }
-
-    .set-level.intermediate {
-      background: rgba(99, 102, 241, 0.15);
-      color: #4f46e5;
-    }
-
-    .set-level.advanced {
-      background: rgba(139, 92, 246, 0.15);
-      color: #7c3aed;
-    }
-
-    .set-title {
-      font-size: 20px;
+    .level-name {
+      font-size: 18px;
       font-weight: 900;
-      color: var(--gray-900);
-      margin-bottom: 6px;
+      color: white;
+      margin-bottom: 2px;
+    }
+
+    .level-count {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
+
+    .wordset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wordset-card {
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .wordset-card:active {
+      transform: scale(0.98);
+    }
+
+    .wordset-header {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
-    .set-description {
-      font-size: 13px;
-      color: var(--gray-600);
-      font-weight: 600;
+    .wordset-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .wordset-info {
+      flex: 1;
+    }
+
+    .wordset-name {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--gray-900);
       margin-bottom: 4px;
     }
 
-    .set-meta {
-      font-size: 13px;
-      color: var(--gray-600);
-      font-weight: 700;
-    }
-
-    .set-badge {
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 20px;
-    }
-
-    .set-badge.basic {
-      background: rgba(16, 185, 129, 0.1);
-    }
-
-    .set-badge.intermediate {
-      background: rgba(99, 102, 241, 0.1);
-    }
-
-    .set-badge.advanced {
-      background: rgba(139, 92, 246, 0.1);
-    }
-
-    .set-badge.completed {
-      background: rgba(16,185,129,0.2);
-    }
-
-    .set-progress {
-      height: 8px;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 12px;
-      position: relative;
-    }
-
-    .set-progress.basic {
-      background: rgba(16, 185, 129, 0.1);
-    }
-
-    .set-progress.intermediate {
-      background: rgba(99, 102, 241, 0.1);
-    }
-
-    .set-progress.advanced {
-      background: rgba(139, 92, 246, 0.1);
-    }
-
-    .set-progress-bar {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.5s ease;
-    }
-
-    .set-progress-bar.basic {
-      background: linear-gradient(90deg, #10b981, #059669);
-      box-shadow: 0 0 8px rgba(16,185,129,0.5);
-    }
-
-    .set-progress-bar.intermediate {
-      background: linear-gradient(90deg, #6366f1, #8b5cf6);
-      box-shadow: 0 0 8px rgba(99,102,241,0.5);
-    }
-
-    .set-progress-bar.advanced {
-      background: linear-gradient(90deg, #8b5cf6, #a855f7);
-      box-shadow: 0 0 8px rgba(139,92,246,0.5);
-    }
-
-    .set-progress-text {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--gray-700);
-    }
-
-    .set-stats {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed rgba(99,102,241,0.2);
-    }
-
-    .set-stat {
+    .wordset-meta {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 8px;
       font-size: 12px;
       color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .wordset-badge {
+      padding: 3px 8px;
+      background: rgba(139,92,246,0.1);
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 700;
+      color: var(--secondary);
+    }
+
+    .wordset-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-practice {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+    }
+
+    .btn-exam {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 2px dashed rgba(255,255,255,0.3);
+    }
+
+    .empty-icon {
+      font-size: 60px;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
     }
 
     .bottom-nav {
       position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom) + 8px);
+      bottom: calc(var(--safe-bottom) + 6px);
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
       display: flex;
-      gap: 8px;
-      padding: 12px 12px;
+      gap: 6px;
+      padding: 10px 10px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(30px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
+      border-radius: 20px;
       box-shadow: 
-        0 12px 40px rgba(0, 0, 0, 0.2),
+        0 10px 35px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
@@ -330,50 +243,32 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      padding: 8px 12px;
+      gap: 3px;
+      padding: 6px 10px;
       background: transparent;
       border: none;
-      border-radius: 16px;
+      border-radius: 14px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s;
-      min-width: 60px;
+      min-width: 54px;
     }
 
     .nav-item:active { transform: scale(0.94); }
     .nav-item.active { background: rgba(255, 255, 255, 0.25); }
 
-    .nav-icon { font-size: 20px; line-height: 1; }
+    .nav-icon { font-size: 18px; line-height: 1; }
     .nav-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
       color: white;
       white-space: nowrap;
     }
 
-    .empty-state {
-      text-align: center;
-      padding: 60px 30px;
-      color: white;
-    }
-
-    .empty-icon {
-      font-size: 80px;
-      margin-bottom: 20px;
-      opacity: 0.8;
-    }
-
-    .empty-title {
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .empty-text {
-      font-size: 15px;
-      opacity: 0.9;
-      line-height: 1.5;
+    @media (max-height: 812px) {
+      .page-title { font-size: 24px; }
+      .wordset-card { padding: 14px; }
+      .wordset-name { font-size: 16px; }
     }
   </style>
 </head>
@@ -381,38 +276,17 @@
   <div class="loading" id="loading">
     <div>
       <div class="loading-spinner"></div>
-      <p style="margin-top:16px; font-size:16px; font-weight:700;">불러오는 중...</p>
+      <p style="margin-top:16px; font-size:16px; font-weight:700;">단어장 불러오는 중...</p>
     </div>
   </div>
 
   <div class="container">
     <header>
-      <a href="index.html" class="back-btn">← 돌아가기</a>
-      <h1>📖 단어장 목록</h1>
-      <p class="subtitle">학습할 단어장을 선택하세요</p>
+      <h1 class="page-title">📖 단어장</h1>
+      <p class="page-subtitle">학습할 세트를 선택하세요</p>
     </header>
 
-    <div class="progress-overview">
-      <div class="progress-stats">
-        <div class="progress-stat">
-          <div class="progress-stat-value" id="totalSets">3</div>
-          <div class="progress-stat-label">전체 세트</div>
-        </div>
-        <div class="progress-stat">
-          <div class="progress-stat-value" id="completedSets">0</div>
-          <div class="progress-stat-label">완료</div>
-        </div>
-        <div class="progress-stat">
-          <div class="progress-stat-value" id="totalWordsCount">60</div>
-          <div class="progress-stat-label">총 단어</div>
-        </div>
-      </div>
-      <div class="overall-progress">
-        <div class="overall-progress-bar" id="overallProgressBar" style="width: 0%"></div>
-      </div>
-    </div>
-
-    <div id="setsContainer"></div>
+    <div id="wordsetContainer"></div>
   </div>
 
   <nav class="bottom-nav">
@@ -439,109 +313,127 @@
   </nav>
 
   <script type="module">
-    import { initFirebase } from './firebase-config.js';
+    function setVVH() {
+      const vv = window.visualViewport;
+      const h = vv ? vv.height : window.innerHeight;
+      document.documentElement.style.setProperty('--vvh', (h * 0.01) + 'px');
+    }
+    window.addEventListener('resize', setVVH);
+    window.visualViewport?.addEventListener('resize', setVVH);
+    setVVH();
+
+    const loadingEl = document.getElementById('loading');
+    const containerEl = document.getElementById('wordsetContainer');
+
+    const levelConfig = {
+      'Basic': { name: '초급', icon: '🌱', color: '#10b981' },
+      'Intermediate': { name: '중급', icon: '🚀', color: '#6366f1' },
+      'Advanced': { name: '고급', icon: '💎', color: '#8b5cf6' }
+    };
 
     async function init() {
       try {
-        await initFirebase();
-        await loadWordSets();
-      } catch (e) {
-        console.error('초기화 실패:', e);
-        await loadWordSets();
-      } finally {
-        document.getElementById('loading').style.display = 'none';
-      }
-    }
-
-    async function loadWordSets() {
-      try {
         const res = await fetch(`words.json?t=${Date.now()}`);
         const json = await res.json();
-        
-        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
         const wordSets = json.wordSets;
-        
-        // 전체 통계
-        let totalWords = 0;
-        let totalStudied = 0;
-        let completedSetsCount = 0;
-        
+
+        // 레벨별로 그룹화
+        const grouped = {};
         wordSets.forEach(set => {
-          totalWords += set.words.length;
-          const setStudied = set.words.filter(w => studied[w.w]).length;
-          totalStudied += setStudied;
-          if (setStudied === set.words.length) completedSetsCount++;
+          if (!grouped[set.level]) {
+            grouped[set.level] = [];
+          }
+          grouped[set.level].push(set);
         });
-        
-        document.getElementById('totalSets').textContent = wordSets.length;
-        document.getElementById('totalWordsCount').textContent = totalWords;
-        document.getElementById('completedSets').textContent = completedSetsCount;
-        
-        const overallProgress = (totalStudied / totalWords * 100).toFixed(1);
-        document.getElementById('overallProgressBar').style.width = overallProgress + '%';
-        
-        // 세트 카드 렌더링
-        const container = document.getElementById('setsContainer');
-        container.innerHTML = '';
-        
-        wordSets.forEach((set, index) => {
-          const setStudied = set.words.filter(w => studied[w.w]).length;
-          const setProgress = (setStudied / set.words.length * 100).toFixed(1);
-          const isCompleted = setStudied === set.words.length;
-          
-          const icons = {
-            basic: '🌱',
-            intermediate: '🚀',
-            advanced: '💎'
-          };
-          
-          const card = document.createElement('a');
-          card.href = `index.html?set=${set.id}`;
-          card.className = `set-card ${set.id}${isCompleted ? ' completed' : ''}`;
-          card.innerHTML = `
-            <div class="set-header">
-              <div class="set-info">
-                <span class="set-level ${set.id}">${set.level}</span>
-                <div class="set-title">
-                  ${icons[set.id]} ${set.name}
+
+        // HTML 생성
+        let html = '';
+        ['Basic', 'Intermediate', 'Advanced'].forEach(level => {
+          const sets = grouped[level] || [];
+          const config = levelConfig[level];
+          const totalWords = sets.reduce((sum, set) => sum + set.words.length, 0);
+
+          html += `
+            <div class="level-section">
+              <div class="level-header">
+                <div class="level-icon">${config.icon}</div>
+                <div class="level-info">
+                  <div class="level-name">${config.name}</div>
+                  <div class="level-count">${sets.length}개 세트 · ${totalWords}개 단어</div>
                 </div>
-                <div class="set-description">${set.description}</div>
-                <div class="set-meta">${set.words.length}개 단어</div>
               </div>
-              <div class="set-badge ${set.id} ${isCompleted ? 'completed' : ''}">
-                ${isCompleted ? '✅' : icons[set.id]}
+              <div class="wordset-list">
+          `;
+
+          if (sets.length === 0) {
+            html += `
+              <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <div class="empty-title">준비 중입니다</div>
+                <div class="empty-text">곧 새로운 단어가 추가될 예정입니다</div>
               </div>
-            </div>
-            
-            <div class="set-progress ${set.id}">
-              <div class="set-progress-bar ${set.id}" style="width: ${setProgress}%"></div>
-              <div class="set-progress-text">${setStudied}/${set.words.length}</div>
-            </div>
-            
-            <div class="set-stats">
-              <div class="set-stat">
-                <span>✅</span>
-                <span>${setStudied}개 완료</span>
-              </div>
-              <div class="set-stat">
-                <span>📊</span>
-                <span>${setProgress}% 진행</span>
+            `;
+          } else {
+            sets.forEach(set => {
+              const wordCount = set.words.length;
+              const hasWords = wordCount > 0;
+              
+              html += `
+                <div class="wordset-card">
+                  <div class="wordset-header">
+                    <div class="wordset-icon">${config.icon}</div>
+                    <div class="wordset-info">
+                      <div class="wordset-name">${set.name}</div>
+                      <div class="wordset-meta">
+                        <span class="wordset-badge">${wordCount}개 단어</span>
+                        ${set.description ? `<span>${set.description}</span>` : ''}
+                      </div>
+                    </div>
+                  </div>
+              `;
+
+              if (hasWords) {
+                html += `
+                  <div class="wordset-actions">
+                    <a href="practice.html?set=${set.id}" class="action-btn btn-practice">
+                      📚 연습하기
+                    </a>
+                    <a href="index.html?set=${set.id}" class="action-btn btn-exam">
+                      ✍️ 시험보기
+                    </a>
+                  </div>
+                `;
+              } else {
+                html += `
+                  <div style="padding: 12px; text-align: center; background: rgba(139,92,246,0.05); border-radius: 12px;">
+                    <div style="font-size: 13px; color: var(--gray-600); font-weight: 600;">단어 준비 중</div>
+                  </div>
+                `;
+              }
+
+              html += `</div>`;
+            });
+          }
+
+          html += `
               </div>
             </div>
           `;
-          
-          container.appendChild(card);
         });
-        
+
+        containerEl.innerHTML = html;
+
       } catch (e) {
-        console.error('데이터 로드 실패:', e);
-        document.getElementById('setsContainer').innerHTML = `
+        console.error('❌ 단어장 로딩 실패:', e);
+        containerEl.innerHTML = `
           <div class="empty-state">
-            <div class="empty-icon">😢</div>
-            <div class="empty-title">데이터를 불러올 수 없습니다</div>
-            <div class="empty-text">words.json 파일을 확인해주세요</div>
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-title">로딩 실패</div>
+            <div class="empty-text">단어장을 불러올 수 없습니다<br>${e.message}</div>
           </div>
         `;
+      } finally {
+        loadingEl.style.display = 'none';
       }
     }
 
