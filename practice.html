@@ -14,12 +14,11 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
-    /* 아이폰13 미니 최적화 */
     :root {
       --safe-top: max(12px, env(safe-area-inset-top));
       --safe-bottom: max(12px, env(safe-area-inset-bottom));
       --nav-height: 72px;
-      --header-height: 60px;
+      --header-height: 90px;
     }
 
     .main-container {
@@ -40,47 +39,222 @@
     header {
       flex: 0 0 var(--header-height);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
       margin-bottom: 8px;
     }
 
+    /* 1줄 헤더 */
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .app-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: white;
-      flex: 1;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      white-space: nowrap;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
     }
 
     .progress-indicator {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: white;
       background: rgba(255,255,255,0.15);
       backdrop-filter: blur(10px);
-      padding: 5px 10px;
-      border-radius: 10px;
+      padding: 4px 8px;
+      border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;
     }
 
     .sound-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.3);
       color: white;
-      font-size: 18px;
+      font-size: 16px;
       cursor: pointer;
       display: grid;
       place-items: center;
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .sound-btn:active {
       transform: scale(0.9);
       background: rgba(255,255,255,0.3);
+    }
+
+    /* 컨트롤 바 */
+    .control-bar {
+      display: flex;
+      gap: 6px;
+    }
+
+    .set-selector {
+      position: relative;
+      flex: 1;
+    }
+
+    .set-current {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .set-current:active {
+      transform: scale(0.98);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .set-icon {
+      font-size: 16px;
+    }
+
+    .set-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .set-arrow {
+      font-size: 10px;
+      transition: transform 0.3s;
+    }
+
+    .set-current.open .set-arrow {
+      transform: rotate(180deg);
+    }
+
+    .set-dropdown {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      z-index: 100;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .set-dropdown.show {
+      max-height: 300px;
+      opacity: 1;
+    }
+
+    .set-option {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(16,185,129,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .set-option:last-child {
+      border-bottom: none;
+    }
+
+    .set-option:hover {
+      background: rgba(16,185,129,0.1);
+    }
+
+    .set-option:active {
+      background: rgba(16,185,129,0.2);
+    }
+
+    .set-option.active {
+      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.15));
+    }
+
+    .set-option-icon {
+      font-size: 20px;
+    }
+
+    .set-option-info {
+      flex: 1;
+    }
+
+    .set-option-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 2px;
+    }
+
+    .set-option-desc {
+      font-size: 10px;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .set-option-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .random-btn {
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .random-btn:active {
+      transform: scale(0.95);
+    }
+
+    .random-btn.active {
+      background: rgba(255,255,255,0.35);
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      animation: randomPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes randomPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     main {
@@ -145,9 +319,7 @@
       border-bottom: 2px solid rgba(16, 185, 129, 0.15);
     }
 
-    .word-main {
-      flex: 1;
-    }
+    .word-main { flex: 1; }
 
     .word-term {
       font-size: 28px;
@@ -318,29 +490,15 @@
       white-space: nowrap;
     }
 
-    /* 아이폰13 미니 세로 모드 최적화 */
     @media (max-height: 812px) {
       .card-inner {
         padding: 14px 12px;
         gap: 10px;
       }
-      
-      .word-term {
-        font-size: 26px;
-      }
-      
-      .word-meaning {
-        font-size: 16px;
-      }
-      
-      .mnemonic-text,
-      .example-text {
-        font-size: 13px;
-      }
-      
-      .translation {
-        font-size: 12px;
-      }
+      .word-term { font-size: 26px; }
+      .word-meaning { font-size: 16px; }
+      .mnemonic-text, .example-text { font-size: 13px; }
+      .translation { font-size: 12px; }
     }
   </style>
 </head>
@@ -354,9 +512,28 @@
 
   <div class="main-container">
     <header>
-      <h1 class="app-title">📚 연습 모드</h1>
-      <span class="progress-indicator" id="progress">1/20</span>
-      <button class="sound-btn" id="soundBtn">🔊</button>
+      <!-- 1줄 헤더 -->
+      <div class="header-top">
+        <h1 class="app-title">📚 연습</h1>
+        <div class="header-controls">
+          <span class="progress-indicator" id="progress">1/20</span>
+          <button class="sound-btn" id="soundBtn">🔊</button>
+        </div>
+      </div>
+
+      <!-- 컨트롤 바 -->
+      <div class="control-bar">
+        <div class="set-selector">
+          <div class="set-current" id="setCurrentBtn">
+            <span class="set-icon" id="currentSetIcon">🌱</span>
+            <span class="set-name" id="currentSetName">기초 단어</span>
+            <span class="set-arrow">▼</span>
+          </div>
+          <div class="set-dropdown" id="setDropdown"></div>
+        </div>
+
+        <button class="random-btn" id="randomBtn" title="랜덤 순서">🎲</button>
+      </div>
     </header>
 
     <main>
@@ -401,9 +578,9 @@
     window.visualViewport?.addEventListener('resize', setVVH);
     setVVH();
 
-    // URL에서 세트 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
-    const selectedSet = urlParams.get('set') || 'basic';
+    let selectedSet = urlParams.get('set') || localStorage.getItem('practice_set') || 'basic';
+    let isRandom = localStorage.getItem('practice_random') === 'true';
 
     let DATA = [];
     let ALL_SETS = [];
@@ -417,43 +594,116 @@
     const soundBtn = document.getElementById('soundBtn');
     const progressEl = document.getElementById('progress');
     const indicatorEl = document.getElementById('slideIndicator');
+    const setCurrentBtn = document.getElementById('setCurrentBtn');
+    const setDropdown = document.getElementById('setDropdown');
+    const currentSetName = document.getElementById('currentSetName');
+    const currentSetIcon = document.getElementById('currentSetIcon');
+    const randomBtn = document.getElementById('randomBtn');
 
-async function init() {
-  try {
-    // Firebase 연결 시도 (실패해도 진행)
-    try {
-      await initFirebase();
-    } catch (firebaseError) {
-      console.warn('⚠️ Firebase 오프라인 모드:', firebaseError.message);
-    }
-    
-    // 단어 데이터 로드
-    const res = await fetch(`words.json?t=${Date.now()}`);
-    const json = await res.json();
-    ALL_SETS = json.wordSets;
-    
-    // 선택된 세트의 단어만 로드
-    const currentSet = ALL_SETS.find(set => set.id === selectedSet);
-    if (currentSet) {
-      DATA = currentSet.words;
-      console.log(`📚 ${currentSet.name} 로드 (${DATA.length}개)`);
-    } else {
-      DATA = ALL_SETS[0].words;
-    }
-    
-    loadVoices();
-    renderIndicator();
-    renderCard(true);
-    updateUI();
-    
-  } catch (e) {
-    console.error('❌ 초기화 실패:', e);
-    alert('데이터를 불러올 수 없습니다: ' + e.message);
-  } finally {
-    loadingEl.style.display = 'none';
-  }
-}
+    const setIcons = { basic: '🌱', intermediate: '🚀', advanced: '💎' };
 
+    if (isRandom) {
+      randomBtn.classList.add('active');
+    }
+
+    randomBtn.onclick = () => {
+      isRandom = !isRandom;
+      localStorage.setItem('practice_random', isRandom);
+      randomBtn.classList.toggle('active', isRandom);
+      
+      idx = 0;
+      loadSet(selectedSet);
+    };
+
+    setCurrentBtn.onclick = (e) => {
+      e.stopPropagation();
+      setCurrentBtn.classList.toggle('open');
+      setDropdown.classList.toggle('show');
+    };
+
+    document.addEventListener('click', () => {
+      setCurrentBtn.classList.remove('open');
+      setDropdown.classList.remove('show');
+    });
+
+    setDropdown.onclick = (e) => {
+      e.stopPropagation();
+    };
+
+    async function init() {
+      try {
+        try {
+          await initFirebase();
+        } catch (firebaseError) {
+          console.warn('⚠️ Firebase 오프라인 모드:', firebaseError.message);
+        }
+        
+        const res = await fetch(`words.json?t=${Date.now()}`);
+        const json = await res.json();
+        ALL_SETS = json.wordSets;
+        
+        renderSetSelector();
+        loadSet(selectedSet);
+        
+      } catch (e) {
+        console.error('❌ 초기화 실패:', e);
+        alert('데이터를 불러올 수 없습니다: ' + e.message);
+      } finally {
+        loadingEl.style.display = 'none';
+      }
+    }
+
+    function renderSetSelector() {
+      setDropdown.innerHTML = ALL_SETS.map(set => `
+        <div class="set-option ${set.id === selectedSet ? 'active' : ''}" data-set="${set.id}">
+          <div class="set-option-icon">${setIcons[set.id]}</div>
+          <div class="set-option-info">
+            <div class="set-option-name">${set.name}</div>
+            <div class="set-option-desc">${set.description}</div>
+          </div>
+          <div class="set-option-count">${set.words.length}개</div>
+        </div>
+      `).join('');
+
+      setDropdown.querySelectorAll('.set-option').forEach(option => {
+        option.onclick = () => {
+          const setId = option.dataset.set;
+          selectedSet = setId;
+          localStorage.setItem('practice_set', setId);
+          
+          setCurrentBtn.classList.remove('open');
+          setDropdown.classList.remove('show');
+          idx = 0;
+          loadSet(setId);
+        };
+      });
+    }
+
+    function loadSet(setId) {
+      const currentSet = ALL_SETS.find(set => set.id === setId);
+      if (!currentSet) return;
+
+      DATA = [...currentSet.words];
+      currentSetName.textContent = currentSet.name;
+      currentSetIcon.textContent = setIcons[setId];
+
+      if (isRandom) {
+        const practiced = JSON.parse(localStorage.getItem('practiced') || '{}');
+        DATA.sort((a, b) => {
+          const aCount = practiced[a.w]?.count || 0;
+          const bCount = practiced[b.w]?.count || 0;
+          if (aCount !== bCount) return aCount - bCount;
+          return Math.random() - 0.5;
+        });
+      } else {
+        DATA.sort((a, b) => a.w.localeCompare(b.w));
+      }
+
+      loadVoices();
+      renderIndicator();
+      renderCard(true);
+      updateUI();
+    }
 
     function loadVoices() {
       voices = synth.getVoices();
@@ -465,9 +715,7 @@ async function init() {
     }
 
     function speak(text) {
-      if (synth.speaking) {
-        synth.cancel();
-      }
+      if (synth.speaking) synth.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
       const enVoice = voices.find(v => 
@@ -520,7 +768,6 @@ async function init() {
       }
 
       const item = DATA[idx];
-
       const card = document.createElement('div');
       card.className = 'card' + (enter ? ' enter' : '');
       card.innerHTML = `
@@ -549,7 +796,6 @@ async function init() {
 
       deckEl.appendChild(card);
       currentCard = card;
-
       attachSwipe(card);
       savePracticeProgress();
     }
@@ -568,100 +814,92 @@ async function init() {
       saveToCloud();
     }
 
-function attachSwipe(card) {
-  let startX = 0, startY = 0, curX = 0, dragging = false;
-  let startTime = 0;
-  let isDragging = false;
+    function attachSwipe(card) {
+      let startX = 0, startY = 0, curX = 0, dragging = false;
+      let startTime = 0;
+      let isDragging = false;
 
-  // 터치 시작
-  const handleStart = (e) => {
-    const touch = e.touches ? e.touches[0] : e;
-    startX = touch.clientX;
-    startY = touch.clientY;
-    startTime = Date.now();
-    dragging = true;
-    isDragging = false;
-    card.style.transition = 'none';
-  };
+      const handleStart = (e) => {
+        const touch = e.touches ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        startTime = Date.now();
+        dragging = true;
+        isDragging = false;
+        card.style.transition = 'none';
+      };
 
-  // 터치 이동
-  const handleMove = (e) => {
-    if (!dragging) return;
-    
-    const touch = e.touches ? e.touches[0] : e;
-    const currentX = touch.clientX;
-    const currentY = touch.clientY;
-    
-    curX = currentX - startX;
-    const curY = currentY - startY;
-    
-    if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
-      isDragging = true;
+      const handleMove = (e) => {
+        if (!dragging) return;
+        
+        const touch = e.touches ? e.touches[0] : e;
+        const currentX = touch.clientX;
+        const currentY = touch.clientY;
+        
+        curX = currentX - startX;
+        const curY = currentY - startY;
+        
+        if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
+          isDragging = true;
+        }
+        
+        if (isDragging && Math.abs(curX) > Math.abs(curY)) {
+          e.preventDefault();
+          card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
+        }
+      };
+
+      const handleEnd = () => {
+        if (!dragging) return;
+        dragging = false;
+        
+        if (!isDragging) {
+          card.style.transform = '';
+          curX = 0;
+          return;
+        }
+        
+        const threshold = 60;
+        const timeElapsed = Date.now() - startTime;
+        const velocity = Math.abs(curX) / timeElapsed;
+        const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
+        
+        if (shouldSwipe && curX > 0) {
+          card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          card.style.transform = 'translateX(150%) rotate(20deg)';
+          setTimeout(() => {
+            card.remove();
+            idx = Math.max(0, idx - 1);
+            renderCard(true);
+            updateUI();
+          }, 300);
+        } else if (shouldSwipe && curX < 0) {
+          card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          card.style.transform = 'translateX(-150%) rotate(-20deg)';
+          setTimeout(() => {
+            card.remove();
+            idx++;
+            renderCard(true);
+            updateUI();
+          }, 300);
+        } else {
+          card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          card.style.transform = '';
+        }
+        curX = 0;
+        isDragging = false;
+      };
+
+      card.addEventListener('touchstart', handleStart, { passive: false });
+      card.addEventListener('touchmove', handleMove, { passive: false });
+      card.addEventListener('touchend', handleEnd);
+      card.addEventListener('touchcancel', handleEnd);
+      
+      card.addEventListener('mousedown', handleStart);
+      card.addEventListener('mousemove', handleMove);
+      card.addEventListener('mouseup', handleEnd);
+      card.addEventListener('mouseleave', handleEnd);
     }
-    
-    if (isDragging && Math.abs(curX) > Math.abs(curY)) {
-      e.preventDefault();
-      card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
-    }
-  };
-
-  // 터치 종료
-  const handleEnd = () => {
-    if (!dragging) return;
-    dragging = false;
-    
-    if (!isDragging) {
-      card.style.transform = '';
-      curX = 0;
-      return;
-    }
-    
-    const threshold = 60;
-    const timeElapsed = Date.now() - startTime;
-    const velocity = Math.abs(curX) / timeElapsed;
-    const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
-    
-    if (shouldSwipe && curX > 0) {
-      // 이전 카드
-      card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      card.style.transform = 'translateX(150%) rotate(20deg)';
-      setTimeout(() => {
-        card.remove();
-        idx = Math.max(0, idx - 1);
-        renderCard(true);
-        updateUI();
-      }, 300);
-    } else if (shouldSwipe && curX < 0) {
-      // 다음 카드
-      card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      card.style.transform = 'translateX(-150%) rotate(-20deg)';
-      setTimeout(() => {
-        card.remove();
-        idx++;
-        renderCard(true);
-        updateUI();
-      }, 300);
-    } else {
-      // 원위치
-      card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-      card.style.transform = '';
-    }
-    curX = 0;
-    isDragging = false;
-  };
-
-  // PC + 모바일 이벤트 모두 등록
-  card.addEventListener('touchstart', handleStart, { passive: false });
-  card.addEventListener('touchmove', handleMove, { passive: false });
-  card.addEventListener('touchend', handleEnd);
-  card.addEventListener('touchcancel', handleEnd);
-  
-  card.addEventListener('mousedown', handleStart);
-  card.addEventListener('mousemove', handleMove);
-  card.addEventListener('mouseup', handleEnd);
-  card.addEventListener('mouseleave', handleEnd);
-}
-
 
     function showComplete() {
       deckEl.innerHTML = `
@@ -670,8 +908,7 @@ function attachSwipe(card) {
             <div style="font-size:70px; margin-bottom:20px;">✅</div>
             <h2 style="font-size:28px; font-weight:900; color:#10b981; margin-bottom:14px;">연습 완료!</h2>
             <p style="font-size:15px; color:#64748b; margin-bottom:20px;">모든 단어를 확인했습니다</p>
-            <a href="wordsets.html" class="btn btn-primary" style="background:linear-gradient(135deg,#10b981,#059669); margin-bottom:10px;">단어장 선택</a>
-            <a href="practice.html?set=${selectedSet}" class="btn btn-secondary">다시 시작</a>
+            <button onclick="location.reload()" class="btn btn-primary" style="background:linear-gradient(135deg,#10b981,#059669); border:none; padding:14px 28px; border-radius:16px; color:white; font-size:16px; font-weight:800; cursor:pointer;">다시 시작</button>
           </div>
         </div>
       `;
