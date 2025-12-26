@@ -1079,28 +1079,50 @@
       return shuffle([...similar, { w: item.w, m: item.m }]);
     }
 
-    function selectChoice(btn, item) {
-      if (answered) return;
-      answered = true;
+function selectChoice(btn, item) {
+  if (answered) return;
+  answered = true;
 
-      const selected = btn.dataset.word;
-      const isCorrect = selected === item.w;
+  const selected = btn.dataset.word;
+  const isCorrect = selected === item.w;
 
-      if (!isCorrect) {
-        vibrate([100, 50, 100]);
-      } else {
-        okCount++;
-        
-        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-        if (!studied[item.w]) {
-          studied[item.w] = { correctCount: 0, interval: 1, lastReview: Date.now() };
-        }
-        studied[item.w].correctCount++;
-        studied[item.w].lastReview = Date.now();
-        localStorage.setItem('studied', JSON.stringify(studied));
-        
-        saveToCloud();
-      }
+  if (!isCorrect) {
+    vibrate([100, 50, 100]);
+  } else {
+    okCount++;
+    
+    const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+    if (!studied[item.w]) {
+      studied[item.w] = { correctCount: 0, interval: 1, lastReview: Date.now() };
+    }
+    studied[item.w].correctCount++;
+    studied[item.w].lastReview = Date.now();
+    localStorage.setItem('studied', JSON.stringify(studied));
+    
+    saveToCloud();
+  }
+
+  // 🔥 정답 선택 후 영단어 표시
+  const wordTermEl = currentCard.querySelector('#wordTerm');
+  wordTermEl.style.opacity = '1';
+  wordTermEl.style.maxHeight = '100px';
+
+  currentCard.querySelectorAll('.choice').forEach((c, i) => {
+    c.classList.add('disabled');
+    const meaningEl = c.querySelector(`[data-idx="${i}"]`);
+    meaningEl.classList.add('show');
+    
+    if (c.dataset.word === item.w) c.classList.add('correct');
+    else if (c.dataset.word === selected) c.classList.add('wrong');
+  });
+
+  const blankEl = currentCard.querySelector('.blank');
+  if (blankEl) blankEl.textContent = item.w;
+
+  currentCard.querySelector('#translation').classList.add('show');
+  currentCard.querySelector('#mnemonicBox').classList.add('show');
+  currentCard.querySelector('#swipeHint').classList.add('show');
+}
 
       currentCard.querySelectorAll('.choice').forEach((c, i) => {
         c.classList.add('disabled');
@@ -1296,4 +1318,5 @@
   </script>
 </body>
 </html>
+
 
