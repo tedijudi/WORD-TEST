@@ -16,12 +16,11 @@
   <link rel="stylesheet" href="common.css" />
   
   <style>
-    /* 아이폰13 미니 최적화 */
     :root {
       --safe-top: max(12px, env(safe-area-inset-top));
       --safe-bottom: max(12px, env(safe-area-inset-bottom));
       --nav-height: 72px;
-      --header-height: 60px;
+      --header-height: 50px;
     }
 
     .main-container {
@@ -43,46 +42,232 @@
       flex: 0 0 var(--header-height);
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 12px;
     }
 
     .app-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: white;
-      flex: 1;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      white-space: nowrap;
+    }
+
+    .set-selector {
+      position: relative;
+      flex: 1;
+    }
+
+    .set-current {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+
+    .set-current:active {
+      transform: scale(0.96);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .set-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .set-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .set-arrow {
+      font-size: 8px;
+      transition: transform 0.3s;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .set-current.open .set-arrow {
+      transform: rotate(180deg);
+    }
+
+    .set-dropdown {
+      position: absolute;
+      top: 46px;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      z-index: 1000;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .set-dropdown.show {
+      max-height: 300px;
+      opacity: 1;
+    }
+
+    .set-option {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(99,102,241,0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .set-option:last-child {
+      border-bottom: none;
+    }
+
+    .set-option:hover {
+      background: rgba(99,102,241,0.1);
+    }
+
+    .set-option:active {
+      background: rgba(99,102,241,0.2);
+    }
+
+    .set-option.active {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15));
+    }
+
+    .set-option-icon {
+      font-size: 20px;
+    }
+
+    .set-option-info {
+      flex: 1;
+    }
+
+    .set-option-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 2px;
+    }
+
+    .set-option-desc {
+      font-size: 10px;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .set-option-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .random-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .random-btn:active {
+      transform: scale(0.9);
+    }
+
+    .random-btn.active {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      border-color: #fbbf24;
+      box-shadow: 
+        0 0 30px rgba(251,191,36,0.8),
+        0 0 15px rgba(251,191,36,0.6),
+        inset 0 0 20px rgba(255,255,255,0.3);
+      animation: randomActive 1.5s ease-in-out infinite;
+    }
+
+    @keyframes randomActive {
+      0%, 100% { 
+        transform: scale(1) rotate(0deg);
+        box-shadow: 
+          0 0 30px rgba(251,191,36,0.8),
+          0 0 15px rgba(251,191,36,0.6);
+      }
+      50% { 
+        transform: scale(1.1) rotate(180deg);
+        box-shadow: 
+          0 0 40px rgba(251,191,36,1),
+          0 0 20px rgba(251,191,36,0.8);
+      }
+    }
+
+    .random-btn.active::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      filter: blur(8px);
+      opacity: 0.6;
+      z-index: -1;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.2); }
+    }
+
+    .stat-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .sync-indicator {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: #10b981;
-      animation: pulse 2s ease-in-out infinite;
+      animation: syncPulse 2s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
     .sync-indicator.syncing { background: #f59e0b; }
     .sync-indicator.offline { background: #ef4444; }
 
-    @keyframes pulse {
+    @keyframes syncPulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
-    }
-
-    .stat-badge {
-      font-size: 12px;
-      font-weight: 700;
-      color: white;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      padding: 5px 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.2);
     }
 
     main {
@@ -115,6 +300,9 @@
       touch-action: pan-y;
       cursor: grab;
       overflow: hidden;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     .card:active { cursor: grabbing; }
@@ -124,11 +312,16 @@
     }
 
     @keyframes cardEnter {
-      from { transform: translateY(-15%) scale(0.9); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
+      from { 
+        transform: translateY(20px) scale(0.95); 
+        opacity: 0; 
+      }
+      to { 
+        transform: translateY(0) scale(1); 
+        opacity: 1; 
+      }
     }
 
-    /* 스와이프 인디케이터 */
     .swipe-indicators {
       position: absolute;
       inset: 0;
@@ -438,7 +631,6 @@
       white-space: nowrap;
     }
 
-    /* 아이폰13 미니 세로 모드 최적화 */
     @media (max-height: 812px) {
       .card-inner {
         padding: 12px 10px;
@@ -479,12 +671,22 @@
 
   <div class="main-container">
     <header>
-      <h1 class="app-title">
-        ✍️ 시험 모드
-        <span class="sync-indicator" id="syncIndicator"></span>
-      </h1>
+      <h1 class="app-title">✍️</h1>
+      
+      <div class="set-selector">
+        <div class="set-current" id="setCurrentBtn">
+          <span class="set-icon" id="currentSetIcon">🌱</span>
+          <span class="set-name" id="currentSetName">기초</span>
+          <span class="set-arrow">▼</span>
+        </div>
+        <div class="set-dropdown" id="setDropdown"></div>
+      </div>
+
+      <button class="random-btn" id="randomBtn" title="랜덤 순서">🎲</button>
+      
       <span class="stat-badge" id="statCurrent">1/20</span>
       <span class="stat-badge">✅ <span id="statOk">0</span></span>
+      <span class="sync-indicator" id="syncIndicator"></span>
     </header>
 
     <main>
@@ -537,9 +739,9 @@
       } catch (e) {}
     }
 
-    // URL에서 세트 파라미터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
-    const selectedSet = urlParams.get('set') || 'basic';
+    let selectedSet = urlParams.get('set') || localStorage.getItem('exam_set') || 'basic';
+    let isRandom = localStorage.getItem('exam_random') === 'true';
 
     let DATA = [];
     let ALL_SETS = [];
@@ -550,45 +752,68 @@
     const deckEl = document.getElementById('deck');
     const loadingEl = document.getElementById('loading');
     const syncIndicator = document.getElementById('syncIndicator');
+    const setCurrentBtn = document.getElementById('setCurrentBtn');
+    const setDropdown = document.getElementById('setDropdown');
+    const currentSetName = document.getElementById('currentSetName');
+    const currentSetIcon = document.getElementById('currentSetIcon');
+    const randomBtn = document.getElementById('randomBtn');
 
-async function init() {
-  try {
-    syncIndicator.classList.add('syncing');
-    
-    // Firebase 시도하되 실패해도 계속 진행
-    try {
-      await initFirebase();
-      syncIndicator.classList.remove('syncing');
-      
-      const profile = await getUserProfile();
-      if (profile) {
-        console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
-      }
-    } catch (firebaseError) {
-      console.warn('⚠️ Firebase 연결 실패 (오프라인 모드)', firebaseError.message);
-      syncIndicator.classList.add('offline');
-      // 계속 진행!
+    const setIcons = { basic: '🌱', intermediate: '🚀', advanced: '💎' };
+    const setShortNames = { basic: '기초', intermediate: '중급', advanced: '고급' };
+
+    if (isRandom) {
+      randomBtn.classList.add('active');
     }
-        
-        // 타임스탬프로 항상 최신 파일 로드
-        const res = await fetch(`words.json?t=${Date.now()}`);
 
+    randomBtn.onclick = () => {
+      isRandom = !isRandom;
+      localStorage.setItem('exam_random', isRandom);
+      randomBtn.classList.toggle('active', isRandom);
+      
+      idx = 0;
+      okCount = 0;
+      loadSet(selectedSet);
+    };
+
+    setCurrentBtn.onclick = (e) => {
+      e.stopPropagation();
+      setCurrentBtn.classList.toggle('open');
+      setDropdown.classList.toggle('show');
+    };
+
+    document.addEventListener('click', () => {
+      setCurrentBtn.classList.remove('open');
+      setDropdown.classList.remove('show');
+    });
+
+    setDropdown.onclick = (e) => {
+      e.stopPropagation();
+    };
+
+    async function init() {
+      try {
+        syncIndicator.classList.add('syncing');
+        
+        try {
+          await initFirebase();
+          syncIndicator.classList.remove('syncing');
+          
+          const profile = await getUserProfile();
+          if (profile) {
+            console.log('👤 사용자:', profile.name, '| 코드:', profile.friendCode);
+          }
+        } catch (firebaseError) {
+          console.warn('⚠️ Firebase 연결 실패 (오프라인 모드)', firebaseError.message);
+          syncIndicator.classList.add('offline');
+        }
+        
+        const res = await fetch(`words.json?t=${Date.now()}`);
         const json = await res.json();
         ALL_SETS = json.wordSets;
         
-        // 선택된 세트의 단어만 로드
-        const currentSet = ALL_SETS.find(set => set.id === selectedSet);
-        if (currentSet) {
-          DATA = currentSet.words;
-          console.log(`📚 ${currentSet.name} 로드 (${DATA.length}개)`);
-        } else {
-          DATA = ALL_SETS[0].words; // 기본값
-        }
+        renderSetSelector();
+        loadSet(selectedSet);
         
-        order = shuffle([...DATA.keys()]);
-        
-        renderCard(true);
-        updateUI();
       } catch (e) {
         console.error('초기화 실패:', e);
         syncIndicator.classList.add('offline');
@@ -596,6 +821,58 @@ async function init() {
       } finally {
         loadingEl.style.display = 'none';
       }
+    }
+
+    function renderSetSelector() {
+      setDropdown.innerHTML = ALL_SETS.map(set => `
+        <div class="set-option ${set.id === selectedSet ? 'active' : ''}" data-set="${set.id}">
+          <div class="set-option-icon">${setIcons[set.id]}</div>
+          <div class="set-option-info">
+            <div class="set-option-name">${set.name}</div>
+            <div class="set-option-desc">${set.description}</div>
+          </div>
+          <div class="set-option-count">${set.words.length}개</div>
+        </div>
+      `).join('');
+
+      setDropdown.querySelectorAll('.set-option').forEach(option => {
+        option.onclick = () => {
+          const setId = option.dataset.set;
+          selectedSet = setId;
+          localStorage.setItem('exam_set', setId);
+          
+          setCurrentBtn.classList.remove('open');
+          setDropdown.classList.remove('show');
+          idx = 0;
+          okCount = 0;
+          loadSet(setId);
+        };
+      });
+    }
+
+    function loadSet(setId) {
+      const currentSet = ALL_SETS.find(set => set.id === setId);
+      if (!currentSet) return;
+
+      DATA = [...currentSet.words];
+      currentSetName.textContent = setShortNames[setId];
+      currentSetIcon.textContent = setIcons[setId];
+
+      if (isRandom) {
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        DATA.sort((a, b) => {
+          const aCount = studied[a.w]?.correctCount || 0;
+          const bCount = studied[b.w]?.correctCount || 0;
+          if (aCount !== bCount) return aCount - bCount;
+          return Math.random() - 0.5;
+        });
+      } else {
+        DATA.sort((a, b) => a.w.localeCompare(b.w));
+      }
+
+      order = [...DATA.keys()];
+      renderCard(true);
+      updateUI();
     }
 
     function renderCard(enter = false) {
@@ -704,121 +981,139 @@ async function init() {
       currentCard.querySelector('#swipeHint').classList.add('show');
     }
 
-function attachSwipe(card) {
-  let startX = 0, startY = 0, curX = 0, dragging = false;
-  let startTime = 0;
-  let isDragging = false;
-  
-  const indicators = card.querySelector('#swipeIndicators');
-  const leftIndicator = card.querySelector('#swipeLeft');
-  const rightIndicator = card.querySelector('#swipeRight');
-
-  // 터치 시작 (모바일 + PC)
-  const handleStart = (e) => {
-    if (!answered) return;
-    
-    const touch = e.touches ? e.touches[0] : e;
-    startX = touch.clientX;
-    startY = touch.clientY;
-    startTime = Date.now();
-    dragging = true;
-    isDragging = false;
-    card.style.transition = 'none';
-    
-    if (indicators) {
-      indicators.classList.add('show');
-    }
-  };
-
-  // 터치 이동
-  const handleMove = (e) => {
-    if (!dragging) return;
-    
-    const touch = e.touches ? e.touches[0] : e;
-    const currentX = touch.clientX;
-    const currentY = touch.clientY;
-    
-    curX = currentX - startX;
-    const curY = currentY - startY;
-    
-    if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
-      isDragging = true;
-    }
-    
-    if (isDragging && Math.abs(curX) > Math.abs(curY)) {
-      e.preventDefault();
-      card.style.transform = `translateX(${curX}px) rotate(${curX * 0.05}deg)`;
+    function attachSwipe(card) {
+      let startX = 0, startY = 0, curX = 0, dragging = false;
+      let startTime = 0;
+      let isDragging = false;
       
-      if (leftIndicator && rightIndicator) {
-        if (curX > 30) {
-          leftIndicator.classList.add('active');
-          rightIndicator.classList.remove('active');
-        } else if (curX < -30) {
-          rightIndicator.classList.add('active');
-          leftIndicator.classList.remove('active');
-        } else {
-          leftIndicator.classList.remove('active');
-          rightIndicator.classList.remove('active');
+      const indicators = card.querySelector('#swipeIndicators');
+      const leftIndicator = card.querySelector('#swipeLeft');
+      const rightIndicator = card.querySelector('#swipeRight');
+
+      const handleStart = (e) => {
+        if (!answered) return;
+        
+        const touch = e.touches ? e.touches[0] : e;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        startTime = Date.now();
+        dragging = true;
+        isDragging = false;
+        card.style.transition = 'none';
+        card.style.opacity = '1';
+        
+        if (indicators) {
+          indicators.classList.add('show');
         }
-      }
-    }
-  };
+      };
 
-  // 터치 종료
-  const handleEnd = () => {
-    if (!dragging) return;
-    dragging = false;
-    
-    if (!isDragging) {
-      card.style.transform = '';
-      if (indicators) {
-        indicators.classList.remove('show');
-      }
-      curX = 0;
-      return;
-    }
-    
-    const threshold = 60;
-    const timeElapsed = Date.now() - startTime;
-    const velocity = Math.abs(curX) / timeElapsed;
-    const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
-    
-    if (shouldSwipe) {
-      card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      card.style.transform = `translateX(${curX > 0 ? '150%' : '-150%'}) rotate(${curX > 0 ? 20 : -20}deg)`;
-      setTimeout(() => {
-        card.remove();
-        idx++;
-        renderCard(true);
-        updateUI();
-      }, 300);
-    } else {
-      card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-      card.style.transform = '';
-      if (indicators) {
-        indicators.classList.remove('show');
-      }
-      if (leftIndicator && rightIndicator) {
-        leftIndicator.classList.remove('active');
-        rightIndicator.classList.remove('active');
-      }
-    }
-    curX = 0;
-    isDragging = false;
-  };
+      const handleMove = (e) => {
+        if (!dragging) return;
+        
+        const touch = e.touches ? e.touches[0] : e;
+        const currentX = touch.clientX;
+        const currentY = touch.clientY;
+        
+        curX = currentX - startX;
+        const curY = currentY - startY;
+        
+        if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
+          isDragging = true;
+        }
+        
+        if (isDragging && Math.abs(curX) > Math.abs(curY)) {
+          e.preventDefault();
+          
+          const rotation = curX * 0.05;
+          const opacity = 1 - Math.abs(curX) / 400;
+          
+          card.style.transform = `translateX(${curX}px) rotate(${rotation}deg)`;
+          card.style.opacity = Math.max(0.3, opacity);
+          
+          if (leftIndicator && rightIndicator) {
+            if (curX > 30) {
+              leftIndicator.classList.add('active');
+              rightIndicator.classList.remove('active');
+            } else if (curX < -30) {
+              rightIndicator.classList.add('active');
+              leftIndicator.classList.remove('active');
+            } else {
+              leftIndicator.classList.remove('active');
+              rightIndicator.classList.remove('active');
+            }
+          }
+        }
+      };
 
-  // PC + 모바일 이벤트 모두 등록
-  card.addEventListener('touchstart', handleStart, { passive: false });
-  card.addEventListener('touchmove', handleMove, { passive: false });
-  card.addEventListener('touchend', handleEnd);
-  card.addEventListener('touchcancel', handleEnd);
-  
-  card.addEventListener('mousedown', handleStart);
-  card.addEventListener('mousemove', handleMove);
-  card.addEventListener('mouseup', handleEnd);
-  card.addEventListener('mouseleave', handleEnd);
-}
+      const handleEnd = () => {
+        if (!dragging) return;
+        dragging = false;
+        
+        if (!isDragging) {
+          card.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          card.style.transform = 'translateX(0) rotate(0deg)';
+          card.style.opacity = '1';
+          if (indicators) {
+            indicators.classList.remove('show');
+          }
+          setTimeout(() => {
+            card.style.transition = '';
+          }, 300);
+          curX = 0;
+          return;
+        }
+        
+        const threshold = 80;
+        const timeElapsed = Date.now() - startTime;
+        const velocity = Math.abs(curX) / timeElapsed;
+        const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.8;
+        
+        if (shouldSwipe) {
+          const direction = curX > 0 ? 1 : -1;
+          const targetX = direction * (window.innerWidth * 1.2);
+          const targetRotation = direction * 30;
+          
+          card.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          card.style.transform = `translateX(${targetX}px) rotate(${targetRotation}deg)`;
+          card.style.opacity = '0';
+          
+          setTimeout(() => {
+            if (card.parentNode) {
+              card.parentNode.removeChild(card);
+            }
+            idx++;
+            renderCard(true);
+            updateUI();
+          }, 500);
+        } else {
+          card.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          card.style.transform = 'translateX(0) rotate(0deg)';
+          card.style.opacity = '1';
+          if (indicators) {
+            indicators.classList.remove('show');
+          }
+          if (leftIndicator && rightIndicator) {
+            leftIndicator.classList.remove('active');
+            rightIndicator.classList.remove('active');
+          }
+          setTimeout(() => {
+            card.style.transition = '';
+          }, 400);
+        }
+        curX = 0;
+        isDragging = false;
+      };
 
+      card.addEventListener('touchstart', handleStart, { passive: false });
+      card.addEventListener('touchmove', handleMove, { passive: false });
+      card.addEventListener('touchend', handleEnd);
+      card.addEventListener('touchcancel', handleEnd);
+      
+      card.addEventListener('mousedown', handleStart);
+      card.addEventListener('mousemove', handleMove);
+      card.addEventListener('mouseup', handleEnd);
+      card.addEventListener('mouseleave', handleEnd);
+    }
 
     function showComplete() {
       const today = new Date().toISOString().split('T')[0];
@@ -863,6 +1158,3 @@ function attachSwipe(card) {
   </script>
 </body>
 </html>
-
-
-
