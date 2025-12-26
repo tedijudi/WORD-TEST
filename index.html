@@ -54,6 +54,35 @@
       white-space: nowrap;
     }
 
+    .refresh-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .refresh-btn:active {
+      transform: rotate(180deg) scale(0.9);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .refresh-btn.spinning {
+      animation: spin 1s linear;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     .set-selector {
       position: relative;
       flex: 1;
@@ -395,12 +424,23 @@
       gap: 4px;
     }
 
+    /* 🔥 처음엔 영단어 숨김 */
     .word-term {
       font-size: 28px;
       font-weight: 900;
       color: var(--gray-900);
       letter-spacing: -0.5px;
       line-height: 1.1;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .word-term.show {
+      opacity: 1;
+      max-height: 100px;
+      margin-bottom: 4px;
     }
 
     .word-meaning {
@@ -449,31 +489,6 @@
       background: linear-gradient(135deg, #fef3c7, #fde68a);
       font-size: 28px;
       color: rgba(245,158,11,0.5);
-    }
-
-    .meaning-box {
-      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
-      border: 2px solid rgba(99,102,241,0.15);
-      border-radius: 16px;
-      padding: 12px 14px;
-      flex: 0 0 auto;
-    }
-
-    .meaning-label {
-      font-size: 9px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 6px;
-      color: var(--primary);
-    }
-
-    .meaning-text {
-      font-size: 16px;
-      line-height: 1.3;
-      color: var(--gray-900);
-      font-weight: 800;
-      text-align: center;
     }
 
     .example-box {
@@ -742,7 +757,6 @@
       
       .word-term { font-size: 24px; }
       .word-meaning { font-size: 16px; }
-      .meaning-text { font-size: 15px; }
       .example-text { font-size: 13px; }
       .mnemonic-text { font-size: 12px; }
       
@@ -769,6 +783,8 @@
   <div class="main-container">
     <header>
       <h1 class="app-title">✍️</h1>
+      
+      <button class="refresh-btn" id="refreshBtn" title="새로고침">🔄</button>
       
       <div class="set-selector">
         <div class="set-current" id="setCurrentBtn">
@@ -834,6 +850,17 @@
       try {
         if (navigator.vibrate) navigator.vibrate(pattern);
       } catch (e) {}
+    }
+
+    // 🔥 새로고침 버튼
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+      refreshBtn.onclick = () => {
+        refreshBtn.classList.add('spinning');
+        setTimeout(() => {
+          location.reload();
+        }, 300);
+      };
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -987,88 +1014,85 @@
       updateUI();
     }
 
- function renderCard(enter = false) {
-  if (idx >= order.length) {
-    showComplete();
-    return;
-  }
+    function renderCard(enter = false) {
+      if (idx >= order.length) {
+        showComplete();
+        return;
+      }
 
-  answered = false;
-  const item = DATA[order[idx]];
-  const choices = generateChoices(item);
+      answered = false;
+      const item = DATA[order[idx]];
+      const choices = generateChoices(item);
 
-  const card = document.createElement('div');
-  card.className = 'card' + (enter ? ' enter' : '');
-  card.innerHTML = `
-    <div class="swipe-indicators" id="swipeIndicators">
-      <div class="swipe-indicator-left" id="swipeLeft">🔄</div>
-      <div class="swipe-indicator-right" id="swipeRight">✅</div>
-    </div>
-    <div class="card-inner">
-      <div class="word-header">
-        <div class="word-main">
-          <div class="word-term" id="wordTerm" style="opacity: 0; max-height: 0; overflow: hidden; transition: all 0.3s;">ability</div>
-          <div class="word-meaning">${item.m}</div>
+      const card = document.createElement('div');
+      card.className = 'card' + (enter ? ' enter' : '');
+      card.innerHTML = `
+        <div class="swipe-indicators" id="swipeIndicators">
+          <div class="swipe-indicator-left" id="swipeLeft">🔄</div>
+          <div class="swipe-indicator-right" id="swipeRight">✅</div>
         </div>
-        <div class="image-box loading" id="imageBox">🖼️</div>
-      </div>
-
-      <div class="example-box">
-        <div class="example-label">예문</div>
-        <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
-        <div class="translation" id="translation">${item.t}</div>
-      </div>
-
-      <div class="mnemonic-box" id="mnemonicBox">
-        <div class="mnemonic-label">연상 문장</div>
-        <div class="mnemonic-text" id="mnemonicText"></div>
-      </div>
-
-      <div class="choices">
-        ${choices.map((c, i) => `
-          <div class="choice" data-word="${c.w}" data-idx="${i}">
-            <div class="choice-word">${c.w}</div>
-            <div class="choice-meaning" data-idx="${i}">${c.m}</div>
+        <div class="card-inner">
+          <div class="word-header">
+            <div class="word-main">
+              <div class="word-term" id="wordTerm">${item.w}</div>
+              <div class="word-meaning">${item.m}</div>
+            </div>
+            <div class="image-box loading" id="imageBox">🖼️</div>
           </div>
-        `).join('')}
-      </div>
 
-      <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
-    </div>
-  `;
+          <div class="example-box">
+            <div class="example-label">예문</div>
+            <div class="example-text">${item.ex.replace('_____', '<span class="blank">_____</span>')}</div>
+            <div class="translation" id="translation">${item.t}</div>
+          </div>
 
-  // 🔥 실제 단어 저장 (숨김)
-  card.querySelector('#wordTerm').textContent = item.w;
-  card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
+          <div class="mnemonic-box" id="mnemonicBox">
+            <div class="mnemonic-label">연상 문장</div>
+            <div class="mnemonic-text" id="mnemonicText"></div>
+          </div>
 
-  const imageBox = card.querySelector('#imageBox');
-  const img = new Image();
-  const imageUrl = `images/${item.w}.webp`;
-  
-  img.onload = () => {
-    imageBox.innerHTML = '';
-    imageBox.appendChild(img);
-    imageBox.classList.remove('loading');
-  };
-  
-  img.onerror = () => {
-    imageBox.textContent = '🎨';
-    imageBox.classList.remove('loading');
-    imageBox.classList.add('error');
-  };
-  
-  img.src = imageUrl;
+          <div class="choices">
+            ${choices.map((c, i) => `
+              <div class="choice" data-word="${c.w}" data-idx="${i}">
+                <div class="choice-word">${c.w}</div>
+                <div class="choice-meaning" data-idx="${i}">${c.m}</div>
+              </div>
+            `).join('')}
+          </div>
 
-  deckEl.appendChild(card);
-  currentCard = card;
+          <div class="swipe-hint" id="swipeHint">← 다시 / 완료 →</div>
+        </div>
+      `;
 
-  card.querySelectorAll('.choice').forEach(btn => {
-    btn.onclick = () => selectChoice(btn, item);
-  });
+      card.querySelector('#mnemonicText').innerHTML = item.m_rich || item.mnemonic;
 
-  attachSwipe(card);
-}
+      const imageBox = card.querySelector('#imageBox');
+      const img = new Image();
+      const imageUrl = `images/${item.w}.webp`;
+      
+      img.onload = () => {
+        imageBox.innerHTML = '';
+        imageBox.appendChild(img);
+        imageBox.classList.remove('loading');
+      };
+      
+      img.onerror = () => {
+        imageBox.textContent = '🎨';
+        imageBox.classList.remove('loading');
+        imageBox.classList.add('error');
+      };
+      
+      img.src = imageUrl;
 
+      deckEl.appendChild(card);
+      currentCard = card;
+
+      card.querySelectorAll('.choice').forEach(btn => {
+        btn.onclick = () => selectChoice(btn, item);
+      });
+
+      attachSwipe(card);
+    }
 
     function generateChoices(item) {
       const similar = DATA
@@ -1079,50 +1103,32 @@
       return shuffle([...similar, { w: item.w, m: item.m }]);
     }
 
-function selectChoice(btn, item) {
-  if (answered) return;
-  answered = true;
+    function selectChoice(btn, item) {
+      if (answered) return;
+      answered = true;
 
-  const selected = btn.dataset.word;
-  const isCorrect = selected === item.w;
+      const selected = btn.dataset.word;
+      const isCorrect = selected === item.w;
 
-  if (!isCorrect) {
-    vibrate([100, 50, 100]);
-  } else {
-    okCount++;
-    
-    const studied = JSON.parse(localStorage.getItem('studied') || '{}');
-    if (!studied[item.w]) {
-      studied[item.w] = { correctCount: 0, interval: 1, lastReview: Date.now() };
-    }
-    studied[item.w].correctCount++;
-    studied[item.w].lastReview = Date.now();
-    localStorage.setItem('studied', JSON.stringify(studied));
-    
-    saveToCloud();
-  }
+      if (!isCorrect) {
+        vibrate([100, 50, 100]);
+      } else {
+        okCount++;
+        
+        const studied = JSON.parse(localStorage.getItem('studied') || '{}');
+        if (!studied[item.w]) {
+          studied[item.w] = { correctCount: 0, interval: 1, lastReview: Date.now() };
+        }
+        studied[item.w].correctCount++;
+        studied[item.w].lastReview = Date.now();
+        localStorage.setItem('studied', JSON.stringify(studied));
+        
+        saveToCloud();
+      }
 
-  // 🔥 정답 선택 후 영단어 표시
-  const wordTermEl = currentCard.querySelector('#wordTerm');
-  wordTermEl.style.opacity = '1';
-  wordTermEl.style.maxHeight = '100px';
-
-  currentCard.querySelectorAll('.choice').forEach((c, i) => {
-    c.classList.add('disabled');
-    const meaningEl = c.querySelector(`[data-idx="${i}"]`);
-    meaningEl.classList.add('show');
-    
-    if (c.dataset.word === item.w) c.classList.add('correct');
-    else if (c.dataset.word === selected) c.classList.add('wrong');
-  });
-
-  const blankEl = currentCard.querySelector('.blank');
-  if (blankEl) blankEl.textContent = item.w;
-
-  currentCard.querySelector('#translation').classList.add('show');
-  currentCard.querySelector('#mnemonicBox').classList.add('show');
-  currentCard.querySelector('#swipeHint').classList.add('show');
-}
+      // 🔥 정답 선택 후 영단어 표시
+      const wordTermEl = currentCard.querySelector('#wordTerm');
+      wordTermEl.classList.add('show');
 
       currentCard.querySelectorAll('.choice').forEach((c, i) => {
         c.classList.add('disabled');
@@ -1318,5 +1324,3 @@ function selectChoice(btn, item) {
   </script>
 </body>
 </html>
-
-
