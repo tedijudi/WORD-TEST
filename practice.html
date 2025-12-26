@@ -861,93 +861,113 @@
       saveToCloud();
     }
 
-    function attachSwipe(card) {
-      let startX = 0, startY = 0, curX = 0, dragging = false;
-      let startTime = 0;
-      let isDragging = false;
+function attachSwipe(card) {
+  let startX = 0, startY = 0, curX = 0, dragging = false;
+  let startTime = 0;
+  let isDragging = false;
 
-      const handleStart = (e) => {
-        const touch = e.touches ? e.touches[0] : e;
-        startX = touch.clientX;
-        startY = touch.clientY;
-        startTime = Date.now();
-        dragging = true;
-        isDragging = false;
-        card.style.transition = 'none';
-      };
+  const handleStart = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+    startTime = Date.now();
+    dragging = true;
+    isDragging = false;
+    card.style.transition = 'none';
+  };
 
-      const handleMove = (e) => {
-        if (!dragging) return;
-        
-        const touch = e.touches ? e.touches[0] : e;
-        const currentX = touch.clientX;
-        const currentY = touch.clientY;
-        
-        curX = currentX - startX;
-        const curY = currentY - startY;
-        
-        if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
-          isDragging = true;
-        }
-        
-        if (isDragging && Math.abs(curX) > Math.abs(curY)) {
-          e.preventDefault();
-          card.style.transform = `translateX(${curX}px) rotate(${curX * 0.03}deg)`;
-        }
-      };
-
-      const handleEnd = () => {
-        if (!dragging) return;
-        dragging = false;
-        
-        if (!isDragging) {
-          card.style.transform = '';
-          curX = 0;
-          return;
-        }
-        
-        const threshold = 60;
-        const timeElapsed = Date.now() - startTime;
-        const velocity = Math.abs(curX) / timeElapsed;
-        const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.5;
-        
-        if (shouldSwipe && curX > 0) {
-          // 이전 카드
-          card.classList.add('exit-left');
-          setTimeout(() => {
-            card.remove();
-            idx = Math.max(0, idx - 1);
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else if (shouldSwipe && curX < 0) {
-          // 다음 카드
-          card.classList.add('exit-right');
-          setTimeout(() => {
-            card.remove();
-            idx++;
-            renderCard(true);
-            updateUI();
-          }, 300);
-        } else {
-          // 원위치
-          card.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-          card.style.transform = '';
-        }
-        curX = 0;
-        isDragging = false;
-      };
-
-      card.addEventListener('touchstart', handleStart, { passive: false });
-      card.addEventListener('touchmove', handleMove, { passive: false });
-      card.addEventListener('touchend', handleEnd);
-      card.addEventListener('touchcancel', handleEnd);
-      
-      card.addEventListener('mousedown', handleStart);
-      card.addEventListener('mousemove', handleMove);
-      card.addEventListener('mouseup', handleEnd);
-      card.addEventListener('mouseleave', handleEnd);
+  const handleMove = (e) => {
+    if (!dragging) return;
+    
+    const touch = e.touches ? e.touches[0] : e;
+    const currentX = touch.clientX;
+    const currentY = touch.clientY;
+    
+    curX = currentX - startX;
+    const curY = currentY - startY;
+    
+    if (Math.abs(curX) > 10 || Math.abs(curY) > 10) {
+      isDragging = true;
     }
+    
+    if (isDragging && Math.abs(curX) > Math.abs(curY)) {
+      e.preventDefault();
+      
+      // 부드러운 회전 각도
+      const rotation = curX * 0.05;
+      // 투명도 변화
+      const opacity = 1 - Math.abs(curX) / 400;
+      
+      card.style.transform = `translateX(${curX}px) rotate(${rotation}deg)`;
+      card.style.opacity = Math.max(0.3, opacity);
+    }
+  };
+
+  const handleEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    
+    if (!isDragging) {
+      card.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      card.style.transform = '';
+      card.style.opacity = '';
+      curX = 0;
+      return;
+    }
+    
+    const threshold = 80;
+    const timeElapsed = Date.now() - startTime;
+    const velocity = Math.abs(curX) / timeElapsed;
+    const shouldSwipe = Math.abs(curX) > threshold || velocity > 0.8;
+    
+    if (shouldSwipe) {
+      // 스와이프 방향 결정
+      const direction = curX > 0 ? 1 : -1;
+      const targetX = direction * (window.innerWidth * 1.2);
+      const targetRotation = direction * 30;
+      
+      // 부드러운 애니메이션으로 퇴장
+      card.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      card.style.transform = `translateX(${targetX}px) rotate(${targetRotation}deg)`;
+      card.style.opacity = '0';
+      
+      setTimeout(() => {
+        card.remove();
+        
+        if (direction > 0) {
+          // 오른쪽 스와이프 = 이전
+          idx = Math.max(0, idx - 1);
+        } else {
+          // 왼쪽 스와이프 = 다음
+          idx++;
+        }
+        
+        renderCard(true);
+        updateUI();
+      }, 500);
+      
+    } else {
+      // 원위치로 부드럽게 복귀
+      card.style.transition = 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      card.style.transform = '';
+      card.style.opacity = '';
+    }
+    
+    curX = 0;
+    isDragging = false;
+  };
+
+  card.addEventListener('touchstart', handleStart, { passive: false });
+  card.addEventListener('touchmove', handleMove, { passive: false });
+  card.addEventListener('touchend', handleEnd);
+  card.addEventListener('touchcancel', handleEnd);
+  
+  card.addEventListener('mousedown', handleStart);
+  card.addEventListener('mousemove', handleMove);
+  card.addEventListener('mouseup', handleEnd);
+  card.addEventListener('mouseleave', handleEnd);
+}
+
 
     function showComplete() {
       deckEl.innerHTML = `
