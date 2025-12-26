@@ -328,28 +328,45 @@
       }
     }
 
-    /* 카드 퇴장 애니메이션 (잔상 제거) */
-    .card.exit-left {
-      animation: exitLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
+.card {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(40px);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  touch-action: pan-y;
+  cursor: grab;
+  overflow: hidden;
+  /* 부드러운 렌더링 */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
 
-    .card.exit-right {
-      animation: exitRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
+.card:active { 
+  cursor: grabbing; 
+}
 
-    @keyframes exitLeft {
-      to { 
-        transform: translateX(-150%) rotate(-20deg);
-        opacity: 0;
-      }
-    }
+.card.enter {
+  animation: cardEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-    @keyframes exitRight {
-      to { 
-        transform: translateX(150%) rotate(20deg);
-        opacity: 0;
-      }
-    }
+@keyframes cardEnter {
+  from { 
+    transform: translateY(20px) scale(0.95) rotateX(10deg); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0) scale(1) rotateX(0deg); 
+    opacity: 1; 
+  }
+}
 
     .card-inner {
       width: 100%;
